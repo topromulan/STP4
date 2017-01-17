@@ -115,7 +115,8 @@ function game_init()
  stadium.floor={}
  stadium.floor.top=24
  stadium.floor.height=35
- stadium.floor.color=3
+ stadium.floor.color1=3
+ stadium.floor.color2=4
  
  stadium.seats={
   {9,27},{22,26},{35,25},{48,24},
@@ -541,14 +542,20 @@ end
 function draw_floor()
 
  for i=1,stadium.floor.height do
-  local r
+  local rad
   if(i<8) then
-   r=15+i^2
-   if r>60 then r=62 end
+   rad=15+i^2
+   if rad>60 then rad=62 end
   else
-   r=60-1.5*(i%3)-i/10
+   rad=60-1.5*(i%3)-i/10
   end
-  line(stadium.field.middle-r,stadium.floor.top+i,stadium.field.middle+r,stadium.floor.top+i,stadium.floor.color)
+  local l=stadium.field.middle-rad
+  local r=stadium.field.middle+rad
+  local h=stadium.floor.top+i
+  line(l,h,r,h,stadium.floor.color1)
+  for j=l+2,r-2,4 do
+   line(j,h,j+1,h,stadium.floor.color2)
+  end
  end
 end
 
