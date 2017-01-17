@@ -112,11 +112,11 @@ function game_init()
  stadium.fans={80,81,82,83,84,85,86}
  stadium.audience={}
 
--- stadium.seats={
---  {18,38},{33,37},
---  {48,36},{63,36},
---  {78,37},{93,38}
--- }
+ stadium.floor={}
+ stadium.floor.top=24
+ stadium.floor.height=35
+ stadium.floor.color=3
+ 
  stadium.seats={
   {9,27},{22,26},{35,25},{48,24},
   {64,24},{77,25},{90,26},{103,27},
@@ -134,6 +134,7 @@ function game_init()
  stadium.field.right=122
  stadium.field.top=60
  stadium.field.bottom=121
+ stadium.field.middle=0.5*(stadium.field.left+stadium.field.right)
  stadium.field.chalkcolor=7
  stadium.field.grasscolor=3
  stadium.field.goalzonewidth=15
@@ -201,7 +202,6 @@ function player_service(num)
 --   oddball.dx=-1*(-3+2*num)*(1+rnd(1.5))
    oddball.dx=-1*(-3+2*num)*(1+rnd(0.5)+players[num].serve_power/10)
    sfx(1+num) sfx(4)
-   debug1=oddball.dx
   end
  else
   --dance unless within serving range
@@ -228,8 +228,6 @@ function player_windup(num)
   players[num].winding_dir=0.5
  end
  
- debug3=players[num].winding_dir
- debug4=players[num].serve_power
 end
 
 function draw_windup()
@@ -320,9 +318,6 @@ function game_update()
     sfx(8) sfx(9)
    end
    
-   debug3=offset   
-   debug4=slope
-   
    if(slope>0.15 or offset>9.9) then
     set_player_pose(approaching_player,5)
    elseif(slope<-0.15 or offset<2.1) then
@@ -387,13 +382,14 @@ function game_draw()
  w2+=rnd(0.25) h2+=rnd(0.25)
  x2+=-0.5+rnd(1)+x2drift y2+=-0.2+rnd(0.4)+y2drift
  
- sspr(0,63,64,64,x1,y1,w1,h1)
- sspr(64,63,64,64,x2,y2,w2,h2)
-
+ --sspr(0,63,64,64,x1,y1,w1,h1)
+ --sspr(64,63,64,64,x2,y2,w2,h2)
+ cls()
  rect(0,0,127,127,5) --———
 
  draw_field() 
  draw_scoreboard()
+ draw_floor()
  draw_door()
  draw_audience()
  draw_player(1)
@@ -539,6 +535,20 @@ function draw_scoreboard()
    line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height/2,coords[i].x,coords[i].y+stadium.display.digit_height/2,stadium.display.lightcolor)
    line(coords[i].x,coords[i].y+stadium.display.digit_height/2,coords[i].x,coords[i].y,stadium.display.lightcolor)   
   end 
+ end
+end
+
+function draw_floor()
+
+ for i=1,stadium.floor.height do
+  local r
+  if(i<8) then
+   r=15+i^2
+   if r>60 then r=62 end
+  else
+   r=60-1.5*(i%3)-i/10
+  end
+  line(stadium.field.middle-r,stadium.floor.top+i,stadium.field.middle+r,stadium.floor.top+i,stadium.floor.color)
  end
 end
 
