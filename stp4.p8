@@ -35,6 +35,7 @@ function _draw()
 end
 
 function _update()
+  if(cycles<0) then cycles=0 end
   cycles+=1
   screen.update()
 
@@ -336,8 +337,9 @@ function game_update()
 
  --out of bounds
  if(oddball.y<=stadium.field.top or oddball.y>=stadium.field.bottom-8) then
+  oddball.y+=-1*oddball.dy/abs(oddball.dy) --prevents getting stuck
   oddball.dy*=-1
-  oddball.dy*=0.9+rnd(0.1)
+  oddball.dy*=0.75+rnd(0.2)
  end
 
  --score!! goal
