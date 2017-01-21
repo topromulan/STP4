@@ -4,7 +4,7 @@ __lua__
 
 function _init()
  screen={}
- cycles=0
+ cycles=0 --still a bug here when it wraps xxx
  do_intro()
 end
 
@@ -336,7 +336,8 @@ function game_update()
  end
 
  --out of bounds
- if(oddball.y<=stadium.field.top or oddball.y>=stadium.field.bottom-8) then
+ if((oddball.y<=stadium.field.top or oddball.y>=stadium.field.bottom-8) and 
+    not (players[1].holding or players[2].holding)) then
   oddball.y+=-1*oddball.dy/abs(oddball.dy) --prevents getting stuck
   oddball.dy*=-1
   oddball.dy*=0.75+rnd(0.2)
