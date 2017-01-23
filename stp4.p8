@@ -346,17 +346,17 @@ function game_update()
   oddball.dy*=0.75+rnd(0.2)
  end
 
- --score!! goal
+ --score!! goal!!
  if(oddball.x<stadium.field.left-4) then
   players[2].score+=1
   sfx(1)
   oddball.upforgrabs=true
-  oddball.service_time=cycles+3+flr(rnd(3))
+  oddball.service_time=cycles+13+flr(rnd(3))
  elseif(oddball.x>stadium.field.right-3) then
   players[1].score+=1
   sfx(1)
   oddball.upforgrabs=true
-  oddball.service_time=cycles+3+flr(rnd(3))
+  oddball.service_time=cycles+13+flr(rnd(3))
  end
 end
 
