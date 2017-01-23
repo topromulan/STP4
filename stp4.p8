@@ -4,7 +4,7 @@ __lua__
 
 function _init()
  screen={}
- cycles=0 --still a bug here when it wraps xxx
+ cycles=0 
  do_intro()
 end
 
@@ -35,8 +35,11 @@ function _draw()
 end
 
 function _update()
-  if(cycles<0) then cycles=0 end
   cycles+=1
+
+  --fix bug when it wraps
+  if(cycles<0) then cycles=1 oddball.service_time=0 end
+
   screen.update()
 
 end
