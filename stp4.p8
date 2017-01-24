@@ -151,7 +151,8 @@ function game_init()
  stadium.display.lightcolor=10
  stadium.display.woodcolor=2
  stadium.display.digit_width=12
- stadium.display.digit_height=20
+ stadium.display.digit_height_max=20
+ stadium.display.digit_heights={2,2}
 
  players[1].x = stadium.field.left + stadium.field.goalzonewidth-13
  players[1].xmin = stadium.field.left-3
@@ -259,10 +260,12 @@ end
 
 
 function game_update()
- if(players[1].score==9) then
-  player_wins(1) 
- elseif(players[2].score==9) then
-  player_wins(2)
+ if(cycles>oddball.service_time) then
+  if(players[1].score==9) then
+   player_wins(1) 
+  elseif(players[2].score==9) then
+   player_wins(2)
+  end
  end
 
  -- original version:
@@ -351,12 +354,14 @@ function game_update()
   players[2].score+=1
   sfx(1)
   oddball.upforgrabs=true
-  oddball.service_time=cycles+13+flr(rnd(3))
+  oddball.service_time=cycles+20+flr(rnd(5))
+  stadium.display.digit_heights[2]=2
  elseif(oddball.x>stadium.field.right-3) then
   players[1].score+=1
   sfx(1)
   oddball.upforgrabs=true
-  oddball.service_time=cycles+13+flr(rnd(3))
+  oddball.service_time=cycles+20+flr(rnd(5))
+  stadium.display.digit_heights[1]=2
  end
 end
 
@@ -491,61 +496,65 @@ function draw_scoreboard()
  for i=1,2 do
   if(players[i].score==0) then
    line(coords[i].x,coords[i].y,coords[i].x+stadium.display.digit_width,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,coords[i].x,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
-   line(coords[i].x,coords[i].y+stadium.display.digit_height,coords[i].x,coords[i].y,stadium.display.lightcolor)   
+   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y,stadium.display.lightcolor)   
   end 
   if(players[i].score==1) then
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
   end 
   if(players[i].score==2) then
    line(coords[i].x,coords[i].y,coords[i].x+stadium.display.digit_width,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height/2,coords[i].x,coords[i].y+stadium.display.digit_height/2,stadium.display.lightcolor)
-   line(coords[i].x,coords[i].y+stadium.display.digit_height/2,coords[i].x,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,coords[i].x,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
   end 
   if(players[i].score==3) then
    line(coords[i].x,coords[i].y,coords[i].x+stadium.display.digit_width,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height/2,coords[i].x,coords[i].y+stadium.display.digit_height/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,coords[i].x,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
   end 
   if(players[i].score==4) then
-   line(coords[i].x,coords[i].y,coords[i].x,coords[i].y+stadium.display.digit_height/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height/2,coords[i].x,coords[i].y+stadium.display.digit_height/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
   end 
   if(players[i].score==5) then
    line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x,coords[i].y,coords[i].x,coords[i].y+stadium.display.digit_height/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height/2,coords[i].x,coords[i].y+stadium.display.digit_height/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height/2,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,coords[i].x,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
   end 
   if(players[i].score==6) then
-   line(coords[i].x,coords[i].y+stadium.display.digit_height,coords[i].x,coords[i].y,stadium.display.lightcolor)   
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,coords[i].x,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height/2,coords[i].x,coords[i].y+stadium.display.digit_height/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height/2,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y,stadium.display.lightcolor)   
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
   end 
   if(players[i].score==7) then
    line(coords[i].x,coords[i].y,coords[i].x+stadium.display.digit_width,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
   end 
   if(players[i].score==8) then
    line(coords[i].x,coords[i].y,coords[i].x+stadium.display.digit_width,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height/2,coords[i].x,coords[i].y+stadium.display.digit_height/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,coords[i].x,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
-   line(coords[i].x,coords[i].y+stadium.display.digit_height,coords[i].x,coords[i].y,stadium.display.lightcolor)   
+   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y,stadium.display.lightcolor)   
   end 
   if(players[i].score==9) then
    line(coords[i].x,coords[i].y,coords[i].x+stadium.display.digit_width,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_height/2,coords[i].x,coords[i].y+stadium.display.digit_height/2,stadium.display.lightcolor)
-   line(coords[i].x,coords[i].y+stadium.display.digit_height/2,coords[i].x,coords[i].y,stadium.display.lightcolor)   
+   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y,stadium.display.lightcolor)
   end 
+
+  if(stadium.display.digit_heights[i]<stadium.display.digit_height_max) then
+   stadium.display.digit_heights[i]+=1
+  end
  end
 end
 
@@ -848,8 +857,8 @@ __sfx__
 001000000000000000000002425025250252500000021250212500000022250222500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000200001f1601e1601b160191702217014170101500a15006150181500a150011501800018000170001800017000000000000000000000000000000000000000000000000000000000000000000000000000000
 002d0000181500c1500c1500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-01100000185102b10021510323001b5103230021510273002052021510205201f51020510273001d5100000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-011000000c0300000007030000000c03000000070300e00014030000000f030000000e030000000b0300000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+01100000185302b10021520323001b5303230021520273002053021520205301f52020520273001d5100000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+011000000c0600000007050000000c06000000070500e00014060000000f050000000e040000000b0300000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
