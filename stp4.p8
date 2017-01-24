@@ -274,7 +274,7 @@ function game_update()
 
 
  for p=1,2 do
-  set_player_pose(p,1+flr((cycles%4+rnd(3))/5))
+  set_player_pose(p,1+flr(rnd(1.05)))
   players[p].moving=false
   if(btn(0,p-1)) then players[p].x-=1 players[p].moving=true end
   if(btn(1,p-1)) then players[p].x+=1 players[p].moving=true end
@@ -437,7 +437,7 @@ function draw_player(num)
 
 --this should be in game_update
 -- or its own function called
--- from game_update
+-- from game_update (player_update()?)
  if(players[num].dancing) then
   if(players[num].started_dancing==nil) then players[num].started_dancing=cycles end
   
