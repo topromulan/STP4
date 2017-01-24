@@ -350,18 +350,25 @@ function game_update()
  end
 
  --score!! goal!!
- if(oddball.x<stadium.field.left-4) then
-  players[2].score+=1
+ local scoring_player
+ if(oddball.x<stadium.field.left-4 or oddball.x>stadium.field.right-3) then
+  if(oddball.x>stadium.field.middle) then
+   scoring_player=1
+  else
+   scoring_player=2
+  end
+  players[scoring_player].score+=1
+  stadium.display.digit_heights[scoring_player]=2
   sfx(1)
   oddball.upforgrabs=true
-  oddball.service_time=cycles+20+flr(rnd(5))
-  stadium.display.digit_heights[2]=2
- elseif(oddball.x>stadium.field.right-3) then
-  players[1].score+=1
-  sfx(1)
-  oddball.upforgrabs=true
-  oddball.service_time=cycles+20+flr(rnd(5))
-  stadium.display.digit_heights[1]=2
+  if(players[1].score<9 and players[2].score<9) then
+   oddball.service_time=cycles+20+rnd(5)
+  else
+   --winner winner chicken dinner 
+   oddball.service_time=cycles+125+rnd(10)
+   sfx(10) sfx(11)
+  end
+  players[scoring_player].dancing=true
  end
 end
 
@@ -573,7 +580,12 @@ function draw_floor()
   local h=stadium.floor.top+i
   line(l,h,r,h,stadium.floor.color1)
   for j=l+2,r-2,4 do
-   line(j,h,j+1,h,stadium.floor.color2)
+   local c=stadium.floor.color2
+   --blink red when win!
+   if((players[1].score==9 or players[2].score==9) and flr(cycles/15)%2==0) then
+    c=8
+   end
+   line(j,h,j+1,h,c)
   end
  end
 end
