@@ -52,9 +52,26 @@ function do_intro()
  lcolor=8
  rcolor=3
 
+ yt=113 yb=117
+ xl=15 xr=109
+
+ --
+
+ rainline=yt-2
+ rainfloor=rainline+12
+
+ rainmemory={}
+ for i=rainline,rainfloor do
+  rainmemory[i]={}
+  for j=0,127 do
+   rainmemory[i][j]=false
+  end
+ end
+ 
+
  screen.update=intro_update
  screen.draw=intro_draw
- 
+  
  cls(5)
 end
 
@@ -85,15 +102,10 @@ function intro_draw()
  if(rnd()<0.975) then print("live",79+rnd(3),104+rnd(3),8) end
  if(flr(cycles/25)%2!=0) then print("broadcasting live",28,105,11) end
 
- yt=113 yb=117
- xl=15 xr=109
-
--- if(rnd()<0.995) then print("from turtle pong stadium",xl,yt,2) end
  if(cycles<15) then print("from turtle pong stadium",xl,yt,2) end
 
- local rainline=yt-3
  
- for y=rainline-1,yb+5 do
+ for y=rainline,rainfloor do
   for x=xl-5,xr+5 do
    if(cycles<5) then
     --fade to black
@@ -109,7 +121,7 @@ function intro_draw()
  local air,water,letter,wet
  air=0 water=1 letter=2 wet=9
 
- for y=rainline+12,rainline,-1 do
+ for y=rainfloor,rainline,-1 do
   for x=xl-4,xr+4 do
    local above=pget(x,y-1)
    local here=pget(x,y)
@@ -124,22 +136,32 @@ function intro_draw()
     end
    elseif(here==letter) then
     if(water==above or wet==above) then
-     result=wet
+     if(rnd()>0.65) then
+      result=wet
+     end
     end
    elseif(here==wet) then
     if(air==above or letter==above) then
-     result=letter
+     if(rnd()>0.65) then
+      if(rainmemory[y][x]==false) then
+       rainmemory[y][x]=true
+       result=wet
+      else
+       rainmemory[y][x]=false
+       result=letter
+      end
+     end
     end
    else
-    result=8
+    result=here
    end
 
    pset(x,y,result)
   end 
  end
-   
+ 
  for x=xl-4,xr+4 do
-  if(rnd()<0.25 or flr(cycles/150)%2==0) then
+  if(rnd()<0.25 or flr(cycles/150)%2==1) then
    pset(x,rainline,1) -- rain
   end
  end
