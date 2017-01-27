@@ -52,14 +52,17 @@ function do_intro()
  lcolor=8
  rcolor=3
 
+ cycles=0
+
  yt=113 yb=117
  xl=15 xr=109
 
  --
 
+ air=0 water=1 letter=11 wet=3
+
  rainline=yt-2
  rainfloor=rainline+12
-
  rainmemory={}
  for i=rainline,rainfloor do
   rainmemory[i]={}
@@ -68,7 +71,6 @@ function do_intro()
   end
  end
  
-
  screen.update=intro_update
  screen.draw=intro_draw
   
@@ -102,7 +104,7 @@ function intro_draw()
  if(rnd()<0.975) then print("live",79+rnd(3),104+rnd(3),8) end
  if(flr(cycles/25)%2!=0) then print("broadcasting live",28,105,11) end
 
- if(cycles<15) then print("from turtle pong stadium",xl,yt,2) end
+ if(cycles<15) then print("from turtle pong stadium",xl,yt,letter) end
 
  
  for y=rainline,rainfloor do
@@ -118,9 +120,6 @@ function intro_draw()
   
  end 
  
- local air,water,letter,wet
- air=0 water=1 letter=2 wet=9
-
  for y=rainfloor,rainline,-1 do
   for x=xl-4,xr+4 do
    local above=pget(x,y-1)
@@ -161,7 +160,7 @@ function intro_draw()
  end
  
  for x=xl-4,xr+4 do
-  if(rnd()<0.25 or flr(cycles/150)%2==1) then
+  if(rnd()<0.15 or (rnd()>0.02 and flr(cycles/150)%2==1)) then
    pset(x,rainline,1) -- rain
   end
  end
