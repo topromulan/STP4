@@ -295,8 +295,8 @@ function player_service(num)
    --let it fly
    players[num].holding=false
    players[num].winding_up=false
---   oddball.dx=-1*(-3+2*num)*(1+rnd(1.5))
    oddball.dx=-1*(-3+2*num)*(1+rnd(0.5)+players[num].serve_power/10)
+   oddball.dy=0.1-rnd(0.2)
    sfx(1+num) sfx(4)
   end
  else
@@ -433,7 +433,7 @@ function game_update()
  end
 
  --out of bounds
- if((oddball.y<=stadium.field.top or oddball.y>=stadium.field.bottom-8) and 
+ if((oddball.y<=stadium.field.top or oddball.y>=stadium.field.bottom-6) and 
     not (players[1].holding or players[2].holding)) then
   oddball.y+=-1*oddball.dy/abs(oddball.dy) --prevents getting stuck
   oddball.dy*=-1
