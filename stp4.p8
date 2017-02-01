@@ -182,7 +182,7 @@ function game_init()
 
  players[1] = {}
  players[2] = {}
- 
+
  players[1].sprites = {9,25,41,57,56,55,54}
  players[2].sprites = {10,26,42,58,59,60,61}
  
@@ -197,6 +197,10 @@ function game_init()
  players[1].winding_dir=1
  players[2].winding_dir=1
  
+ trophy_for_player1=false
+ trophy_for_player2=false
+ party_message=nil
+
  stadium.field={}
  stadium.display={}
 
@@ -351,9 +355,10 @@ end
 
 function game_update()
  if(cycles>oddball.service_time) then
-  if(players[1].score==9) then
+  if(players[1].score>=9) then
    player_wins(1) 
-  elseif(players[2].score==9) then
+  end
+  if(players[2].score>=9) then
    player_wins(2)
   end
  end
@@ -457,6 +462,7 @@ function game_update()
   else
    --winner winner chicken dinner 
    oddball.service_time=cycles+55+rnd(10)
+   players[scoring_player].dancing=true
    sfx(10) sfx(11)
   end
   players[scoring_player].dancing=true
@@ -682,18 +688,27 @@ function draw_audience()
 end
 
 function player_wins(num)
- trophy_for_player=num
- player_party(num)
-end
-
-function player_party(num)
+ if(num==1) then
+  trophy_for_player1=true
+ elseif(num==2) then
+  trophy_for_player2=true
+ end
  screen.update=party_update
  screen.draw=party_draw
- party_started=cycles
- if(num==1) then party_message="player 1 wins" else party_message="player 2 wins" end
+ party_started=cycles+1
+
+ if(party_message==nil and num==1) then
+  party_message="player 1 wins"
+ elseif(party_message==nil and num==2) then
+  party_message="player 2 wins"
+ else
+  party_message="everybody wins!!"
+ end
  music(0)
  party_update()
+ adjective="stellar"  
 end
+
 
 function party_update()
  party_time=cycles-party_started
@@ -719,17 +734,23 @@ function party_draw()
  end
  party_drapes_draw()
  if(party_time>20) then print("thanks for playing",20,45,7) end
- if(party_time>28 and flr(cycles/20)%2==0) then print("that was awesome!!",25,55,7) end
+ if(party_time>28 and flr(cycles/20)%2==0) then print("that was "..adjective.."!!",25,55,7) end
  if(party_time>50) then print(party_message,28,65,11) end
 
- local s=players[trophy_for_player].sprites[1+cycles%6]
- local sx=s*8%128
- local sy=8*flr(s*8/128)
- local px=128*(party_time/125)
- if(trophy_for_player==2) then px=128-px end --so player 2 comes from r
- local py=100-party_time/20+50*sin(party_time/cycles)
+ for p=1,2 do
+  local s,sx,sy,px,py
+  if(p==1 and trophy_for_player1 or
+     p==2 and trophy_for_player2) then
+   s=players[p].sprites[1+cycles%6]
+   sx=s*8%128
+   sy=8*flr(s*8/128)
+   px=128*(party_time/125)
+   if(p==2) then px=128-px end --so player 2 comes from r
+   py=100-party_time/20+50*sin(party_time/cycles)
+   sspr(sx,sy,8,8,px,py,24,24)
+  end
+ end
  
- sspr(sx,sy,8,8,px,py,24,24)
 end
 
 function party_drapes_draw()
