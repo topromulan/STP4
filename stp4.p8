@@ -45,6 +45,10 @@ function _update()
 end
 
 function do_intro()
+
+ intro_ending=false
+ intro_ending_at=nil
+
  --coordinates of planets l/r
  lx=40 ly=20
  rx=80 ry=20
@@ -58,6 +62,23 @@ function do_intro()
  xl=15 xr=109
 
  --
+ 
+ stplogo={}
+ stplogo.s={}
+ stplogo.t={}
+ stplogo.p={}
+ stplogo.clr1=7
+ stplogo.clr2=5
+ stplogo.clr=stplogo.clr1
+
+ stplogo.s.x=20 stplogo.s.y=45
+ stplogo.s.width=15 stplogo.s.height=21
+ stplogo.t.x=40 stplogo.t.y=50
+ stplogo.t.width=15 stplogo.t.height=21
+ stplogo.p.x=60 stplogo.p.y=55
+ stplogo.p.width=15 stplogo.p.height=21
+
+ -- 
 
  air=0 water=1 letter=11 wet=3
 
@@ -78,7 +99,14 @@ function do_intro()
 end
 
 function intro_update()
- if(btnp()!=0) then play_game() end
+ if(btnp()!=0) intro_ending=true
+ if(intro_ending) then
+  if(intro_ending_at==nil) then
+   intro_ending_at=cycles+55
+   sfx(10) sfx(11)
+  end
+  if(cycles>intro_ending_at) play_game()
+ end 
  
  lx+=1
  if(lx>200) then lx=-200 end
@@ -94,11 +122,36 @@ function intro_draw()
  rectfill(0,0,127,102,5)
  circfill(lx,ly,32+sin(lx/1000)*20,lcolor)
  circfill(rx,ry,30,rcolor)
- print("anderson company",38,25,11) 
- sspr(0,12,12,20,20,45) -- s
- sspr(16,12,12,20,40,50) -- t
- sspr(32,12,12,20,60,55) -- p
+ print("2017 macrowave",38,25,11) 
 
+ if(intro_ending) intro_left=intro_ending_at-cycles
+ if(intro_ending) then
+  stplogo.clr=intro_left/2
+  stplogo.s.x-=rnd()
+  stplogo.s.y-=rnd()
+  stplogo.s.width+=rnd(0.75)
+  stplogo.s.height+=rnd(0.75)
+  stplogo.t.x-=rnd()
+  stplogo.t.y+=rnd(0.5)
+  stplogo.t.width+=rnd(0.65)
+  stplogo.t.height+=rnd(0.65)
+  stplogo.p.x-=rnd(0.5)
+  stplogo.p.y-=rnd()
+  stplogo.p.width+=rnd(0.55)
+  stplogo.p.height+=rnd(0.55)
+ else
+ end
+ 
+ sspr(0,12,12,20,rnd(1.005)+stplogo.s.x,stplogo.s.y,stplogo.s.width,stplogo.s.height)
+ sspr(16,12,12,20,rnd(1.010)+stplogo.t.x,stplogo.t.y,stplogo.t.width,stplogo.t.height)
+ sspr(32,12,12,20,rnd(1.015)+stplogo.p.x,stplogo.p.y,stplogo.p.width,stplogo.p.height)
+
+ if(intro_ending) then
+   print("uper",stplogo.s.x+stplogo.s.width,stplogo.s.y+stplogo.s.height/2,stplogo.clr)
+   print("urtle",stplogo.t.x+stplogo.t.width*0.8,stplogo.t.y+stplogo.t.height/2,stplogo.clr)
+   print("ong",stplogo.p.x+stplogo.p.width*0.9,stplogo.p.y+stplogo.p.height/2,stplogo.clr)
+ end
+ 
  if(flr(cycles/30)%2!=0) then print("insert money to play",8,90,6) end
  if(rnd()<0.975) then print("live",79+rnd(3),104+rnd(3),8) end
  if(rnd()<0.975) then print("live",79+rnd(3),104+rnd(3),8) end
