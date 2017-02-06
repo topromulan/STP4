@@ -1,4 +1,4 @@
-# STP4
+# Super Turtle Pong 4
 
 *Welcome to Turtle Pong Stadium*
 
@@ -8,25 +8,37 @@ Turtles use a paddle to bounce one lucky turtle around a field. The goal is to h
 
 ## Motivation
 
-Humans have evolved to the point where they can understand Turtle Pong, theoretically?
+Super Turtle Pong 4 brings back the authentic feel of these historic MacroWave products and takes them to the next level with the incredible future-now expansive PICO-8 architecture.
+ * 1994 Super Turtle Pong 3 (color graphics, audience, Turbo C++)
+ * 1993 Turtle Pong (monochrome graphics, QuickBasic)
+ * 1991 Turtle Pong (text mode in DOS with BASCOM)
 
 ## Instructions
 
 ### Intro Screen
- * To INSERT MONEY, press the first button.
+ * To INSERT MONEY, press any button.
 
 ### Game Play
 
+Move your player to the desired standing position within your end of the field. Pay no mind to the mixed citizenry of the world who routinely crowd the grandstand seats. After the game, they will just leave through the exit in an orderly fashion while the winner parties. To be a winner, you need to score nine! Here is your guide to scoring those nine points:
+
 #### Service
- * To wind up and serve, hold down the first button.
- * You may move around.
+ * When an (un)lucky turtle sits alone in the middle of the grassy field, press and hold down the "O" button to serve.
+ * A meter shows you winding up, and helps you measure out the power of your serve. Keep holding it..
+ * You may still move around.
+ * Release the same "O" button to surprise your opponent with a turtle flying right at him, or try to sneak it past him along the edge.
 #### Ball in Play
- * To move your player around use your directional keypad.
- * Fielding the ball while you just pressed the first button can add oomph to your return.
- * Pressing the first button when the ball is not nearby you may start dancing.
+ * Move your player by means of your directional keypad.
+ * Fielding the (un)lucky turtle while you just pressed and are holding "O" can add extra "oomph" to your return. You will know you nailed it if you hear the special sound effect.
+ * Pressing the first button when the ball is not nearby, you may start dancing. Be careful with that - hate to get caught dancing while your opponent's shot sails past.  
+ * To hit the trickiest angles, try adjusting which part of your paddle it impacts.
 #### Ethical Concerns
- * To direct deposit points unfairly, press the second button.
+ * To direct deposit points to your opponent electronically, press the second button. The button is marked with an "X" to warn you.
 
 ### Party
- * To leave the party early, press a button after you waited a sec.
+ * A player who achieves nine points is thrown a party.
+ * To leave the party early and get started on your next whuppin', press "O" after you waited a sec.
+
+## Gratuities
+ * 2016-2017 Macrowave
 
