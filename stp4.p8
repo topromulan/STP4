@@ -85,7 +85,7 @@ function do_intro()
  rainline=yt-2
  rainfloor=rainline+12
  rainmemory={}
- for i=rainline,rainfloor do
+ for i=rainline,rainfloor+5 do
   rainmemory[i]={}
   for j=0,127 do
    rainmemory[i][j]=false
@@ -106,6 +106,10 @@ function intro_update()
    sfx(10) sfx(11)
   end
   if(cycles>intro_ending_at) play_game()
+  rainfloor+=0.23
+  for x=1,50 do
+   pset(10+rnd(104),rainfloor-rnd(),0)
+  end
  end 
  
  lx+=1
@@ -173,7 +177,7 @@ function intro_draw()
   
  end 
  
- for y=rainfloor,rainline,-1 do
+ for y=flr(rainfloor),rainline,-1 do
   for x=xl-4,xr+4 do
    local above=pget(x,y-1)
    local here=pget(x,y)
@@ -428,10 +432,10 @@ function game_update()
  for p=1,2 do
   set_player_pose(p,1+flr(rnd(1.05)))
   players[p].moving=false
-  if(btn(0,p-1)) then players[p].x-=1 players[p].moving=true end
-  if(btn(1,p-1)) then players[p].x+=1 players[p].moving=true end
-  if(btn(2,p-1)) then players[p].y-=1 players[p].moving=true end
-  if(btn(3,p-1)) then players[p].y+=1 players[p].moving=true end
+  if(btn(0,p-1)) then players[p].x-=0.75 players[p].moving=true end
+  if(btn(1,p-1)) then players[p].x+=0.89+rnd(0.05) players[p].moving=true end
+  if(btn(2,p-1)) then players[p].y-=0.95+rnd(0.03) players[p].moving=true end
+  if(btn(3,p-1)) then players[p].y+=0.95+rnd(0.03) players[p].moving=true end
 --  if(moving) then players[p].sprite=players[p].sprites[1+flr(rnd(2))] end
   if(players[p].moving) then set_player_pose(p,1+flr(rnd(2))) end
   if(btn(4,p-1) or players[p].winding_up) then player_service(p) end
