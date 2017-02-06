@@ -1,6 +1,8 @@
 pico-8 cartridge // http://www.pico-8.com
 version 8
 __lua__
+-- super turtle pong 4
+-- 2016-2017 macrowave
 
 function _init()
  screen={}
