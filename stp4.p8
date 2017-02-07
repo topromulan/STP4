@@ -270,8 +270,15 @@ function game_init()
  stadium.floor={}
  stadium.floor.top=26
  stadium.floor.height=33
- stadium.floor.color1=12
- stadium.floor.color2=13
+ --regular floor
+ stadium.floor.color1=2
+ stadium.floor.color2=14
+ stadium.floor.flicker=false
+
+ -- shiny floor
+-- stadium.floor.color1=12
+-- stadium.floor.color2=13
+-- stadium.floor.flicker==true
  
  stadium.seats={
   {9,27},{22,26},{35,25},{48,24},
@@ -427,10 +434,11 @@ function game_update()
   end
  end
  
- local t=stadium.floor.color1
- stadium.floor.color1=stadium.floor.color2
- stadium.floor.color2=t
-
+ if(stadium.floor.flicker) then
+  local t=stadium.floor.color1
+  stadium.floor.color1=stadium.floor.color2
+  stadium.floor.color2=t
+ end
  -- original version:
  -- if(btnp(4)) then players[1].score += 1 end
  -- if(btnp(5)) then players[2].score += 1 end
