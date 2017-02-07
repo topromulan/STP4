@@ -507,7 +507,13 @@ function game_update()
     --they screwed up boooo
     sfx(8) sfx(9)
    end
-   oddball.dx+=rnd(0.1)*players[approaching_player].dx
+
+   if(approaching_player==1 and players[approaching_player].dx<0
+     or approaching_player==2 and players[approaching_player].dx>0) then
+    oddball.dx+=0.2*players[approaching_player].dx 
+   else
+    oddball.dx+=rnd(0.1)*players[approaching_player].dx
+   end
    oddball.dy+=0.45*players[approaching_player].dy
 
    shuffle_audience_timing()
