@@ -308,10 +308,12 @@ function game_init()
  players[1].x = stadium.field.left + stadium.field.goalzonewidth-13
  players[1].xmin = stadium.field.left-3
  players[1].xmax = stadium.field.left+stadium.field.goalzonewidth-5
+ players[1].dx=0 players[1].dy=0
 
  players[2].x=stadium.field.right - stadium.field.goalzonewidth+5
  players[2].xmin=stadium.field.right-stadium.field.goalzonewidth-2
  players[2].xmax=stadium.field.right-4
+ players[2].dx=0 players[2].dy=0
 
  players[1].y=stadium.field.top + 5
  players[2].y=stadium.field.bottom-13
@@ -361,6 +363,8 @@ function player_service(num)
    players[num].winding_up=false
    oddball.dx=-1*(-3+2*num)*(1+rnd(0.5)+players[num].serve_power/10)
    oddball.dy=0.1-rnd(0.2)
+   oddball.dx+=rnd(0.1)*players[num].dx
+   oddball.dy+=1*players[num].dy
    sfx(1+num) sfx(4)
   end
  else
@@ -431,18 +435,37 @@ function game_update()
  -- if(btnp(4)) then players[1].score += 1 end
  -- if(btnp(5)) then players[2].score += 1 end
 
-
  for p=1,2 do
   set_player_pose(p,1+flr(rnd(1.05)))
-  players[p].moving=false
-  if(btn(0,p-1)) then players[p].x-=0.75 players[p].moving=true end
-  if(btn(1,p-1)) then players[p].x+=0.89+rnd(0.05) players[p].moving=true end
-  if(btn(2,p-1)) then players[p].y-=0.95+rnd(0.03) players[p].moving=true end
-  if(btn(3,p-1)) then players[p].y+=0.95+rnd(0.03) players[p].moving=true end
---  if(moving) then players[p].sprite=players[p].sprites[1+flr(rnd(2))] end
-  if(players[p].moving) then set_player_pose(p,1+flr(rnd(2))) end
+  if(btn(0,p-1)) players[p].dx-=0.45-rnd(0.05)
+  if(btn(1,p-1)) players[p].dx+=0.39+rnd(0.05)
+  if(btn(2,p-1)) players[p].dy-=0.45-rnd(0.03)
+  if(btn(3,p-1)) players[p].dy+=0.45+rnd(0.03)
+  if(not (btn(0,p-1) or btn(1,p-1))) players[p].dx*=0.55
+  if(not (btn(2,p-1) or btn(3,p-1))) players[p].dy*=0.64
+
+  if(players[p].dx<0.1 and players[p].dx>-0.1
+    and players[p].dy<0.1 and players[p].dy>-0.1) then
+   players[p].moving=false
+   players[p].dx=0
+   players[p].dy=0
+  else
+   players[p].moving=true
+  end
+  
+  if(players[p].moving) then
+   set_player_pose(p,1+flr(rnd(2)))
+
+   if(players[p].dx>0.75) players[p].dx=0.75
+   if(players[p].dx<-0.89) players[p].dx=-0.89
+   if(players[p].dy>1.25) players[p].dy=0.95
+   if(players[p].dy<-1.25) players[p].dy=-0.95
+
+   players[p].x+=players[p].dx
+   players[p].y+=players[p].dy
+  end
+
   if(btn(4,p-1) or players[p].winding_up) then player_service(p) end
---  if(btnp(5,p-1)) then players[p].score+=1 end
   if(btnp(5,p-1)) then players[p].score+=1 end
  end
 
@@ -480,11 +503,14 @@ function game_update()
     else
      oddball.dy+=2
     end
-    shuffle_audience_timing()
    else
     --they screwed up boooo
     sfx(8) sfx(9)
    end
+   oddball.dx+=rnd(0.1)*players[approaching_player].dx
+   oddball.dy+=0.45*players[approaching_player].dy
+
+   shuffle_audience_timing()
    
    if(slope>0.15 or offset>9.9) then
     set_player_pose(approaching_player,5)
@@ -923,9 +949,9 @@ __gfx__
 88288202022002020022000000000000000000000000000000000000000000004444403333333333333333333333344444444444444443333333333322222223
 88280222020202022222200000000000000000000000000000000000000000004444443333333335553333333333333344444444444444433333333333332231
 08880000000000000000000000000000000000000000000000000000000000004444444333333555555553333333333333344444444444444333333333332311
-00000000000000000000000000000000000000000000000000000000000000004444444333335555555555533333333333333444444444444443333344444333
-00000000000000000000000000000000000000000000000000000000000000004444444433355555555553333333333333333334444444444444333444444133
-00000000000000000000000000000000000000000000000000000000000000000444444444555555553333333333333333333333344444444444434444444331
+00000000088802220000000000000000000000000000000000000000000000004444444333335555555555533333333333333444444444444443333344444333
+000000000ff0001f0000000000000000000000000000000000000000000000004444444433355555555553333333333333333334444444444444333444444133
+000000000ff000ff0000000000000000000000000000000000000000000000000444444444555555553333333333333333333333344444444444434444444331
 00000000000000000000000000000000000000000000000000000000000000000444444444444333333333333333331333333333333444444444444444444111
 00000000000000000000000000000000000000000000000000000000000000003144444444444433333333333333003113333333333334444444444444444111
 00000000000000000000000000000000000000000000000000000000000000001134444444444443333333333333333111133333333333344444444444441111
