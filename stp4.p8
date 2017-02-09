@@ -575,7 +575,7 @@ end
 
 function shuffle_audience_timing()
  for i=1,#stadium.audience do
-  stadium.audience[i].timing=-4+flr(rnd(9))
+  stadium.audience[i].timing=-19+flr(rnd(39))
  end
 end
 
