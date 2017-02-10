@@ -40,7 +40,10 @@ function _update()
   cycles+=1
   
   --fix bug when it wraps
-  if(cycles<0) then cycles=1 oddball.service_time=0 end
+  if(cycles<0) then
+   cycles=1 
+   if(oddball!=nil) oddball.service_time=0 
+  end
 
   screen.update()
 
