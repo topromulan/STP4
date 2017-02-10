@@ -335,7 +335,10 @@ function game_init()
  --seat the audience
  for seat=1,#stadium.seats do
   stadium.audience[seat]={}
-  stadium.audience[seat].sprite=stadium.fans[1+flr(rnd(#stadium.fans))]
+  while(stadium.audience[seat].sprite==nil or stadium.audience[seat].sprite==stadium.audience[seat-1].sprite) do
+   stadium.audience[seat].sprite=stadium.fans[1+flr(rnd(#stadium.fans))]
+   if(seat==1 or rnd()<0.2) break   
+  end
   stadium.audience[seat].timing=0
  end
  shuffle_audience_timing()
