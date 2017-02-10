@@ -13,7 +13,7 @@ end
 function _draw()
   screen.draw()
 
-  print(cycles,0,0,9,0)
+--  print(cycles,0,0,9,0)
   if(debug1!=nil) then
    print(debug1,0,50,9,0)
    if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=cycles end
