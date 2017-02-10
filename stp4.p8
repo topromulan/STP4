@@ -3,17 +3,17 @@ version 8
 __lua__
 -- super turtle pong 4
 -- 2016-2017 macrowave
+-- https://github.com/topromulan/stp4
 
 function _init()
  screen={}
- cycles=0 
  do_intro()
 end
 
 function _draw()
   screen.draw()
 
---  print(cycles,0,0,9,0)
+  print(cycles,0,0,9,0)
   if(debug1!=nil) then
    print(debug1,0,50,9,0)
    if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=cycles end
@@ -38,7 +38,7 @@ end
 
 function _update()
   cycles+=1
-
+  
   --fix bug when it wraps
   if(cycles<0) then cycles=1 oddball.service_time=0 end
 
@@ -377,7 +377,7 @@ function player_service(num)
  else
   --dance unless within serving range
   -- or already dancing
-  if(abs(oddball.x-players[num].x)>15 and not oddball.upforgrabs
+  if(abs(oddball.x-players[num].x)>40 and not oddball.upforgrabs
     and not players[num].dancing) then
    players[num].dancing=true
    sfx(10) sfx(11)
