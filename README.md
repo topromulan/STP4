@@ -23,17 +23,22 @@ Super Turtle Pong 4 brings back the authentic feel of these historic MacroWave p
 Move your player to the desired standing position within your end of the field. Pay no mind to the mixed citizenry of the world who routinely crowd the grandstand seats. After the game, they will just leave through the exit in an orderly fashion while the winner parties. To be a winner, you need to score nine! Here is your guide to scoring those nine points:
 
 #### Service
+ * Move your player by means of your directional keypad.
  * When an (un)lucky turtle sits alone in the middle of the grassy field, press and hold down the "O" button to serve.
- * A meter shows you winding up, and helps you measure out the power of your serve. Keep holding it..
+ * A meter on screen shows you winding up for the serve. This helps you measure out the power of your serve. Keep holding it..
  * You may still move around.
- * Release the same "O" button to surprise your opponent with a turtle flying right at him, or try to sneak it past him along the edge.
+ * Release "O" to serve.
+ ** Pro tip: Surprise your opponent with a turtle flying right at him, or try to sneak it past him along the edge.
+
 #### Ball in Play
  * Move your player by means of your directional keypad.
  * Fielding the (un)lucky turtle while you just pressed and are holding "O" can add extra "oomph" to your return. You will know you nailed it if you hear the special sound effect.
- * Pressing the first button when the ball is not nearby, you may start dancing. Be careful with that - hate to get caught dancing while your opponent's shot sails past.  
- * To hit the trickiest angles, try adjusting which part of your paddle it impacts.
+ * Pressing the "O" button when the ball is not nearby, you may start dancing. 
+ ** Dance responsibly. No refunds on shots that sail past you.
+ * To hit some tricky angles, try using the edges of your paddle.
+
 #### Ethical Concerns
- * To direct deposit points to your opponent electronically, press the second button. The button is marked with an "X" to warn you.
+ * To unfairly direct deposit points to your opponent electronically, press the second button. The button is marked with an "X" to warn you.
 
 ### Party
  * A player who achieves nine points is thrown a party.
