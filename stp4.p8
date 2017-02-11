@@ -376,6 +376,7 @@ function player_service(num)
    players[num].winding_up=false
    oddball.dx=-1*(-3+2*num)*(1+rnd(0.5)+players[num].serve_power/10)
    oddball.dy=0.1-rnd(0.2)
+   oddball.dx*=0.55
    oddball.dx+=rnd(0.1)*players[num].dx
    oddball.dy+=1*players[num].dy
    sfx(1+num) sfx(4)
@@ -455,8 +456,8 @@ function game_update()
   if(btn(1,p%2)) players[p].dx+=0.39+rnd(0.05)
   if(btn(2,p%2)) players[p].dy-=0.45-rnd(0.03)
   if(btn(3,p%2)) players[p].dy+=0.45+rnd(0.03)
-  if(not (btn(0,p%2) or btn(1,p%2))) players[p].dx*=0.55
-  if(not (btn(2,p%2) or btn(3,p%2))) players[p].dy*=0.64
+  if(not (btn(0,p%2) or btn(1,p%2))) players[p].dx*=0.65
+  if(not (btn(2,p%2) or btn(3,p%2))) players[p].dy*=0.74
 
   if(players[p].dx<0.1 and players[p].dx>-0.1
     and players[p].dy<0.1 and players[p].dy>-0.1) then
@@ -501,7 +502,7 @@ function game_update()
  local slope=oddball.dy/oddball.dx if(approaching_player==2) then slope*=-1 end
  local offset
  
- if(abs(oddball.x-players[approaching_player].x)<2) then
+ if(abs(oddball.x-players[approaching_player].x)<3) then
   --check for paddle impact
   local shieldhity1=players[approaching_player].y-5
   local shieldhity2=players[approaching_player].y+7
