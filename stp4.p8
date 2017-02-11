@@ -366,7 +366,7 @@ function player_service(num)
   oddball.dx=0 oddball.dy=0
   players[num].holding=true
  elseif(players[num].holding) then
-  if(btn(4,num-1)) then
+  if(btn(4,num%2)) then
    --still winding up
    players[num].winding_up=true
    player_windup(num)
@@ -451,12 +451,12 @@ function game_update()
 
  for p=1,2 do
   set_player_pose(p,1+flr(rnd(1.05)))
-  if(btn(0,p-1)) players[p].dx-=0.45-rnd(0.05)
-  if(btn(1,p-1)) players[p].dx+=0.39+rnd(0.05)
-  if(btn(2,p-1)) players[p].dy-=0.45-rnd(0.03)
-  if(btn(3,p-1)) players[p].dy+=0.45+rnd(0.03)
-  if(not (btn(0,p-1) or btn(1,p-1))) players[p].dx*=0.55
-  if(not (btn(2,p-1) or btn(3,p-1))) players[p].dy*=0.64
+  if(btn(0,p%2)) players[p].dx-=0.45-rnd(0.05)
+  if(btn(1,p%2)) players[p].dx+=0.39+rnd(0.05)
+  if(btn(2,p%2)) players[p].dy-=0.45-rnd(0.03)
+  if(btn(3,p%2)) players[p].dy+=0.45+rnd(0.03)
+  if(not (btn(0,p%2) or btn(1,p%2))) players[p].dx*=0.55
+  if(not (btn(2,p%2) or btn(3,p%2))) players[p].dy*=0.64
 
   if(players[p].dx<0.1 and players[p].dx>-0.1
     and players[p].dy<0.1 and players[p].dy>-0.1) then
@@ -479,8 +479,8 @@ function game_update()
    players[p].y+=players[p].dy
   end
 
-  if(btn(4,p-1) or players[p].winding_up) then player_service(p) end
-  if(btnp(5,p-1)) then players[p].score+=1 end
+  if(btn(4,p%2) or players[p].winding_up) then player_service(p) end
+  if(btnp(5,p%2)) then players[p].score+=1 end
  end
 
  if(oddball.upforgrabs) then
@@ -543,7 +543,7 @@ function game_update()
    sfx(1+approaching_player)
    --glancing blows
    --extra oomph
-   if(btn(4,approaching_player-1)) then oddball.dx*=1.1 sfx(0) end   
+   if(btn(4,approaching_player%2)) then oddball.dx*=1.1 sfx(0) end   
   end
  end
 
