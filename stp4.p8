@@ -481,7 +481,7 @@ function game_update()
   end
 
   if(btn(4,p%2) or players[p].winding_up) then player_service(p) end
-  if(btnp(5,p%2)) then players[p].score+=1 end
+  if(btnp(5,(p+1)%2)) then players[p].score+=1 end
  end
 
  if(oddball.upforgrabs) then
