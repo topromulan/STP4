@@ -809,15 +809,16 @@ function player_wins(num)
  party_started=cycles+1
 
  if(party_message==nil and num==1) then
-  party_message="player 1 wins"
+  party_message="left player wins"
  elseif(party_message==nil and num==2) then
-  party_message="player 2 wins"
+  party_message="right player wins"
  else
   party_message="everybody wins!!"
  end
  music(0)
  party_update()
- adjective="stellar"  
+ local compliments={"’stellar’","first place","–electric–","…like a ninja…","epic","rad"}
+ adjective=compliments[1+flr(rnd(#compliments))]
 end
 
 
@@ -846,7 +847,14 @@ function party_draw()
  party_drapes_draw()
  if(party_time>20) then print("thanks for playing",20,45,7) end
  if(party_time>28 and flr(cycles/20)%2==0) then print("that was "..adjective.."!!",25,55,7) end
- if(party_time>50) then print(party_message,28,65,11) end
+ local tcolor
+ if(party_time>38) then
+  tcolor=11
+  if(party_time>42) rectfill(24,63,28+4+4*#party_message,71,2)
+ else
+  if(flr(cycles/1.5)%2==0) tcolor=2 else tcolor=4
+ end
+ print(party_message,28,65,tcolor)
 
  for p=1,2 do
   local s,sx,sy,px,py
