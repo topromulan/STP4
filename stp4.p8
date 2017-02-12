@@ -587,7 +587,8 @@ function shuffle_audience_timing()
 end
 
 function game_draw()
- cls(5)
+ cls()
+ rect(0,0,127,127,5) --———
 
  draw_field() 
  draw_scoreboard()
