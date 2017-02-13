@@ -274,15 +274,13 @@ function game_init()
  stadium.floor.top=26
  stadium.floor.height=33
  --regular floor
- stadium.floor.color1=2
- stadium.floor.color2=14
- stadium.floor.flicker=false
+ local rugcolorpairs={{2,14,false},{3,4,false},{1,13,false},{0,5,false},{12,13,false},{12,13,true}}
+ local i=1+flr(rnd(#rugcolorpairs))
 
- -- shiny floor
--- stadium.floor.color1=12
--- stadium.floor.color2=13
--- stadium.floor.flicker==true
- 
+ stadium.floor.color1=rugcolorpairs[i][1]
+ stadium.floor.color2=rugcolorpairs[i][2]
+ stadium.floor.flicker=rugcolorpairs[i][3]
+
  stadium.seats={
   {9,27},{22,26},{35,25},{48,24},
   {64,24},{77,25},{90,26},{103,27},
