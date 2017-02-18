@@ -104,19 +104,25 @@ function do_intro()
 end
 
 function intro_update()
- if(btnp()!=0) intro_ending=true
  if(intro_ending) then
   if(intro_ending_at==nil) then
    intro_ending_at=cycles+55
    sfx(10) sfx(11)
   end
   if(cycles>intro_ending_at) play_game()
-  rainfloor+=0.23
+  rainfloor+=0.11
   for x=1,50 do
    pset(10+rnd(104),rainfloor-rnd(),0)
   end
  end 
- 
+ if(btnp()!=0) then
+  if(not intro_ending) then
+   intro_ending=true
+  else
+   intro_ending_at=cycles
+  end
+ end
+
  lx+=1
  if(lx>200) then lx=-200 end
 
@@ -131,10 +137,10 @@ function intro_draw()
  rectfill(0,0,127,102,5)
  circfill(lx,ly,32+sin(lx/1000)*20,lcolor)
  circfill(rx,ry,30,rcolor)
- print("2017 macrowave",38,25,11) 
+ print("1992-2017 macrowave",38,25,11) 
 
- if(intro_ending) intro_left=intro_ending_at-cycles
- if(intro_ending) then
+ if(intro_ending and intro_ending_at!=nil) then
+  intro_left=intro_ending_at-cycles
   stplogo.clr=intro_left/2
   stplogo.s.x-=rnd()
   stplogo.s.y-=rnd()
