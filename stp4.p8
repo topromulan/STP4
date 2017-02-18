@@ -258,6 +258,18 @@ function game_init()
  players[2].serve_power=1
  players[1].winding_dir=1
  players[2].winding_dir=1
+
+ local lnames={
+  {"red","red","red","rouge","rusty","ruddy","redder","rosy"},
+  {"ricky","ricky","ralf","rancid","remy","rebner","raggy","rose","ray","ruffguy"}
+ }
+ local rnames={
+  {"purple","purple","purplish","p.","plum","perse"},
+  {"pete","pete","page","paddy","padma","price","pinky","pepper","po-po"}
+ }
+
+ players[1].name=lnames[1][1+flr(rnd(#lnames[1]))].." "..lnames[2][1+flr(rnd(#lnames[2]))]
+ players[2].name=rnames[1][1+flr(rnd(#rnames[1]))].." "..rnames[2][1+flr(rnd(#rnames[2]))]
  
  trophy_for_player1=false
  trophy_for_player2=false
@@ -271,8 +283,8 @@ function game_init()
  stadium.audience={}
 
  stadium.floor={}
- stadium.floor.top=26
- stadium.floor.height=33
+ stadium.floor.top=25
+ stadium.floor.height=32
  --regular floor
  local rugcolorpairs={{2,14,false},{3,4,false},{1,13,false},{0,5,false},{12,13,false},{12,13,true}}
  local i=1+flr(rnd(#rugcolorpairs))
@@ -282,22 +294,21 @@ function game_init()
  stadium.floor.flicker=rugcolorpairs[i][3]
 
  stadium.seats={
-  {9,27},{22,26},{35,25},{48,24},
-  {64,24},{77,25},{90,26},{103,27},
+  {8,25},{21,24},{34,23},{47,22},
+  {65,22},{78,23},{91,24},{104,25},
 
-  {14,36},{28,35},{42,34},
-          {56,33},
-  {70,34},{84,35},{98,36},
+  {14,34},{28,33},{42,32},
+          {56,31},
+  {70,32},{84,33},{98,34},
   
-  {19,45},{33,44},{47,43},
-  {61,43},{75,44},{89,45},
-  
+  {19,43},{33,42},{47,41},
+  {61,41},{75,42},{89,43},
  }
  
  stadium.field.left=5
  stadium.field.right=122
- stadium.field.top=60
- stadium.field.bottom=121
+ stadium.field.top=58
+ stadium.field.bottom=119
  stadium.field.middle=0.5*(stadium.field.left+stadium.field.right)
  stadium.field.chalkcolor=7
  stadium.field.grasscolor=3
@@ -305,12 +316,14 @@ function game_init()
 
  stadium.display.left=25
  stadium.display.right=102
- stadium.display.top=5
+ stadium.display.top=8
  stadium.display.bottom=29
  stadium.display.lightcolor=10
- stadium.display.woodcolor=2
+ stadium.display.woodcolor=1
+ if(rnd()<0.66) stadium.display.woodcolor=2
+ if(rnd()<0.63) stadium.display.woodcolor=13
  stadium.display.digit_width=12
- stadium.display.digit_height_max=20
+ stadium.display.digit_height_max=17
  stadium.display.digit_heights={2,2}
 
  players[1].x = stadium.field.left + stadium.field.goalzonewidth-13
@@ -415,16 +428,19 @@ function draw_windup()
  else
   draw_it=false
  end
+ local x1,y1,x2,y2,middle,width
+ middle=0.5*(stadium.field.left+stadium.field.right)
+ width=10
+ x1=middle-width/2 x2=middle+width/2 
+ y1=stadium.field.bottom-1 y2=127
  if(draw_it) then
-  local x1,y1,x2,y2,middle,width
-  middle=0.5*(stadium.field.left+stadium.field.right)
-  width=10
-  x1=middle-width/2 x2=middle+width/2 
-  y1=stadium.field.bottom+1 y2=127
-  meter_right=x1+(width-1)*(players[num].serve_power/10)
+  local meter_right=x1+(width-1)*(players[num].serve_power/10)
   rect(x1,y1,x2,y2,15)
   rectfill(x1+1,y1+1,x2-1,y2-1,14)
   rectfill(x1+1,y1+1,meter_right,y2-1,8)
+ else
+  rectfill(x1,stadium.field.bottom+1,x2,126,5)
+  print("vs",middle-3,122,15)
  end  
 end
 
@@ -588,12 +604,19 @@ function game_draw()
  cls()
  rect(0,0,127,127,5) --———
 
+ local msg="turtle pong stadium"
+ local clr=15
+ if(rnd()<0.2 and cycles%2==0) clr=7
+ print(msg,64-2*#msg,2,clr)
+
  draw_field() 
  draw_scoreboard()
  draw_floor()
+ draw_names()
  
  local exitx=(stadium.display.left+stadium.display.right)/2-12
- local exity=stadium.display.bottom-22
+ local exity=stadium.display.bottom-25
+ draw_door(exitx,exity+3) --just adding a little length
  draw_door(exitx,exity)
 
  draw_audience()
@@ -747,8 +770,12 @@ function draw_scoreboard()
  end
 end
 
-function draw_floor()
+function draw_names()
+ print(players[1].name,2,121,8)
+ print(players[2].name,127-4*#players[2].name,121,2)
+end
 
+function draw_floor()
  for i=1,stadium.floor.height do
   local rad
   if(i<8) then
@@ -807,11 +834,14 @@ function player_wins(num)
  party_started=cycles+1
 
  if(party_message==nil and num==1) then
-  party_message="left player wins"
+  party_message=players[1].name.." wins"
+  plaque_color=8
  elseif(party_message==nil and num==2) then
-  party_message="right player wins"
+  party_message=players[2].name.." wins"
+  plaque_color=2
  else
   party_message="everybody wins!!"
+  plaque_color=4
  end
  music(0)
  party_update()
@@ -847,10 +877,10 @@ function party_draw()
  if(party_time>28 and flr(cycles/20)%2==0) then print("that was "..adjective.."!!",25,55,7) end
  local tcolor
  if(party_time>38) then
-  tcolor=11
-  if(party_time>42) rectfill(24,63,28+4+4*#party_message,71,2)
+  tcolor=15
+  if(party_time>42) rectfill(24,63,28+4+4*#party_message,71,plaque_color)
  else
-  if(flr(cycles/1.5)%2==0) tcolor=2 else tcolor=4
+  if(flr(cycles/1.5)%2==0) tcolor=15 else tcolor=plaque_color
  end
  print(party_message,28,65,tcolor)
 
