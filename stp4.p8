@@ -128,8 +128,11 @@ function intro_update()
 
  if(rnd()>0.975) then rx+=rnd()-0.5 end
  if(rnd()>0.985) then ry+=rnd()-0.5 end
- 
- if(lx==50) then sfx(0) end
+
+ if(lx==50) then
+  schedule_sfx(0,flr(rnd(2))) 
+  rx+=0.75 ry+=0.85
+ end
 
  sound_effect_mgmt()
 end
@@ -268,11 +271,11 @@ function game_init()
 
  local lnames={
   {"red","red","red","rouge","rusty","ruddy","redder","rosy"},
-  {"ricky","ricky","ralf","rancid","remy","rebner","raggy","rose","ray","ruffguy"}
+  {"ricky","ricky","ralf","rancid","remy","rebner","raggy","rose","ray","ruffguy","razor","ripple"}
  }
  local rnames={
   {"purple","purple","purplish","p.","plum","perse"},
-  {"pete","pete","page","paddy","padma","price","pinky","pepper","po-po"}
+  {"pete","pete","page","paddy","padma","price","pinky","peppy","po-po","patty","press","poof"}
  }
 
  players[1].name=lnames[1][1+flr(rnd(#lnames[1]))].." "..lnames[2][1+flr(rnd(#lnames[2]))]
