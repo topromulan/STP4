@@ -595,8 +595,9 @@ function game_update()
   oddball.upforgrabs=true
   if(players[1].score<9 and players[2].score<9) then
    oddball.service_time=cycles+20+rnd(5)
-   poke(0x3681,50+flr(rnd(20)))
+   poke(0x3681,40+flr(rnd(40)))
    sfx(16)
+   if(rnd()<0.15) schedule_sfx(17,5)
   else
    --winner winner chicken dinner 
    oddball.service_time=cycles+55+rnd(10)+12
