@@ -4,10 +4,12 @@ __lua__
 -- super turtle pong 4
 -- 2016-2017 macrowave
 -- https://github.com/topromulan/stp4
-
+-- from dale and dahlia anderson.
 function _init()
  screen={}
  do_intro()
+
+
 
 -- game_init()
 -- player_wins(1+flr(rnd(2)))
