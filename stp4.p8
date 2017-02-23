@@ -8,6 +8,9 @@ __lua__
 function _init()
  screen={}
  do_intro()
+
+-- game_init()
+-- player_wins(1+flr(rnd(2)))
 end
 
 function _draw()
@@ -878,7 +881,8 @@ end
 function party_draw()
  cls(5)
 
- draw_door(76,40)
+ draw_door(70,44)
+ --extend draw_floor
  
  local progress=8+party_time/12
  
@@ -893,16 +897,31 @@ function party_draw()
    )
  end
  party_drapes_draw()
- if(party_time>20) then print("thanks for playing",20,45,7) end
- if(party_time>28 and flr(cycles/20)%2==0) then print("that was "..adjective.."!!",25,55,7) end
+
+ local clr1,clr2
+ if(flr(cycles/3.1)%2==0) then
+  clr1=4 clr2=9
+ else
+  clr1=9 clr2=4
+ end
+
+ rectfill(7,11,65+4*#adjective,33,5)
+ rect(7,11,65+4*#adjective,33,9)
+ if(party_time>10) then print("thanks for playing",10,15,clr1) end
+ if(party_time>20 and flr(cycles/20)%2==0) then print("that was "..adjective.."!!",13,23,clr2) end
+
+ local plaquexy={}
+ plaquexy[1]=42-2*#party_message
+ plaquexy[2]=40
  local tcolor
  if(party_time>38) then
   tcolor=15
-  if(party_time>42) rectfill(24,63,28+4+4*#party_message,71,plaque_color)
+  if(party_time>42) rectfill(plaquexy[1],plaquexy[2],plaquexy[1]+2+4*#party_message,plaquexy[2]+8,plaque_color)
  else
   if(flr(cycles/1.5)%2==0) tcolor=15 else tcolor=plaque_color
  end
- print(party_message,28,65,tcolor)
+
+ print(party_message,plaquexy[1]+2,plaquexy[2]+2,tcolor)
 
  for p=1,2 do
   local s,sx,sy,px,py
