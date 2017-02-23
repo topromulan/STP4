@@ -129,14 +129,34 @@ function intro_update()
 
  lx+=1
  if(lx>200) then lx=-200 end
-
- if(rnd()>0.975) then rx+=rnd()-0.5 end
- if(rnd()>0.985) then ry+=rnd()-0.5 end
-
  if(lx==50) then
   schedule_sfx(0,flr(rnd(2))) 
   rx+=0.75 ry+=0.85
  end
+
+ if(rx>85) then
+  subx=1
+ elseif(rx>80) then
+  subx=0.6
+ elseif(rx>75) then
+  subx=0.4
+ else
+  subx=0
+ end
+
+ if(ry>25) then
+  suby=1
+ elseif(ry>20) then
+  suby=0.6
+ elseif(ry>15) then
+  suby=0.4
+ else
+  suby=0
+ end
+ 
+ if(rnd()>0.25) then rx+=rnd()-subx end
+ if(rnd()>0.25) then ry+=rnd()-suby end
+
 
  sound_effect_mgmt()
 end
