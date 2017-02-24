@@ -392,6 +392,7 @@ function game_init()
  oddball.service_time=cycles+10+rnd(3)
  oddball.dx=0 oddball.dy=0
  oddball.x=64 -- so it's not nil
+ oddball.approaching_player=1
 
 end
 
@@ -429,7 +430,10 @@ function player_service(num)
  else
   --dance unless within serving range
   -- or already dancing
-  if(abs(oddball.x-players[num].x)>40 and not oddball.upforgrabs
+  if(((oddball.approaching_player==num
+     and abs(oddball.x-players[num].x)>40)
+     or oddball.approaching_player!=num)
+    and not oddball.upforgrabs
     and not players[num].dancing) then
    players[num].dancing=true
    sfx(10) sfx(11)
@@ -501,10 +505,12 @@ function game_update()
  
  for p=1,2 do
   set_player_pose(p,1+flr(rnd(1.05)))
-  if(btn(0,p%2)) players[p].dx-=0.45-rnd(0.05)
-  if(btn(1,p%2)) players[p].dx+=0.39+rnd(0.05)
-  if(btn(2,p%2)) players[p].dy-=0.45-rnd(0.03)
-  if(btn(3,p%2)) players[p].dy+=0.45+rnd(0.03)
+  if(players[p].holding or players[p].dancing or not btn(4,p%2)) then
+   if(btn(0,p%2)) players[p].dx-=0.45-rnd(0.05)
+   if(btn(1,p%2)) players[p].dx+=0.39+rnd(0.05)
+   if(btn(2,p%2)) players[p].dy-=0.45-rnd(0.03)
+   if(btn(3,p%2)) players[p].dy+=0.45+rnd(0.03)
+  end
   if(not (btn(0,p%2) or btn(1,p%2))) players[p].dx*=0.65
   if(not (btn(2,p%2) or btn(3,p%2))) players[p].dy*=0.74
 
@@ -547,17 +553,16 @@ function game_update()
   oddball.y+=oddball.dy
  end
 
- local approaching_player=1 if(oddball.dx > 0) then approaching_player=2 end 
- local slope=oddball.dy/oddball.dx if(approaching_player==2) then slope*=-1 end
+ local slope=oddball.dy/oddball.dx if(oddball.approaching_player==2) then slope*=-1 end
  local offset
  
- if(abs(oddball.x-players[approaching_player].x)<3) then
+ if(abs(oddball.x-players[oddball.approaching_player].x)<3) then
   --check for paddle impact
-  local shieldhity1=players[approaching_player].y-5
-  local shieldhity2=players[approaching_player].y+7
+  local shieldhity1=players[oddball.approaching_player].y-5
+  local shieldhity2=players[oddball.approaching_player].y+7
   offset=flr(0.5+oddball.y-shieldhity1)
   if(oddball.y>=shieldhity1 and oddball.y<=shieldhity2) then
-   if(not players[approaching_player].dancing) then
+   if(not players[oddball.approaching_player].dancing) then
     --collision
     oddball.dx*=-1
     if(offset<2.1) then oddball.dy-=2
@@ -572,30 +577,32 @@ function game_update()
     sfx(8) sfx(9)
    end
 
-   if(approaching_player==1 and players[approaching_player].dx<0
-     or approaching_player==2 and players[approaching_player].dx>0) then
-    oddball.dx+=0.2*players[approaching_player].dx 
+   if(oddball.approaching_player==1 and players[oddball.approaching_player].dx<0
+     or oddball.approaching_player==2 and players[oddball.approaching_player].dx>0) then
+    oddball.dx+=0.2*players[oddball.approaching_player].dx 
    else
-    oddball.dx+=rnd(0.1)*players[approaching_player].dx
+    oddball.dx+=rnd(0.1)*players[oddball.approaching_player].dx
    end
-   oddball.dy+=0.45*players[approaching_player].dy
+   oddball.dy+=0.45*players[oddball.approaching_player].dy
 
    shuffle_audience_timing()
    
    if(slope>0.15 or offset>9.9) then
-    set_player_pose(approaching_player,5)
+    set_player_pose(oddball.approaching_player,5)
    elseif(slope<-0.15 or offset<2.1) then
-    set_player_pose(approaching_player,4)
+    set_player_pose(oddball.approaching_player,4)
    else
-    set_player_pose(approaching_player,3)
+    set_player_pose(oddball.approaching_player,3)
    end
-   players[approaching_player].stagger_effect=35
-   sfx(1+approaching_player)
+   players[oddball.approaching_player].stagger_effect=35
+   sfx(1+oddball.approaching_player)
    --glancing blows
    --extra oomph
-   if(btn(4,approaching_player%2)) then oddball.dx*=1.1 sfx(0) end   
+   if(btn(4,oddball.approaching_player%2)) then oddball.dx*=1.1 sfx(0) end   
   end
  end
+
+ oddball.approaching_player=1 if(oddball.dx > 0) then oddball.approaching_player=2 end 
 
  --out of bounds
  if((oddball.y<=stadium.field.top or oddball.y>=stadium.field.bottom-6) and 
@@ -690,7 +697,6 @@ function draw_field()
 end   
 
 function draw_player(num)
-
 --this should be in game_update
 -- or its own function called
 -- from game_update (player_update()?)
@@ -698,12 +704,15 @@ function draw_player(num)
   if(players[num].started_dancing==nil) then players[num].started_dancing=cycles end
   
   if(cycles-players[num].started_dancing<9) then
-   set_player_pose(num,6)
    players[num].stagger_effect=nil
+   set_player_pose(num,6)
+   players[num].stagger_effect=15
   elseif(cycles-players[num].started_dancing<25) then
    players[num].stagger_effect=nil
    set_player_pose(num,7)
    players[num].stagger_effect=8
+  elseif(cycles-players[num].started_dancing<32) then
+   --noop
   else
    players[num].started_dancing=nil
    players[num].dancing=false
