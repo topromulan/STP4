@@ -154,8 +154,8 @@ function intro_update()
   suby=0
  end
  
- if(rnd()>0.25) then rx+=rnd()-subx end
- if(rnd()>0.25) then ry+=rnd()-suby end
+ if(rnd()>0.975) then rx+=rnd()-subx end
+ if(rnd()>0.985) then ry+=rnd()-suby end
 
 
  sound_effect_mgmt()
