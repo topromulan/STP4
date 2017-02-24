@@ -463,11 +463,11 @@ function player_windup(num)
 end
 
 function draw_windup()
- local draw_it,num
+ local draw_it,num,clr
  if(players[1].winding_up) then
-  draw_it=true num=1
+  draw_it=true num=1 clr=8
  elseif(players[2].winding_up) then
-  draw_it=true num=2
+  draw_it=true num=2 clr=2
  else
   draw_it=false
  end
@@ -480,7 +480,7 @@ function draw_windup()
   local meter_right=x1+(width-1)*(players[num].serve_power/10)
   rect(x1,y1,x2,y2,15)
   rectfill(x1+1,y1+1,x2-1,y2-1,14)
-  rectfill(x1+1,y1+1,meter_right,y2-1,8)
+  rectfill(x1+1,y1+1,meter_right,y2-1,clr)
  else
   rectfill(x1,stadium.field.bottom+1,x2,126,5)
   print("vs",middle-3,122,15)
