@@ -294,17 +294,22 @@ function game_init()
  players[2].winding_dir=1
 
  local lnames={
-  {"red","red","red","rouge","rusty","ruddy","redder","rosy"},
-  {"ricky","ricky","ralf","rancid","remy","rebner","raggy","rose","ray","ruffguy","razor","ripple"}
+  {"red","red","red","rouge","rusty","ruddy","redder","rosy","ruby","russet","big red"},
+  {"ricky","ricky","ralf","rancid","remy","rebner","raggy","rose","ray","ruffguy","razor","ripple","rhine","roo","radagast"}
  }
  local rnames={
-  {"purple","purple","purplish","p.","plum","perse"},
-  {"pete","pete","page","paddy","padma","price","pinky","peppy","po-po","patty","press","poof"}
+  {"purple","purple","purplish","p.","plum","perse","peri w."},
+  {"pete","pete","page","paddy","padma","price","pinky","peppy","po-po","patty","press","poof","perp","pixel"}
  }
 
- players[1].name=lnames[1][1+flr(rnd(#lnames[1]))].." "..lnames[2][1+flr(rnd(#lnames[2]))]
- players[2].name=rnames[1][1+flr(rnd(#rnames[1]))].." "..rnames[2][1+flr(rnd(#rnames[2]))]
- 
+ local too_long="radagast rebner"
+ players[1].name=too_long players[2].name=too_long
+ while(#players[1].name>=#too_long) do
+  players[1].name=lnames[1][1+flr(rnd(#lnames[1]))].." "..lnames[2][1+flr(rnd(#lnames[2]))]
+ end
+ while(#players[2].name>=#too_long) do
+  players[2].name=rnames[1][1+flr(rnd(#rnames[1]))].." "..rnames[2][1+flr(rnd(#rnames[2]))]
+ end 
  trophy_for_player1=false
  trophy_for_player2=false
  party_message=nil
