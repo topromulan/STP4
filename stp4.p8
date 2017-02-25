@@ -433,16 +433,7 @@ function player_service(num)
    sfx(1+num) sfx(4)
   end
  else
-  --dance unless within serving range
-  -- or already dancing
-  if(((oddball.approaching_player==num
-     and abs(oddball.x-players[num].x)>40)
-     or oddball.approaching_player!=num)
-    and not oddball.upforgrabs
-    and not players[num].dancing) then
-   players[num].dancing=true
-   sfx(10) sfx(11)
-  end
+  --dancing?
  end
  set_player_pose(num,3)
 end
@@ -570,12 +561,24 @@ function game_update()
    if(not players[oddball.approaching_player].dancing) then
     --collision
     oddball.dx*=-1
-    if(offset<2.1) then oddball.dy-=2
-    elseif(offset<4.1) then oddball.dy-=0.25 oddball.dy*=1.2
-    elseif(offset<8) then oddball.dy*=0.5 oddball.dy+=-0.2+rnd(0.4)
-    elseif(offset<10) then oddball.dy+=0.25 oddball.dy*=1.2
+    if(offset<2.1) then
+     oddball.dy-=2
+     debug1="n"
+    elseif(offset<4.1) then
+     oddball.dy-=0.25
+     oddball.dy*=1.2
+     debug1="ne"
+    elseif(offset<8) then
+     oddball.dy*=0.5
+     oddball.dy+=-0.2+rnd(0.4)
+     debug1="e"
+    elseif(offset<10) then
+     oddball.dy+=0.25
+     oddball.dy*=1.2
+     debug1="se"
     else
      oddball.dy+=2
+     debug1="s"
     end
    else
     --they screwed up boooo
