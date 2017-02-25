@@ -586,9 +586,13 @@ function game_update()
      or oddball.approaching_player==2 and players[oddball.approaching_player].dx>0) then
     oddball.dx+=0.2*players[oddball.approaching_player].dx 
    else
-    oddball.dx+=rnd(0.1)*players[oddball.approaching_player].dx
+    oddball.dx+=(0.05+rnd(0.05))*players[oddball.approaching_player].dx
    end
+   local lowspeed=0.888
+   if(abs(oddball.dx)<lowspeed) oddball.dx=lowspeed*(oddball.dx/abs(oddball.dx))
    oddball.dy+=0.45*players[oddball.approaching_player].dy
+   debug1=oddball.dx
+   debug2=oddball.dy
 
    shuffle_audience_timing()
    
