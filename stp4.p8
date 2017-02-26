@@ -68,7 +68,7 @@ function do_intro()
  lx=40 ly=20
  rx=80 ry=20
 
- lcolor=8
+ lcolor=4
  rcolor=3
 
  cycles=0
@@ -109,6 +109,8 @@ function do_intro()
  
  screen.update=intro_update
  screen.draw=intro_draw
+
+ game_init()
   
  cls(5)
 end
@@ -163,14 +165,32 @@ function intro_update()
  if(rnd()>0.975) then rx+=rnd()-subx end
  if(rnd()>0.985) then ry+=rnd()-suby end
 
-
  sound_effect_mgmt()
 end
 
 function intro_draw()
  rectfill(0,0,127,102,5)
- circfill(lx,ly,32+sin(lx/1000)*20,lcolor)
- circfill(rx,ry,30,rcolor)
+
+ local s,sx,sy
+ local rd=30
+ local ld=32+sin(lx/1000)*20
+ local ratio=ld/rd
+ circfill(lx,ly,ld,lcolor)
+ s=players[1].sprites[1+flr(cycles/5)%7]
+ sx=s*8%128
+ sy=8*flr(s*8/128)
+ sspr(sx,sy,8,8,lx-12*ratio,ly-24*ratio,24*ratio,24*ratio)
+
+ circfill(rx,ry,rd,rcolor)
+ if(lx>=51 and lx<=70) then
+  s=players[2].sprites[6]
+ else
+  s=players[2].sprites[1+flr(cycles/5)%2]
+ end
+ sx=s*8%128
+ sy=8*flr(s*8/128)
+ sspr(sx,sy,8,8,rx-12,ry-20,24,24)
+
  print("1992-2017 macrowave",38,25,11) 
 
  if(intro_ending and intro_ending_at!=nil) then
