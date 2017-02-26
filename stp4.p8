@@ -17,24 +17,30 @@ end
 function _draw()
   screen.draw()
 
---  print(cycles,0,0,9,0)
+  if(flr(cycles%2.5)==0) then
+   debug_color=14
+  elseif(flr(cycles%1.5)==1) then
+   debug_color=7
+  else
+   debug_color=2
+  end
   if(debug1!=nil) then
-   print(debug1,0,50,9,0)
+   print(debug1,1,12,debug_color)
    if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=cycles end
    if(cycles-debug1_reminder>150) then debug1=nil debug1_memory=nil debug1_reminder=nil end  
   end
   if(debug2!=nil) then
-   print(debug2,0,60,9,0)
+   print(debug2,1,19,debug_color)
    if(debug2_memory!=debug2) then debug2_memory=debug2 debug2_reminder=cycles end
    if(cycles-debug2_reminder>150) then debug2=nil debug2_memory=nil debug2_reminder=nil end  
   end
   if(debug3!=nil) then
-   print(debug3,0,109,9,0)
+   print(debug3,125-3*#debug3,12,debug_color)
    if(debug3_memory!=debug3) then debug3_memory=debug3 debug3_reminder=cycles end
    if(cycles-debug3_reminder>150) then debug3=nil debug3_memory=nil debug3_reminder=nil end  
   end
   if(debug4!=nil) then
-   print(debug4,0,119,9,0)
+   print(debug4,126-3*#debug4,19,debug_color)
    if(debug4_memory!=debug4) then debug4_memory=debug4 debug4_reminder=cycles end
    if(cycles-debug4_reminder>150) then debug4=nil debug4_memory=nil debug4_reminder=nil end  
   end
@@ -572,23 +578,18 @@ function game_update()
     --collision
     oddball.dx*=-1
     if(offset<2.1) then
-     oddball.dy-=2
-     debug1="n"
+     oddball.dy-=1.8+rnd(0.4)
     elseif(offset<4.1) then
      oddball.dy-=0.25
      oddball.dy*=1.2
-     debug1="ne"
     elseif(offset<8) then
      oddball.dy*=0.5
      oddball.dy+=-0.2+rnd(0.4)
-     debug1="e"
     elseif(offset<10) then
      oddball.dy+=0.25
      oddball.dy*=1.2
-     debug1="se"
     else
-     oddball.dy+=2
-     debug1="s"
+     oddball.dy+=1.8+rnd(0.4)
     end
    else
     --they screwed up boooo
