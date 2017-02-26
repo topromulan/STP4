@@ -509,9 +509,19 @@ function game_update()
   end
   if(not (btn(0,p%2) or btn(1,p%2))) players[p].dx*=0.65
   if(not (btn(2,p%2) or btn(3,p%2))) players[p].dy*=0.74
+  --introduces a waver when not hanging onto the paddle
+  if(band(shr(btn(),(p%2)*8),2^0+2^1+2^2+2^3)==0) then
+   players[p].dx*=(0.7+rnd(0.6))
+   players[p].dy*=(0.7+rnd(0.6))
+   if(rnd()<players[p].dx) players[p].dx*=-1
+  end 
+   
+   
 
-  if(players[p].dx<0.1 and players[p].dx>-0.1
-    and players[p].dy<0.1 and players[p].dy>-0.1) then
+  local threshold=0.25
+  if(p==2) threshold=0.005
+  if(players[p].dx<threshold and players[p].dx>-1*threshold
+    and players[p].dy<threshold and players[p].dy>-1*threshold) then
    players[p].moving=false
    players[p].dx=0
    players[p].dy=0
