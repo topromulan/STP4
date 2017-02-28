@@ -426,6 +426,7 @@ function game_init()
  oddball.x=64 -- so it's not nil
  oddball.approaching_player=1
 
+ help_flag=false
 end
 
 function set_player_pose(num,pose)
@@ -731,10 +732,32 @@ function game_draw()
  draw_oddball()
  draw_windup()
 
- if(oddball.upforgrabs and (players[1].score==0 and players[2].score==0 and cycles-oddball.upforgrabs_time>95)) then
-  local msg="(hold Ž to serve)"
-  local clr=(flr(cycles/25)%2+5)
-  print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-15,clr)
+ if(players[1].score==0 and players[2].score==0) then
+  local msg,clr
+  clr=(flr(cycles/25)%2+5)
+  if(oddball.upforgrabs and cycles-oddball.upforgrabs_time>125) then
+   help_flag=true
+   msg="(hold Ž to serve)"
+   print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-15,clr)   
+  end
+  if(help_flag and (players[1].holding or players[2].holding) and cycles-oddball.upforgrabs_time>145) then
+   msg="(let that turtle fly!))"
+   print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-22,clr)
+   msg="     watch | that meter"
+   print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-13,clr)
+   msg="|"
+   print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-8,cycles%16+rnd(3))
+   msg="v"
+   print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-6,4+cycles%5)
+   
+   if(players[1].winding_up) then
+    if(players[1].winding_dir>2) players[1].winding_dir=2
+    if(players[1].winding_dir<-0.5) players[1].winding_dir=-0.5
+   elseif(players[2].winding_up) then
+    if(players[2].winding_dir>2) players[2].winding_dir=2
+    if(players[2].winding_dir<-0.5) players[2].winding_dir=-0.5
+   end
+  end
  end
 end
 
