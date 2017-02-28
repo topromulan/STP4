@@ -324,7 +324,7 @@ function game_init()
   {"ricky","ricky","ralf","rancid","remy","rebner","raggy","rose","ray","ruffguy","razor","ripple","rhine","roo","radagast"}
  }
  local rnames={
-  {"purple","purple","purplish","p.","plum","perse","peri w."},
+  {"purple","purple","purplish","p.","plum","perse","p-diddy"},
   {"pete","pete","page","paddy","padma","price","pinky","peppy","po-po","patty","press","poof","perp","pixel"}
  }
 
@@ -420,6 +420,7 @@ function game_init()
  shuffle_audience_timing()
  
  oddball.upforgrabs=true
+ oddball.upforgrabs_time=cycles
  oddball.service_time=cycles+10+rnd(3)
  oddball.dx=0 oddball.dy=0
  oddball.x=64 -- so it's not nil
@@ -488,16 +489,25 @@ function draw_windup()
  else
   draw_it=false
  end
- local x1,y1,x2,y2,middle,width
+ 
+ 
+ local x1,y1,x2,y2,middle,width,meter_left,meter_right
  middle=0.5*(stadium.field.left+stadium.field.right)
  width=10
  x1=middle-width/2 x2=middle+width/2 
  y1=stadium.field.bottom-1 y2=127
+
  if(draw_it) then
-  local meter_right=x1+(width-1)*(players[num].serve_power/10)
+  if(num==1) then
+   meter_left=x1+1
+   meter_right=x1+(width-1)*(players[num].serve_power/10)
+  else
+   meter_left=x2-(width-1)*(players[num].serve_power/10)
+   meter_right=x2-1
+  end
   rect(x1,y1,x2,y2,15)
   rectfill(x1+1,y1+1,x2-1,y2-1,14)
-  rectfill(x1+1,y1+1,meter_right,y2-1,clr)
+  rectfill(meter_left,y1+1,meter_right,y2-1,clr)
  else
   rectfill(x1,stadium.field.bottom+1,x2,126,5)
   print("vs",middle-3,122,15)
@@ -667,6 +677,7 @@ function game_update()
   stadium.display.digit_heights[scoring_player]=2
   schedule_sfx(1,7)--lets clapping begin first
   oddball.upforgrabs=true
+  oddball.upforgrabs_time=cycles
   if(players[1].score<9 and players[2].score<9) then
    oddball.service_time=cycles+20+rnd(5)
    poke(0x3681,60+flr(rnd(30)))
@@ -719,6 +730,12 @@ function game_draw()
  draw_player(2)
  draw_oddball()
  draw_windup()
+
+ if(oddball.upforgrabs and (players[1].score==0 and players[2].score==0 and cycles-oddball.upforgrabs_time>95)) then
+  local msg="(hold Ž to serve)"
+  local clr=(flr(cycles/25)%2+5)
+  print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-15,clr)
+ end
 end
 
 
