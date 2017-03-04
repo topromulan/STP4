@@ -424,6 +424,7 @@ function game_init()
  oddball.service_time=cycles+10+rnd(3)
  oddball.dx=0 oddball.dy=0
  oddball.x=64 -- so it's not nil
+ oddball.y=64
  oddball.approaching_player=1
 
  help_flag=false
@@ -535,6 +536,12 @@ function game_update()
   stadium.floor.color1=stadium.floor.color2
   stadium.floor.color2=t
  end
+
+ if(oddball.y<players[1].y+2) then
+  players[1].y-=2 
+ elseif(oddball.y>players[1].y+6) then
+  players[1].y+=2
+ end
  
  for p=1,2 do
   set_player_pose(p,1+flr(rnd(1.05)))
@@ -601,8 +608,12 @@ function game_update()
  
  if(abs(oddball.x-players[oddball.approaching_player].x)<3) then
   --check for paddle impact
-  local shieldhity1=players[oddball.approaching_player].y-5
-  local shieldhity2=players[oddball.approaching_player].y+7
+  local num,shieldhity1,shieldhity2
+
+  num=oddball.approaching_player
+  shieldhity1=players[num].y-5
+  shieldhity2=players[num].y+7
+
   offset=flr(0.5+oddball.y-shieldhity1)
   if(oddball.y>=shieldhity1 and oddball.y<=shieldhity2) then
    if(not players[oddball.approaching_player].dancing) then
