@@ -127,11 +127,15 @@ function intro_update()
    pset(10+rnd(104),rainfloor-rnd(),0)
   end
  end 
- if(btnp()!=0) then
-  if(not intro_ending) then
-   intro_ending=true
-  else
-   intro_ending_at=cycles
+
+ if(btnp()!=0 and not intro_ending) intro_ending=true
+ for p=1,2 do
+  if(btnp(4,p%2) or btnp(5,p%2)) then
+   if(players[p].ai) then
+    players[p].ai=false
+   else
+    intro_ending_at=cycles
+   end
   end
  end
 
@@ -290,7 +294,7 @@ function intro_draw()
 end
 
 function play_game()
- game_init()
+-- game_init() called during intro
  screen.update=game_update
  screen.draw=game_draw
 end
@@ -299,14 +303,17 @@ function game_init()
  players={}
  stadium={}
 
- oddball = {}
- oddball.sprites = {11,12,13,29,45,44,43,27}
+ oddball={}
+ oddball.sprites={11,12,13,29,45,44,43,27}
 
- players[1] = {}
- players[2] = {}
+ players[1]={}
+ players[2]={}
 
- players[1].sprites = {9,25,41,57,56,55,54}
- players[2].sprites = {10,26,42,58,59,60,61}
+ players[1].ai=true
+ players[2].ai=true
+
+ players[1].sprites={9,25,41,57,56,55,54}
+ players[2].sprites={10,26,42,58,59,60,61}
  
  players[1].score=0
  players[2].score=0
@@ -391,9 +398,9 @@ function game_init()
  stadium.display.digit_height_max=17
  stadium.display.digit_heights={2,2}
 
- players[1].x = stadium.field.left + stadium.field.goalzonewidth-13
- players[1].xmin = stadium.field.left-3
- players[1].xmax = stadium.field.left+stadium.field.goalzonewidth-5
+ players[1].x=stadium.field.left + stadium.field.goalzonewidth-13
+ players[1].xmin=stadium.field.left-3
+ players[1].xmax=stadium.field.left+stadium.field.goalzonewidth-5
  players[1].dx=0 players[1].dy=0
 
  players[2].x=stadium.field.right - stadium.field.goalzonewidth+5
@@ -420,7 +427,6 @@ function game_init()
  shuffle_audience_timing()
  
  oddball.upforgrabs=true
- oddball.upforgrabs_time=cycles
  oddball.service_time=cycles+10+rnd(3)
  oddball.dx=0 oddball.dy=0
  oddball.x=64 -- so it's not nil
@@ -537,19 +543,23 @@ function game_update()
   stadium.floor.color2=t
  end
 
- if(oddball.y<players[1].y+2) then
-  players[1].y-=2 
- elseif(oddball.y>players[1].y+6) then
-  players[1].y+=2
- end
  
  for p=1,2 do
   set_player_pose(p,1+flr(rnd(1.05)))
-  if(players[p].holding or players[p].dancing or not btn(4,p%2)) then
+  if(not players[p].ai and (players[p].holding or players[p].dancing or not btn(4,p%2))) then
    if(btn(0,p%2)) players[p].dx-=0.45-rnd(0.05)
    if(btn(1,p%2)) players[p].dx+=0.39+rnd(0.05)
    if(btn(2,p%2)) players[p].dy-=0.45-rnd(0.03)
    if(btn(3,p%2)) players[p].dy+=0.45+rnd(0.03)
+  elseif(players[p].ai) then
+   -- simple ai
+   -- later integrate w normal movement
+   -- 
+   if(oddball.y<players[p].y+2) then
+    players[p].y-=2 
+   elseif(oddball.y>players[p].y+6) then
+    players[p].y+=2
+   end
   end
   if(not (btn(0,p%2) or btn(1,p%2))) players[p].dx*=0.65
   if(not (btn(2,p%2) or btn(3,p%2))) players[p].dy*=0.74
@@ -590,8 +600,8 @@ function game_update()
  end
 
  if(oddball.upforgrabs) then
-  oddball.x = (stadium.field.left+stadium.field.right)/2-4
-  oddball.y = (stadium.field.top+stadium.field.bottom)/2-4
+  oddball.x=(stadium.field.left+stadium.field.right)/2-4
+  oddball.y=(stadium.field.top+stadium.field.bottom)/2-4
  elseif(players[1].holding) then
   oddball.x=players[1].x+6
   oddball.y=players[1].y+1
@@ -689,7 +699,6 @@ function game_update()
   stadium.display.digit_heights[scoring_player]=2
   schedule_sfx(1,7)--lets clapping begin first
   oddball.upforgrabs=true
-  oddball.upforgrabs_time=cycles
   if(players[1].score<9 and players[2].score<9) then
    oddball.service_time=cycles+20+rnd(5)
    poke(0x3681,60+flr(rnd(30)))
@@ -746,12 +755,12 @@ function game_draw()
  if(players[1].score==0 and players[2].score==0) then
   local msg,clr
   clr=(flr(cycles/25)%2+5)
-  if(oddball.upforgrabs and cycles-oddball.upforgrabs_time>125) then
+  if(oddball.upforgrabs and cycles-intro_ending_at>125) then
    help_flag=true
    msg="(hold Ž to serve)"
    print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-15,clr)   
   end
-  if(help_flag and (players[1].holding or players[2].holding) and cycles-oddball.upforgrabs_time>145) then
+  if(help_flag and (players[1].holding or players[2].holding) and cycles-intro_ending_at>145) then
    msg="(let that turtle fly!))"
    print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-22,clr)
    msg="     watch | that meter"
