@@ -131,7 +131,7 @@ function intro_update()
 
  if(btnp()!=0 and not intro_ending) intro_ending=true
  for p=1,2 do
-  if(newbtnp("o",p) or newbtnp("x",p)) then
+  if(btnp(4,players[p].js.num) or btnp(5,players[p].js.num)) then
    if(players[p].ai) then
     players[p].ai=false
    else
@@ -552,20 +552,21 @@ function game_update()
  
  for p=1,2 do
   set_player_pose(p,1+flr(rnd(1.05)))
-  if(not players[p].ai and (players[p].holding or players[p].dancing or not newbtn("o",p))) then
+
+  -- simple ai
+  if(players[p].ai) then
+   if(oddball.y<players[p].y+2) then
+    players[p].js["u"]=1
+   elseif(oddball.y>players[p].y+6) then
+    players[p].js["d"]=1
+   end
+  end
+
+  if((players[p].holding or players[p].dancing or not newbtn("o",p))) then
    if(newbtn("l",p)) players[p].dx-=0.45-rnd(0.05)
    if(newbtn("r",p)) players[p].dx+=0.39+rnd(0.05)
    if(newbtn("u",p)) players[p].dy-=0.45-rnd(0.03)
    if(newbtn("d",p)) players[p].dy+=0.45+rnd(0.03)
-  elseif(players[p].ai) then
-   -- simple ai
-   -- later integrate w normal movement
-   -- 
-   if(oddball.y<players[p].y+2) then
-    players[p].y-=2 
-   elseif(oddball.y>players[p].y+6) then
-    players[p].y+=2
-   end
   end
   if(not (newbtn("l",p) or newbtn("r",p))) players[p].dx*=0.65
   if(not (newbtn("u",p) or newbtn("d",p))) players[p].dy*=0.74
@@ -1145,21 +1146,24 @@ function newbtn_conv(x)
   if(x==js_mappings[i][1]) return js_mappings[i][2]
   if(x==js_mappings[i][2]) return js_mappings[i][1]
  end
- debug1="newbtn_convert miss"
 end
 
 function newbtn_mgmt()
  for p=1,2 do
   for b=0,5 do
-   local m=newbtn_conv(b)
-   if(btn(b,players[p].js.num)) then
-    if(players[p].js[m]) then
-     players[p].js[m]+=1
-    else
-     players[p].js[m]=0
-    end
+   if(players[p].ai) then
+    players[p].js[newbtn_conv(b)]=nil
    else
-    players[p].js[m]=nil
+    local m=newbtn_conv(b)
+    if(btn(b,players[p].js.num)) then
+     if(players[p].js[m]) then
+      players[p].js[m]+=1
+     else
+      players[p].js[m]=0
+     end
+    else
+     players[p].js[m]=nil
+    end
    end
   end
  end
