@@ -111,6 +111,7 @@ function do_intro()
  screen.draw=intro_draw
 
  game_init()
+ newbtn_init()
   
  cls(5)
 end
@@ -130,7 +131,7 @@ function intro_update()
 
  if(btnp()!=0 and not intro_ending) intro_ending=true
  for p=1,2 do
-  if(btnp(4,p%2) or btnp(5,p%2)) then
+  if(newbtnp("o",p) or newbtnp("x",p)) then
    if(players[p].ai) then
     players[p].ai=false
    else
@@ -170,6 +171,7 @@ function intro_update()
  if(rnd()>0.985) then ry+=rnd()-suby end
 
  sound_effect_mgmt()
+ newbtn_mgmt()
 end
 
 function intro_draw()
@@ -311,6 +313,10 @@ function game_init()
 
  players[1].ai=true
  players[2].ai=true
+ players[1].js={}
+ players[1].js.num=1
+ players[2].js={}
+ players[2].js.num=0
 
  players[1].sprites={9,25,41,57,56,55,54}
  players[2].sprites={10,26,42,58,59,60,61}
@@ -452,7 +458,7 @@ function player_service(num)
   oddball.dx=0 oddball.dy=0
   players[num].holding=true
  elseif(players[num].holding) then
-  if(btn(4,num%2)) then
+  if(newbtn("o",num)) then
    --still winding up
    players[num].winding_up=true
    player_windup(num)
@@ -546,11 +552,11 @@ function game_update()
  
  for p=1,2 do
   set_player_pose(p,1+flr(rnd(1.05)))
-  if(not players[p].ai and (players[p].holding or players[p].dancing or not btn(4,p%2))) then
-   if(btn(0,p%2)) players[p].dx-=0.45-rnd(0.05)
-   if(btn(1,p%2)) players[p].dx+=0.39+rnd(0.05)
-   if(btn(2,p%2)) players[p].dy-=0.45-rnd(0.03)
-   if(btn(3,p%2)) players[p].dy+=0.45+rnd(0.03)
+  if(not players[p].ai and (players[p].holding or players[p].dancing or not newbtn("o",p))) then
+   if(newbtn("l",p)) players[p].dx-=0.45-rnd(0.05)
+   if(newbtn("r",p)) players[p].dx+=0.39+rnd(0.05)
+   if(newbtn("u",p)) players[p].dy-=0.45-rnd(0.03)
+   if(newbtn("d",p)) players[p].dy+=0.45+rnd(0.03)
   elseif(players[p].ai) then
    -- simple ai
    -- later integrate w normal movement
@@ -561,10 +567,11 @@ function game_update()
     players[p].y+=2
    end
   end
-  if(not (btn(0,p%2) or btn(1,p%2))) players[p].dx*=0.65
-  if(not (btn(2,p%2) or btn(3,p%2))) players[p].dy*=0.74
+  if(not (newbtn("l",p) or newbtn("r",p))) players[p].dx*=0.65
+  if(not (newbtn("u",p) or newbtn("d",p))) players[p].dy*=0.74
   --introduces a waver when not hanging onto the paddle
-  if(band(shr(btn(),(p%2)*8),2^0+2^1+2^2+2^3)==0) then
+--  if(band(shr(btn(),(p%2)*8),2^0+2^1+2^2+2^3)==0) then
+  if(not (newbtn("l",p) or newbtn("r",p) or newbtn("u",p) or newbtn("d",p))) then
    players[p].dx*=(0.7+rnd(0.6))
    players[p].dy*=(0.7+rnd(0.6))
    if(rnd()<players[p].dx) players[p].dx*=-1
@@ -595,8 +602,8 @@ function game_update()
    players[p].y+=players[p].dy
   end
 
-  if(btn(4,p%2) or players[p].winding_up) then player_service(p) end
-  if(btnp(5,(p+1)%2)) then players[p].score+=1 end
+  if(newbtn("o",p) or players[p].winding_up) then player_service(p) end
+--  if(newbtnp("x",p)) then players[(p%2)+1].score+=1 end
  end
 
  if(oddball.upforgrabs) then
@@ -673,7 +680,7 @@ function game_update()
    sfx(1+oddball.approaching_player)
    --glancing blows
    --extra oomph
-   if(btn(4,oddball.approaching_player%2)) then oddball.dx*=1.1 sfx(0) end   
+   if(newbtn("o",oddball.approaching_player)) then oddball.dx*=1.1 sfx(0) end   
   end
  end
 
@@ -719,6 +726,7 @@ function game_update()
  end
 
  sound_effect_mgmt()
+ newbtn_mgmt()
 end
 
 function shuffle_audience_timing()
@@ -1009,7 +1017,10 @@ end
 
 function party_update()
  party_time=cycles-party_started
- if(party_time>120 or ((party_time>25) and (btnp(4,0)  or  btnp(4,1)))) then do_intro() end
+ if(party_time>120 or ((party_time>25) and (newbtnp("o",1) or newbtnp("o",2)))) then do_intro() end
+
+ sound_effect_mgmt()
+ newbtn_mgmt()
 end
 
 function party_draw()
@@ -1070,7 +1081,6 @@ function party_draw()
    sspr(sx,sy,8,8,px,py,24,24)
   end
  end
- 
 end
 
 function party_drapes_draw()
@@ -1111,6 +1121,62 @@ end
 function schedule_sfx(s,o)
  add(scheduled_sfx,{s,cycles+o})
 end
+
+function newbtn_init()
+ for p=1,2 do
+  for b=0,5 do
+   if(btn(b,players[p].js.num)) then
+    --false is a reminder that it
+    -- was already pressed at init
+    players[p].js[newbtn_conv(b)]=false
+   else
+    players[p].js[newbtn_conv(b)]=nil
+   end
+  end
+ end
+end
+
+function newbtn_conv(x)
+ js_mappings={
+  {0,"l"},{1,"r"},{2,"u"},{3,"d"},
+  {4,"o"},{5,"x"}
+ }
+ for i=1,#js_mappings do
+  if(x==js_mappings[i][1]) return js_mappings[i][2]
+  if(x==js_mappings[i][2]) return js_mappings[i][1]
+ end
+ debug1="newbtn_convert miss"
+end
+
+function newbtn_mgmt()
+ for p=1,2 do
+  for b=0,5 do
+   local m=newbtn_conv(b)
+   if(btn(b,players[p].js.num)) then
+    if(players[p].js[m]) then
+     players[p].js[m]+=1
+    else
+     players[p].js[m]=0
+    end
+   else
+    players[p].js[m]=nil
+   end
+  end
+ end
+end
+
+function newbtn(b,p)
+ if(players[p].js[b]) return true
+ return false
+end
+
+function newbtnp(b,p)
+ if(newbtn(b,p)) then
+  if(players[p].js[b]==0) return true
+ end
+ return false
+end
+
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000888800002220000000000000088000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000fff000001ff0000084000000044000000008800000000000000000
