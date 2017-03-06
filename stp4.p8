@@ -1194,24 +1194,25 @@ function ai_control(p)
  slope.a=slope[1]/slope[2]
  local top=stadium.field.top local bottom=stadium.field.bottom
  local height=bottom-top
-debug1="unhandled unhandled unhandled unhandled"
+ local direction=oddball.dx/abs(oddball.dx)
+ if(rnd()>0.5) players[p].js["l"]=1
+ if(rnd()>0.5) players[p].js["r"]=1
+ 
  if(players[p%2+1].holding or p!=oddball.approaching_player) then
   --amble toward midfield
   if(players[p].y<midfield and rnd()>0.5) players[p].js["d"]=1
   if(players[p].y>midfield and rnd()>0.5) players[p].js["u"]=1
-debug1="la de dah"
+  
  else
   if(distance>17) then
    --sizing it up faraway
    local yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
    if(yprojection>bottom+height/2 or yprojection<top-height/2) then
     --can't tell yet, head midfield
-debug1="hmm.."
     if(players[p].y<midfield and rnd()>0.2) players[p].js["d"]=1
     if(players[p].y>midfield and rnd()>0.2) players[p].js["u"]=1
    else
     if(yprojection>top-10 or yprojection<bottom+10) then
-debug1="coming"
      --it looks like it's coming to us
      if(players[p].y<oddball.y and rnd()>0.2) players[p].js["d"]=1
      if(players[p].y>oddball.y and rnd()>0.2) players[p].js["u"]=1
@@ -1219,13 +1220,10 @@ debug1="coming"
      local blunder=0.5*(oddball.y+midfield)
      if(players[p].y<blunder and rnd()>0.4) players[p].js["d"]=1
      if(players[p].y>blunder and rnd()>0.4) players[p].js["u"]=1
-debug1="guessing"
     end
    end
   else
-debug1="closer"
    local yprojection=oddball.y+(distance/oddball.dx)*oddball.dy
-   debug4="yp "..yprojection
    if(oddball.y<0.5*(players[p].y+yprojection)) then
     players[p].js["u"]=1
    elseif(oddball.y>0.5*(players[p].y+yprojection)) then
