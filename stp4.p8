@@ -553,12 +553,17 @@ function game_update()
  for p=1,2 do
   set_player_pose(p,1+flr(rnd(1.05)))
 
-  -- simple ai
   if(players[p].ai) then
-   if(oddball.y<players[p].y+2) then
-    players[p].js["u"]=1
-   elseif(oddball.y>players[p].y+6) then
-    players[p].js["d"]=1
+   if(false) then
+    -- simple ai
+    if(oddball.y<players[p].y+2) then
+     players[p].js["u"]=1
+    elseif(oddball.y>players[p].y+6) then
+     players[p].js["d"]=1
+    end
+
+   else
+    ai_control(p)
    end
   end
 
@@ -1181,6 +1186,53 @@ function newbtnp(b,p)
  return false
 end
 
+function ai_control(p)
+ 
+ local midfield=0.5*(stadium.field.top+stadium.field.bottom)-11+rnd(9)
+ local distance=abs(players[p].x-oddball.x)
+ local slope={oddball.y*(0.95+rnd(0.04)),oddball.x*(0.9+rnd(0.09))}
+ local top=stadium.field.top local bottom=stadium.field.bottom
+ local height=bottom-top
+ 
+debug1="unhandled unhandled unhandled unhandled"
+ if(players[p%2+1].holding or p!=oddball.approaching_player) then
+  --amble toward midfield
+  if(players[p].y<midfield and rnd()>0.5) players[p].js["d"]=1
+  if(players[p].y>midfield and rnd()>0.5) players[p].js["u"]=1
+debug1="la de dah"
+ else
+  if(distance>1) then
+   --sizing it up faraway
+   local yprojection=oddball.y+slope[1]*(distance/slope[2])
+   if(yprojection<top-height/1.1 or yprojection>bottom+height/1.1) then
+    --can't tell yet, head midfield
+debug1="hmm.."
+    if(players[p].y<midfield and rnd()>0.2) players[p].js["d"]=1
+    if(players[p].y>midfield and rnd()>0.2) players[p].js["u"]=1
+   else
+    if(yprojection>top-10 or yprojection<bottom+10) then
+debug1="coming"
+     --it looks like it's coming to us
+     if(players[p].y<oddball.y and rnd()>0.2) players[p].js["d"]=1
+     if(players[p].y>oddball.y and rnd()>0.2) players[p].js["u"]=1
+    else
+     local blunder=0.5*(oddball.y+midfield)
+     if(players[p].y<blunder and rnd()>0.4) players[p].js["d"]=1
+     if(players[p].y>blunder and rnd()>0.4) players[p].js["u"]=1
+debug1="guessing"     
+    end
+   end
+  else
+debug1="simple ai"
+   if(oddball.y<players[p].y+2) then
+    players[p].js["u"]=1
+   elseif(oddball.y>players[p].y+6) then
+    players[p].js["d"]=1
+   end
+  end
+ end
+
+end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000888800002220000000000000088000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000fff000001ff0000084000000044000000008800000000000000000
