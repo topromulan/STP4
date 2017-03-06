@@ -25,22 +25,22 @@ function _draw()
    debug_color=2
   end
   if(debug1!=nil) then
-   print(debug1,1,12,debug_color)
+   print(debug1,66,66,debug_color)
    if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=cycles end
    if(cycles-debug1_reminder>150) then debug1=nil debug1_memory=nil debug1_reminder=nil end  
   end
   if(debug2!=nil) then
-   print(debug2,1,19,debug_color)
+   print(debug2,66,96,debug_color)
    if(debug2_memory!=debug2) then debug2_memory=debug2 debug2_reminder=cycles end
    if(cycles-debug2_reminder>150) then debug2=nil debug2_memory=nil debug2_reminder=nil end  
   end
   if(debug3!=nil) then
-   print(debug3,125-3*#debug3,12,debug_color)
+   print(debug3,62-3*#debug3,66,debug_color)
    if(debug3_memory!=debug3) then debug3_memory=debug3 debug3_reminder=cycles end
    if(cycles-debug3_reminder>150) then debug3=nil debug3_memory=nil debug3_reminder=nil end  
   end
   if(debug4!=nil) then
-   print(debug4,126-3*#debug4,19,debug_color)
+   print(debug4,62-3*#debug4,96,debug_color)
    if(debug4_memory!=debug4) then debug4_memory=debug4 debug4_reminder=cycles end
    if(cycles-debug4_reminder>150) then debug4=nil debug4_memory=nil debug4_reminder=nil end  
   end
@@ -470,7 +470,7 @@ function player_service(num)
    oddball.dy=0.1-rnd(0.2)
    --oddball.dx*=0.55 --for serve testing
    oddball.dx+=rnd(0.1)*players[num].dx
-   oddball.dy+=1*players[num].dy
+   oddball.dy+=1.5*players[num].dy
    sfx(1+num) sfx(4)
   end
  else
@@ -1190,10 +1190,10 @@ function ai_control(p)
  
  local midfield=0.5*(stadium.field.top+stadium.field.bottom)-11+rnd(9)
  local distance=abs(players[p].x-oddball.x)
- local slope={oddball.y*(0.95+rnd(0.04)),oddball.x*(0.9+rnd(0.09))}
+ local slope={oddball.dy*(0.95+rnd(0.04)),oddball.dx*(0.9+rnd(0.09))}
+ slope.a=slope[1]/slope[2]
  local top=stadium.field.top local bottom=stadium.field.bottom
  local height=bottom-top
- 
 debug1="unhandled unhandled unhandled unhandled"
  if(players[p%2+1].holding or p!=oddball.approaching_player) then
   --amble toward midfield
@@ -1201,10 +1201,10 @@ debug1="unhandled unhandled unhandled unhandled"
   if(players[p].y>midfield and rnd()>0.5) players[p].js["u"]=1
 debug1="la de dah"
  else
-  if(distance>1) then
+  if(distance>17) then
    --sizing it up faraway
-   local yprojection=oddball.y+slope[1]*(distance/slope[2])
-   if(yprojection<top-height/1.1 or yprojection>bottom+height/1.1) then
+   local yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
+   if(yprojection>bottom+height/2 or yprojection<top-height/2) then
     --can't tell yet, head midfield
 debug1="hmm.."
     if(players[p].y<midfield and rnd()>0.2) players[p].js["d"]=1
@@ -1219,14 +1219,16 @@ debug1="coming"
      local blunder=0.5*(oddball.y+midfield)
      if(players[p].y<blunder and rnd()>0.4) players[p].js["d"]=1
      if(players[p].y>blunder and rnd()>0.4) players[p].js["u"]=1
-debug1="guessing"     
+debug1="guessing"
     end
    end
   else
-debug1="simple ai"
-   if(oddball.y<players[p].y+2) then
+debug1="closer"
+   local yprojection=oddball.y+(distance/oddball.dx)*oddball.dy
+   debug4="yp "..yprojection
+   if(oddball.y<0.5*(players[p].y+yprojection)) then
     players[p].js["u"]=1
-   elseif(oddball.y>players[p].y+6) then
+   elseif(oddball.y>0.5*(players[p].y+yprojection)) then
     players[p].js["d"]=1
    end
   end
