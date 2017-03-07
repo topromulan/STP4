@@ -35,12 +35,12 @@ function _draw()
    if(cycles-debug2_reminder>150) then debug2=nil debug2_memory=nil debug2_reminder=nil end  
   end
   if(debug3!=nil) then
-   print(debug3,62-3*#debug3,66,debug_color)
+   print(debug3,62-4*#debug3,66,debug_color)
    if(debug3_memory!=debug3) then debug3_memory=debug3 debug3_reminder=cycles end
    if(cycles-debug3_reminder>150) then debug3=nil debug3_memory=nil debug3_reminder=nil end  
   end
   if(debug4!=nil) then
-   print(debug4,62-3*#debug4,96,debug_color)
+   print(debug4,62-4*#debug4,96,debug_color)
    if(debug4_memory!=debug4) then debug4_memory=debug4 debug4_reminder=cycles end
    if(cycles-debug4_reminder>150) then debug4=nil debug4_memory=nil debug4_reminder=nil end  
   end
@@ -1214,8 +1214,8 @@ function ai_control(p)
    else
     if(yprojection>top-10 or yprojection<bottom+10) then
      --it looks like it's coming to us
-     if(players[p].y<oddball.y and rnd()>0.2) players[p].js["d"]=1
-     if(players[p].y>oddball.y and rnd()>0.2) players[p].js["u"]=1
+     if(players[p].y<yprojection and rnd()>0.2) players[p].js["d"]=1
+     if(players[p].y>yprojection and rnd()>0.2) players[p].js["u"]=1
     else
      local blunder=0.5*(oddball.y+midfield)
      if(players[p].y<blunder and rnd()>0.4) players[p].js["d"]=1
