@@ -1190,6 +1190,7 @@ function ai_control(p)
  
  local midfield=0.5*(stadium.field.top+stadium.field.bottom)-11+rnd(9)
  local distance=abs(players[p].x-oddball.x)
+ if(p==2) distance+=4 else distance-=4
  local slope={oddball.dy*(0.95+rnd(0.04)),oddball.dx*(0.9+rnd(0.09))}
  slope.a=slope[1]/slope[2]
  local top=stadium.field.top local bottom=stadium.field.bottom
@@ -1223,6 +1224,7 @@ function ai_control(p)
     end
    end
   else
+   -- near field
    local yprojection=oddball.y+(distance/oddball.dx)*oddball.dy
    if(oddball.y<0.5*(players[p].y+yprojection)) then
     players[p].js["u"]=1
