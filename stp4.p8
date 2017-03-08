@@ -314,9 +314,9 @@ function game_init()
  players[1].ai=true
  players[2].ai=true
  players[1].js={}
- players[1].js.num=1
+ players[1].js.num=0
  players[2].js={}
- players[2].js.num=0
+ players[2].js.num=2
 
  players[1].sprites={9,25,41,57,56,55,54}
  players[2].sprites={10,26,42,58,59,60,61}
@@ -440,6 +440,8 @@ function game_init()
  oddball.approaching_player=1
 
  help_flag=false
+ 
+ ai_far_field=23
 end
 
 function set_player_pose(num,pose)
@@ -469,8 +471,8 @@ function player_service(num)
    oddball.dx=-1*(-3+2*num)*(1+rnd(0.5)+players[num].serve_power/10)
    oddball.dy=0.1-rnd(0.2)
    --oddball.dx*=0.55 --for serve testing
-   oddball.dx+=rnd(0.1)*players[num].dx
-   oddball.dy+=1.5*players[num].dy
+   oddball.dx+=(0.1+rnd(0.1))*players[num].dx
+   oddball.dy+=1.75*players[num].dy
    sfx(1+num) sfx(4)
   end
  else
@@ -564,6 +566,7 @@ function game_update()
 
    else
     ai_control(p)
+--    newbtn_init() to hold still
    end
   end
 
@@ -712,6 +715,7 @@ function game_update()
   stadium.display.digit_heights[scoring_player]=2
   schedule_sfx(1,7)--lets clapping begin first
   oddball.upforgrabs=true
+  oddball.x=64 oddball.y=85 --approximately in the middle so ai returns to midfield
   if(players[1].score<9 and players[2].score<9) then
    oddball.service_time=cycles+20+rnd(5)
    poke(0x3681,60+flr(rnd(30)))
@@ -1190,7 +1194,7 @@ function ai_control(p)
  
  local midfield=0.5*(stadium.field.top+stadium.field.bottom)-11+rnd(9)
  local distance=abs(players[p].x-oddball.x)
- if(p==2) distance+=4 else distance-=4
+ if(p==2) distance+=3 else distance-=4
  local slope={oddball.dy*(0.95+rnd(0.04)),oddball.dx*(0.9+rnd(0.09))}
  slope.a=slope[1]/slope[2]
  local top=stadium.field.top local bottom=stadium.field.bottom
@@ -1203,29 +1207,33 @@ function ai_control(p)
   --amble toward midfield
   if(players[p].y<midfield and rnd()>0.5) players[p].js["d"]=1
   if(players[p].y>midfield and rnd()>0.5) players[p].js["u"]=1
-  
  else
-  if(distance>17) then
+  if(distance>ai_far_field) then
    --sizing it up faraway
    local yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
-   if(yprojection>bottom+height/2 or yprojection<top-height/2) then
-    --can't tell yet, head midfield
-    if(players[p].y<midfield and rnd()>0.2) players[p].js["d"]=1
-    if(players[p].y>midfield and rnd()>0.2) players[p].js["u"]=1
-   else
-    if(yprojection>top-10 or yprojection<bottom+10) then
-     --it looks like it's coming to us
-     if(players[p].y<yprojection and rnd()>0.2) players[p].js["d"]=1
-     if(players[p].y>yprojection and rnd()>0.2) players[p].js["u"]=1
+   if(yprojection<top-5 or yprojection>bottom+5) then
+    local to_wall,bounces,overage
+    if(oddball.dy<0) then
+     to_wall=oddball.y-stadium.field.top
     else
-     local blunder=0.5*(oddball.y+midfield)
-     if(players[p].y<blunder and rnd()>0.4) players[p].js["d"]=1
-     if(players[p].y>blunder and rnd()>0.4) players[p].js["u"]=1
+     to_wall=stadium.field.bottom-oddball.y
     end
+    overage=abs(yprojection-oddball.y)-to_wall
+    bounces=1+flr(overage/height)
+    newyproj=overage%height
+    if(bounces%2==0 and oddball.dy<0 or bounces%2==1 and oddball.dy>0) newyproj=height-newyproj
+    newyproj+=stadium.field.top
    end
+   if(players[p].y>newyproj) then
+    players[p].js["u"]=1
+   else
+    players[p].js["d"]=1
+   end   
   else
    -- near field
    local yprojection=oddball.y+(distance/oddball.dx)*oddball.dy
+   if(yprojection<top) yprojection=top+(yprojection-top-height)
+   if(yprojection>bottom) yprojection=bottom-(yprojection-top-height)
    if(oddball.y<0.5*(players[p].y+yprojection)) then
     players[p].js["u"]=1
    elseif(oddball.y>0.5*(players[p].y+yprojection)) then
