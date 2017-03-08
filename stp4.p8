@@ -1203,7 +1203,8 @@ function ai_control(p)
  if(rnd()>0.5) players[p].js["l"]=1
  if(rnd()>0.5) players[p].js["r"]=1
  
- if(players[p%2+1].holding or p!=oddball.approaching_player) then
+ 
+ if(oddball.upforgrabs or players[p%2+1].holding or p!=oddball.approaching_player) then
   --amble toward midfield
   if(players[p].y<midfield and rnd()>0.5) players[p].js["d"]=1
   if(players[p].y>midfield and rnd()>0.5) players[p].js["u"]=1
