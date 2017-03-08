@@ -9,6 +9,7 @@ function _init()
  screen={}
  do_intro()
 
+ debug_msg_time=75
 -- party screen test:
 -- game_init()
 -- player_wins(1+flr(rnd(2)))
@@ -27,22 +28,22 @@ function _draw()
   if(debug1!=nil) then
    print(debug1,66,66,debug_color)
    if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=cycles end
-   if(cycles-debug1_reminder>150) then debug1=nil debug1_memory=nil debug1_reminder=nil end  
+   if(cycles-debug1_reminder>debug_msg_time) then debug1=nil debug1_memory=nil debug1_reminder=nil end  
   end
   if(debug2!=nil) then
    print(debug2,66,96,debug_color)
    if(debug2_memory!=debug2) then debug2_memory=debug2 debug2_reminder=cycles end
-   if(cycles-debug2_reminder>150) then debug2=nil debug2_memory=nil debug2_reminder=nil end  
+   if(cycles-debug2_reminder>debug_msg_time) then debug2=nil debug2_memory=nil debug2_reminder=nil end  
   end
   if(debug3!=nil) then
    print(debug3,62-4*#debug3,66,debug_color)
    if(debug3_memory!=debug3) then debug3_memory=debug3 debug3_reminder=cycles end
-   if(cycles-debug3_reminder>150) then debug3=nil debug3_memory=nil debug3_reminder=nil end  
+   if(cycles-debug3_reminder>debug_msg_time) then debug3=nil debug3_memory=nil debug3_reminder=nil end  
   end
   if(debug4!=nil) then
    print(debug4,62-4*#debug4,96,debug_color)
    if(debug4_memory!=debug4) then debug4_memory=debug4 debug4_reminder=cycles end
-   if(cycles-debug4_reminder>150) then debug4=nil debug4_memory=nil debug4_reminder=nil end  
+   if(cycles-debug4_reminder>debug_msg_time) then debug4=nil debug4_memory=nil debug4_reminder=nil end  
   end
 end
 
@@ -314,9 +315,9 @@ function game_init()
  players[1].ai=true
  players[2].ai=true
  players[1].js={}
- players[1].js.num=0
+ players[1].js.num=1
  players[2].js={}
- players[2].js.num=2
+ players[2].js.num=0
 
  players[1].sprites={9,25,41,57,56,55,54}
  players[2].sprites={10,26,42,58,59,60,61}
@@ -1202,16 +1203,15 @@ function ai_control(p)
  local direction=oddball.dx/abs(oddball.dx)
  if(rnd()>0.5) players[p].js["l"]=1
  if(rnd()>0.5) players[p].js["r"]=1
- 
- 
+
  if(oddball.upforgrabs or players[p%2+1].holding or p!=oddball.approaching_player) then
   --amble toward midfield
   if(players[p].y<midfield and rnd()>0.5) players[p].js["d"]=1
   if(players[p].y>midfield and rnd()>0.5) players[p].js["u"]=1
  else
+  local yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
   if(distance>ai_far_field) then
    --sizing it up faraway
-   local yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
    if(yprojection<top-5 or yprojection>bottom+5) then
     local to_wall,bounces,overage
     if(oddball.dy<0) then
@@ -1220,10 +1220,12 @@ function ai_control(p)
      to_wall=stadium.field.bottom-oddball.y
     end
     overage=abs(yprojection-oddball.y)-to_wall
-    bounces=1+flr(overage/height)
+    bounces=flr(overage/height)
     newyproj=overage%height
-    if(bounces%2==0 and oddball.dy<0 or bounces%2==1 and oddball.dy>0) newyproj=height-newyproj
+    if(bounces%2==1 and oddball.dy<0 or bounces%2==1 and oddball.dy>0) newyproj=height-newyproj
     newyproj+=stadium.field.top
+   else
+    newyproj=yprojection
    end
    if(players[p].y>newyproj) then
     players[p].js["u"]=1
@@ -1232,17 +1234,13 @@ function ai_control(p)
    end   
   else
    -- near field
-   local yprojection=oddball.y+(distance/oddball.dx)*oddball.dy
-   if(yprojection<top) yprojection=top+(yprojection-top-height)
-   if(yprojection>bottom) yprojection=bottom-(yprojection-top-height)
-   if(oddball.y<0.5*(players[p].y+yprojection)) then
+   if(players[p].y>yprojection+1) then
     players[p].js["u"]=1
-   elseif(oddball.y>0.5*(players[p].y+yprojection)) then
+   elseif(players[p].y<yprojection-1) then
     players[p].js["d"]=1
    end
   end
  end
-
 end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000888800002220000000000000088000000000000000000000000000
