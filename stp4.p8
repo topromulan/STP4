@@ -850,6 +850,7 @@ function draw_player(num)
  if(players[num].y > players[num].ymax) then players[num].y=players[num].ymax end 
 
  spr(players[num].sprite,players[num].x,players[num].y)
+ if(players[num].ai) print("ai",players[num].x+1,players[num].y-7,7)
 end
 
 function draw_oddball()
