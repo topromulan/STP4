@@ -211,18 +211,6 @@ function intro_draw()
  if(cycles<15) print("from turtle pong stadium",xl,yt,letter)
 
  
- for y=rainline,rainfloor do
-  for x=xl-5,xr+5 do
-   if(cycles<5) then
-    --fade to black
-    pset(x-1+rnd(3),y-1+rnd(3),0)
-   else
-    --smear it around
-    --?
-   end
-  end
-  
- end 
  
  for y=flr(rainfloor),rainline,-1 do
   for x=xl-4,xr+4 do
@@ -262,6 +250,15 @@ function intro_draw()
    pset(x,y,result)
   end 
  end
+
+ for y=rainline,rainfloor do
+  for x=xl-5,xr+5 do
+   if(cycles<13) then
+    local coord={x-1+rnd(3),y-1+rnd(3)}
+    if(pget(coord[1],coord[2])!=water) pset(coord[1],coord[2],0)
+   end
+  end
+ end 
  
  for x=xl-4,xr+4 do
   if(rnd()<0.15 or (rnd()>0.02 and flr(cycles/150)%2==1)) then
