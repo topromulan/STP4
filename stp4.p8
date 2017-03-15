@@ -1196,6 +1196,9 @@ function ai_control(p)
  local top=stadium.field.top local bottom=stadium.field.bottom
  local height=bottom-top
  local direction=oddball.dx/abs(oddball.dx)
+ local backwards,forwards
+  if(p==1) backwards="l" else backwards="r"
+  if(p==1) forwards="r" else backwards="l"
  local coming=true if(p!=oddball.approaching_player) coming=false
  if(oddball.upforgrabs or players[p%2+1].holding or not coming) then
   --amble toward midfield
@@ -1208,15 +1211,15 @@ function ai_control(p)
   local yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
   if(distance>ai_far_field) then
    --sizing it up faraway
+   if(rnd()>0.84) then --tend to back up
+    players[p].js[backwards]=1
+   elseif(rnd()>0.93) then
+    players[p].js[forwards]=1
+   end
    if(not thinking) then
     thinking=3+flr(rnd(7.5))
    elseif(thinking>0) then
     thinking-=1
-    if(rnd()>0.44) then
-     players[p].js.l=1
-    elseif(rnd()>0.33) then
-     players[p].js.r=1
-    end
     if(not (players[p].js.u or players[p].js.d)) then
      if(yprojection<players[p].dy) then
       if(rnd()>0.25) players[p].js.u=3 else players[p].js.d=2
@@ -1253,6 +1256,11 @@ function ai_control(p)
    end
   else
    -- near field
+   if(rnd()>0.74) then --tend to run for it
+    players[p].js[forwards]=2
+   elseif(rnd()>0.83) then
+    players[p].js[backwards]=1
+   end
    if(players[p].y>yprojection+1) then
     players[p].js.u=2
    elseif(players[p].y<yprojection-1) then
