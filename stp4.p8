@@ -12,9 +12,6 @@ function _init()
 -- party screen test:
 -- game_init()
 -- player_wins(1+flr(rnd(2)))
- local wasting,tokens,reserving
- local them,party,fixing,wow,ok
- local just,a,few,so,many,actually
 end
 
 function _draw()
@@ -1009,6 +1006,8 @@ function player_wins(num)
  party_update()
  local compliments={"ístellarí","Åfirst placeÅ","ñelectricñ","Ölike a ninjaÖ","çepicç","èradè"}
  adjective=compliments[1+flr(rnd(#compliments))]
+
+ per=4+flr(rnd(3.5)) -- a mysterious global variable
 end
 
 
@@ -1027,14 +1026,18 @@ function party_draw()
  draw_door(70,44)
  
  local p=1.1*(8+party_time/12)
- 
+
  for i=1,#stadium.audience do
   local z=stadium.audience[i].sprite+32
+  local row=flr(i/per)
+  local col=i%6
   sspr(z*8%128,8*flr(z*8/128),8,8,
-   60+p+(i%4)*(15-(p/1.5+10/(3+flr(i/6)))),--x
-   61-p/12+flr(i/6)*(7-i/10),--y
-   20/p*(flr(i/6)*6),--w
-   20/p*(flr(i/6)*6),--h
+   60+p-5*flr(i/per)+
+    (i%per)*((360-(10-row)*30)/p)
+    , --x
+   61-p/12+flr(i/per)*(7-i/10),--y
+   20/p*(flr(i/per)*per),--w
+   20/p*(flr(i/per)*per),--h
    (cycles%3==0)--x flip
   )
  end
