@@ -8,46 +8,18 @@ __lua__
 function _init()
  screen={}
  do_intro()
- debug=true
 
- debug_msg_time=75
 -- party screen test:
 -- game_init()
 -- player_wins(1+flr(rnd(2)))
+ local wasting,tokens,reserving
+ local them,party,fixing,wow,ok
+ local just,a,few,so,many,actually
 end
 
 function _draw()
  screen.draw()
 
- if(debug) then
-  if(flr(cycles%2.5)==0) then
-   debug_color=14
-  elseif(flr(cycles%1.5)==1) then
-   debug_color=7
-  else
-   debug_color=2
-  end
-  if(debug1!=nil) then
-   print(debug1,66,66,debug_color)
-   if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=cycles end
-   if(cycles-debug1_reminder>debug_msg_time) then debug1=nil debug1_memory=nil debug1_reminder=nil end  
-  end
-  if(debug2!=nil) then
-   print(debug2,66,96,debug_color)
-   if(debug2_memory!=debug2) then debug2_memory=debug2 debug2_reminder=cycles end
-   if(cycles-debug2_reminder>debug_msg_time) then debug2=nil debug2_memory=nil debug2_reminder=nil end  
-  end
-  if(debug3!=nil) then
-   print(debug3,62-4*#debug3,66,debug_color)
-   if(debug3_memory!=debug3) then debug3_memory=debug3 debug3_reminder=cycles end
-   if(cycles-debug3_reminder>debug_msg_time) then debug3=nil debug3_memory=nil debug3_reminder=nil end  
-  end
-  if(debug4!=nil) then
-   print(debug4,62-4*#debug4,96,debug_color)
-   if(debug4_memory!=debug4) then debug4_memory=debug4 debug4_reminder=cycles end
-   if(cycles-debug4_reminder>debug_msg_time) then debug4=nil debug4_memory=nil debug4_reminder=nil end  
-  end
- end
 end
 
 function _update()
@@ -145,7 +117,7 @@ function intro_update()
  end
 
  lx+=1
- if(lx>200) then lx=-200 end
+ if(lx>200) lx=-200
  if(lx==50) then
   schedule_sfx(0,flr(rnd(2))) 
   rx+=0.75 ry+=0.85
@@ -171,8 +143,8 @@ function intro_update()
   suby=0
  end
  
- if(rnd()>0.975) then rx+=rnd()-subx end
- if(rnd()>0.985) then ry+=rnd()-suby end
+ if(rnd()>0.975) rx+=rnd()-subx
+ if(rnd()>0.985) ry+=rnd()-suby
 
  sound_effect_mgmt()
  newbtn_mgmt()
@@ -231,12 +203,12 @@ function intro_draw()
    print("ong",stplogo.p.x+stplogo.p.width*0.9,stplogo.p.y+stplogo.p.height/2,stplogo.clr)
  end
  
- if(flr(cycles/30)%2!=0) then print("insert money to play",8,90,6) end
- if(rnd()<0.975) then print("live",79+rnd(3),104+rnd(3),8) end
- if(rnd()<0.975) then print("live",79+rnd(3),104+rnd(3),8) end
- if(flr(cycles/25)%2!=0) then print("broadcasting live",28,105,11) end
+ if(flr(cycles/30)%2!=0) print("insert money to play",8,90,6)
+ if(rnd()<0.975) print("live",79+rnd(3),104+rnd(3),8)
+ if(rnd()<0.975) print("live",79+rnd(3),104+rnd(3),8)
+ if(flr(cycles/25)%2!=0) print("broadcasting live",28,105,11)
 
- if(cycles<15) then print("from turtle pong stadium",xl,yt,letter) end
+ if(cycles<15) print("from turtle pong stadium",xl,yt,letter)
 
  
  for y=rainline,rainfloor do
@@ -449,7 +421,7 @@ function game_init()
 end
 
 function set_player_pose(num,pose)
- if(players[num].stagger_effect == nil) then players[num].stagger_effect=0 end
+ if(players[num].stagger_effect == nil) players[num].stagger_effect=0
  if(players[num].stagger_effect>0) then
   players[num].stagger_effect-=1
  else
@@ -499,7 +471,7 @@ function player_service(num)
 end
 
 function player_windup(num)
- if(players[num].serve_power==nil) then players[num].serve_power=1 end
+ if(players[num].serve_power==nil) players[num].serve_power=1
 
  players[num].serve_power+=players[num].winding_dir
  
@@ -628,7 +600,7 @@ function game_update()
    players[p].y+=players[p].dy
   end
 
-  if(newbtn("o",p) or players[p].winding_up) then player_service(p) end
+  if(newbtn("o",p) or players[p].winding_up) player_service(p)
 --  if(newbtnp("x",p)) then players[(p%2)+1].score+=1 end
  end
 
@@ -646,7 +618,7 @@ function game_update()
   oddball.y+=oddball.dy
  end
 
- local slope=oddball.dy/oddball.dx if(oddball.approaching_player==2) then slope*=-1 end
+ local slope=oddball.dy/oddball.dx if(oddball.approaching_player==2) slope*=-1
  local offset
  
  if(abs(oddball.x-players[oddball.approaching_player].x)<3) then
@@ -840,7 +812,7 @@ function draw_player(num)
 -- or its own function called
 -- from game_update (player_update()?)
  if(players[num].dancing) then
-  if(players[num].started_dancing==nil) then players[num].started_dancing=cycles end
+  if(players[num].started_dancing==nil) players[num].started_dancing=cycles
   
   if(cycles-players[num].started_dancing<9) then
    players[num].stagger_effect=nil
@@ -860,10 +832,10 @@ function draw_player(num)
 --  set_player_sprite(num,players[num].sprites[1+flr(rnd(2))])
  end
 
- if(players[num].x < players[num].xmin) then players[num].x=players[num].xmin end
- if(players[num].y < players[num].ymin) then players[num].y=players[num].ymin end
- if(players[num].x > players[num].xmax) then players[num].x=players[num].xmax end
- if(players[num].y > players[num].ymax) then players[num].y=players[num].ymax end 
+ if(players[num].x<players[num].xmin) players[num].x=players[num].xmin
+ if(players[num].y < players[num].ymin) players[num].y=players[num].ymin
+ if(players[num].x > players[num].xmax) players[num].x=players[num].xmax
+ if(players[num].y > players[num].ymax) players[num].y=players[num].ymax
 
  spr(players[num].sprite,players[num].x,players[num].y)
  if(players[num].ai) print("ai",players[num].x+1,players[num].y-7,7)
@@ -973,7 +945,7 @@ function draw_floor(middle,top,height)
   local rad
   if(i<8) then
    rad=15+i^2
-   if rad>60 then rad=62 end
+   if(rad>60) rad=62
   else
    rad=60-1.5*(i%3)-i/10
   end
@@ -1010,8 +982,8 @@ function draw_audience()
   --draw each audience member in 
   -- their seat, facing the ball
   local fan_sprite=stadium.audience[seat].sprite
-  if(oddball.x < seatx+stadium.audience[seat].timing) then fan_sprite-=16 end
-  if(oddball.x > seatx+8+stadium.audience[seat].timing) then fan_sprite+=16 end
+  if(oddball.x < seatx+stadium.audience[seat].timing) fan_sprite-=16
+  if(oddball.x > seatx+8+stadium.audience[seat].timing) fan_sprite+=16
   spr(fan_sprite,seatx+4,seaty+3)
  end
 end
@@ -1045,7 +1017,7 @@ end
 
 function party_update()
  party_time=cycles-party_started
- if(party_time>120 or ((party_time>25) and (newbtnp("o",1) or newbtnp("o",2)))) then do_intro() end
+ if(party_time>120 or ((party_time>25) and (newbtnp("o",1) or newbtnp("o",2)))) do_intro()
 
  sound_effect_mgmt()
  newbtn_mgmt()
@@ -1080,8 +1052,8 @@ function party_draw()
 
  rectfill(7,11,65+4*#adjective,33,5)
  rect(7,11,65+4*#adjective,33,9)
- if(party_time>10) then print("thanks for playing",10,15,clr1) end
- if(party_time>20 and flr(cycles/20)%2==0) then print("that was "..adjective.."!!",13,23,clr2) end
+ if(party_time>10) print("thanks for playing",10,15,clr1)
+ if(party_time>20 and flr(cycles/20)%2==0) print("that was "..adjective.."!!",13,23,clr2)
 
  local plaquexy={}
  plaquexy[1]=42-2*#party_message
@@ -1115,8 +1087,8 @@ function party_drapes_draw()
  local x,y
  for y=0,127 do
   for x=0,127 do
-   if(y>party_line1(x)) then pset(x,y,party_fn(x,y)) end
-   if(y<party_line2(x)) then pset(x,y,party_fn(x,y)) end
+   if(y>party_line1(x)) pset(x,y,party_fn(x,y))
+   if(y<party_line2(x)) pset(x,y,party_fn(x,y))
   end
  end
  for x=0,127 do
