@@ -21,6 +21,8 @@ end
 
 function _update()
   cycles+=1
+
+ if(cycles%30==0) printh("")
   
   --fix bug when it wraps
   if(cycles<0) then
@@ -303,7 +305,7 @@ function game_init()
  players[2].winding_dir=1
 
  local lnames={
-  {"red","red","red","rouge","rusty","ruddy","redder","rosy","ruby","russet","big red"},
+  {"red","red","red","rouge","rusty","ruddy","redder","rosy","ruby","russet","big red","beet red"},
   {"ricky","ricky","ralf","rancid","remy","rebner","raggy","rose","ray","ruffguy","razor","ripple","rhine","roo","radagast"}
  }
  local rnames={
@@ -424,6 +426,8 @@ function set_player_pose(num,pose)
 end
 
 function player_service(num)
+ players[num].dx*=0.75
+ players[num].dy*=0.75
  if(oddball.upforgrabs and cycles>oddball.service_time+25+rnd(3.2) and not players[num].dancing) then
   --move it into player's hands
   oddball.upforgrabs=false
@@ -539,25 +543,18 @@ function game_update()
   set_player_pose(p,1+flr(rnd(1.05)))
 
   if(players[p].ai) then
-   if(false) then
-    -- simple ai
-    if(oddball.y<players[p].y+2) then
-     players[p].js["u"]=1
-    elseif(oddball.y>players[p].y+6) then
-     players[p].js["d"]=1
-    end
-
-   else
-    ai_control(p)
---    newbtn_init() to hold still
-   end
+   ai_control(p)
+--   players[p].js.l=nil
+--   players[p].js.u=nil
+--   players[p].js.d=nil
+--   players[p].js.r=nil
   end
 
   if((players[p].holding or players[p].dancing or not newbtn("o",p))) then
-   if(newbtn("l",p)) players[p].dx-=0.45-rnd(0.05)
-   if(newbtn("r",p)) players[p].dx+=0.39+rnd(0.05)
-   if(newbtn("u",p)) players[p].dy-=0.45-rnd(0.03)
-   if(newbtn("d",p)) players[p].dy+=0.45+rnd(0.03)
+   if(newbtn("l",p)) players[p].dx-=0.35-rnd(0.05)
+   if(newbtn("r",p)) players[p].dx+=0.29+rnd(0.05)
+   if(newbtn("u",p)) players[p].dy-=0.35-rnd(0.03)
+   if(newbtn("d",p)) players[p].dy+=0.35+rnd(0.03)
   end
   if(not (newbtn("l",p) or newbtn("r",p))) players[p].dx*=0.65
   if(not (newbtn("u",p) or newbtn("d",p))) players[p].dy*=0.74
@@ -569,8 +566,6 @@ function game_update()
    if(rnd()<players[p].dx) players[p].dx*=-1
   end 
    
-   
-
   local threshold=0.25
   if(p==2) threshold=0.005
   if(players[p].dx<threshold and players[p].dx>-1*threshold
@@ -595,7 +590,9 @@ function game_update()
   end
 
   if(newbtn("o",p) or players[p].winding_up) player_service(p)
---  if(newbtnp("x",p)) then players[(p%2)+1].score+=1 end
+  if(newbtnp("x",p)) then
+  players[1+p%2].score+=1
+  end
  end
 
  if(oddball.upforgrabs) then
@@ -1038,7 +1035,7 @@ function party_draw()
    61-p/12+flr(i/per)*(7-i/10),--y
    20/p*(flr(i/per)*per),--w
    20/p*(flr(i/per)*per),--h
-   (cycles%3==0)--x flip
+   ((cycles+flr(stadium.audience[i].timing))%3==0)--x flip
   )
  end
  party_drapes_draw()
@@ -1189,8 +1186,9 @@ end
 function ai_control(p)
  local midfield=0.5*(stadium.field.top+stadium.field.bottom)-11+rnd(9)
  local midzone if(p==1) midzone=stadium.field.left+4 else midzone=stadium.field.right-10
- local distance=abs(players[p].x-oddball.x)
+ local distance=abs(players[p].x-oddball.x) if(p==2) distance-=4
  if(p==2) distance+=3 else distance-=4
+ local gap=abs(players[p].y-oddball.y)
  local slope={oddball.dy*(0.95+rnd(0.04)),oddball.dx*(0.9+rnd(0.09))}
  slope.a=slope[1]/slope[2]
  local top=stadium.field.top local bottom=stadium.field.bottom
@@ -1198,7 +1196,7 @@ function ai_control(p)
  local direction=oddball.dx/abs(oddball.dx)
  local backwards,forwards
   if(p==1) backwards="l" else backwards="r"
-  if(p==1) forwards="r" else backwards="l"
+  if(p==1) forwards="r" else forwards="l"
  local coming=true if(p!=oddball.approaching_player) coming=false
  if(oddball.upforgrabs or players[p%2+1].holding or not coming) then
   --amble toward midfield
@@ -1211,9 +1209,9 @@ function ai_control(p)
   local yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
   if(distance>ai_far_field) then
    --sizing it up faraway
-   if(rnd()>0.84) then --tend to back up
+   if(rnd()>0.94) then --tend to back up
     players[p].js[backwards]=1
-   elseif(rnd()>0.93) then
+   elseif(rnd()>0.98) then
     players[p].js[forwards]=1
    end
    if(not thinking) then
@@ -1266,6 +1264,15 @@ function ai_control(p)
    elseif(players[p].y<yprojection-1) then
     players[p].js.d=2
    end
+
+   if(distance>3.1*abs(oddball.dx) and distance<4.1*abs(oddball.dx)) then
+    if(gap<12) players[p].js.o=3
+   end
+   
+--   if(abs(yprojection-players[p].y)<3) then
+  --  players[p].js.o=2
+  -- end
+
   end
   
  end
