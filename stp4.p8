@@ -544,6 +544,23 @@ function game_update()
 
   if(players[p].ai) then
    ai_control(p)
+   
+   if(oddball.upforgrabs and
+     (
+      (
+       cycles-oddball.service_time>180
+       and rnd()<0.01
+      ) or
+      (
+       cycles-oddball.service_time>5
+       and players[p%2+1].score>players[p].score
+      )
+     )
+    )
+      then
+    players[p].js.o=5+flr(rnd(20))
+   end
+     
 --   players[p].js.l=nil
 --   players[p].js.u=nil
 --   players[p].js.d=nil
