@@ -8,10 +8,6 @@ __lua__
 function _init()
  screen={}
  do_intro()
-
--- party screen test:
--- game_init()
--- player_wins(1+flr(rnd(2)))
 end
 
 function _draw()
@@ -686,13 +682,23 @@ function game_update()
 
  oddball.approaching_player=1 if(oddball.dx > 0) then oddball.approaching_player=2 end 
 
- --out of bounds
- if((oddball.y<=stadium_field_top or oddball.y>=stadium_field_bottom-6) and 
-    not (players[1].holding or players[2].holding)) then
-  oddball.y+=-1*oddball.dy/abs(oddball.dy) --prevents getting stuck
-  oddball.dy*=-1
-  oddball.dy*=0.75+rnd(0.2)
+ local out_of_bounds,diff,effective_top,effective_bottom
+ local yadjust={0,-6}
+ effective_top=stadium_field_top+yadjust[1]
+ effective_bottom=stadium_field_bottom+yadjust[2]
+ diff=effective_top-oddball.y
+ if(diff>0) then
+  printh("diff1 "..diff)
+  out_of_bounds=true
+  oddball.y=effective_top+diff
  end
+ diff=oddball.y-effective_bottom
+ if(diff>0) then
+  out_of_bounds=true
+  oddball.y=effective_bottom-diff
+  printh("diff2 "..diff)
+ end
+ if(out_of_bounds) oddball.dy*=-0.75-rnd(0.2)
 
  --score!! goal!!
  local scoring_player
@@ -1037,15 +1043,15 @@ function party_draw()
 
  for i=1,#stadium_audience do
   local z=stadium_audience[i].sprite+32
-  local row=flr(i/per)
+  local row=1+flr(i/per)
   local col=i%6
   sspr(z*8%128,8*flr(z*8/128),8,8,
-   60+p-5*flr(i/per)+
+   60+p-5*row+
     (i%per)*((360-(10-row)*30)/p)
     , --x
-   61-p/12+flr(i/per)*(7-i/10),--y
-   20/p*(flr(i/per)*per),--w
-   20/p*(flr(i/per)*per),--h
+   59-p/12+row*(8-row),--y
+   20/p*(row*per),--w
+   20/p*(row*per),--h
    ((cycles+flr(stadium_audience[i].timing))%3==0)--x flip
   )
  end
@@ -1279,10 +1285,6 @@ function ai_control(p)
    if(distance>3.1*abs(oddball.dx) and distance<4.1*abs(oddball.dx)) then
     if(gap<12) players[p].js.o=3
    end
-   
---   if(abs(yprojection-players[p].y)<3) then
-  --  players[p].js.o=2
-  -- end
 
   end
   
