@@ -1012,7 +1012,7 @@ function player_wins(num)
  end
  music(0)
  party_update()
- local compliments={"ístellarí","Åfirst placeÅ","ñelectricñ","Ölike a ninjaÖ","çepicç","èradè"}
+ local compliments={"ístellarí","Åfirst placeÅ","ñelectricñ","Ölike a ninjaÖ","çepicç","èradè","ìtop notchì","ô zen-like ô","épico-rifficó"}
  adjective=compliments[1+flr(rnd(#compliments))]
 
  per=4+flr(rnd(3.5)) -- a mysterious global variable
