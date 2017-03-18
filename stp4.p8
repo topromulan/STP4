@@ -54,19 +54,19 @@ function do_intro()
  --
  
  stplogo={}
- stplogo.s={}
- stplogo.t={}
- stplogo.p={}
- stplogo.clr1=7
- stplogo.clr2=5
- stplogo.clr=stplogo.clr1
+ stplogos={}
+ stplogot={}
+ stplogop={}
+ stplogoclr1=7
+ stplogoclr2=5
+ stplogoclr=stplogoclr1
 
- stplogo.s.x=20 stplogo.s.y=45
- stplogo.s.width=15 stplogo.s.height=21
- stplogo.t.x=40 stplogo.t.y=50
- stplogo.t.width=15 stplogo.t.height=21
- stplogo.p.x=60 stplogo.p.y=55
- stplogo.p.width=15 stplogo.p.height=21
+ stplogosx=20 stplogosy=45
+ stplogoswidth=15 stplogosheight=21
+ stplogotx=40 stplogoty=50
+ stplogotwidth=15 stplogotheight=21
+ stplogopx=60 stplogopy=55
+ stplogopwidth=15 stplogopheight=21
 
  -- 
 
@@ -176,30 +176,30 @@ function intro_draw()
 
  if(intro_ending and intro_ending_at!=nil) then
   intro_left=intro_ending_at-cycles
-  stplogo.clr=intro_left/2
-  stplogo.s.x-=rnd()
-  stplogo.s.y-=rnd()
-  stplogo.s.width+=rnd(0.75)
-  stplogo.s.height+=rnd(0.75)
-  stplogo.t.x-=rnd()
-  stplogo.t.y+=rnd(0.5)
-  stplogo.t.width+=rnd(0.65)
-  stplogo.t.height+=rnd(0.65)
-  stplogo.p.x-=rnd(0.5)
-  stplogo.p.y-=rnd()
-  stplogo.p.width+=rnd(0.55)
-  stplogo.p.height+=rnd(0.55)
+  stplogoclr=intro_left/2
+  stplogosx-=rnd()
+  stplogosy-=rnd()
+  stplogoswidth+=rnd(0.75)
+  stplogosheight+=rnd(0.75)
+  stplogotx-=rnd()
+  stplogoty+=rnd(0.5)
+  stplogotwidth+=rnd(0.65)
+  stplogotheight+=rnd(0.65)
+  stplogopx-=rnd(0.5)
+  stplogopy-=rnd()
+  stplogopwidth+=rnd(0.55)
+  stplogopheight+=rnd(0.55)
  else
  end
  
- sspr(0,12,12,20,rnd(1.005)+stplogo.s.x,stplogo.s.y,stplogo.s.width,stplogo.s.height)
- sspr(16,12,12,20,rnd(1.010)+stplogo.t.x,stplogo.t.y,stplogo.t.width,stplogo.t.height)
- sspr(32,12,12,20,rnd(1.015)+stplogo.p.x,stplogo.p.y,stplogo.p.width,stplogo.p.height)
+ sspr(0,12,12,20,rnd(1.005)+stplogosx,stplogosy,stplogoswidth,stplogosheight)
+ sspr(16,12,12,20,rnd(1.010)+stplogotx,stplogoty,stplogotwidth,stplogotheight)
+ sspr(32,12,12,20,rnd(1.015)+stplogopx,stplogopy,stplogopwidth,stplogopheight)
 
  if(intro_ending) then
-   print("uper",stplogo.s.x+stplogo.s.width,stplogo.s.y+stplogo.s.height/2,stplogo.clr)
-   print("urtle",stplogo.t.x+stplogo.t.width*0.8,stplogo.t.y+stplogo.t.height/2,stplogo.clr)
-   print("ong",stplogo.p.x+stplogo.p.width*0.9,stplogo.p.y+stplogo.p.height/2,stplogo.clr)
+   print("uper",stplogosx+stplogoswidth,stplogosy+stplogosheight/2,stplogoclr)
+   print("urtle",stplogotx+stplogotwidth*0.8,stplogoty+stplogotheight/2,stplogoclr)
+   print("ong",stplogopx+stplogopwidth*0.9,stplogopy+stplogopheight/2,stplogoclr)
  end
  
  if(flr(cycles/30)%2!=0) print("insert money to play",8,90,6)
@@ -275,7 +275,6 @@ end
 
 function game_init()
  players={}
- stadium={}
 
  oddball={}
  oddball.sprites={11,12,13,29,45,44,43,27}
@@ -325,25 +324,21 @@ function game_init()
  trophy_for_player2=false
  party_message=nil
 
- stadium.field={}
- stadium.display={}
+ stadium_fans={80,81,82,83,84,85,86,87,88}
 
- stadium.fans={80,81,82,83,84,85,86,87,88}
+ stadium_audience={}
 
- stadium.audience={}
-
- stadium.floor={}
- stadium.floor.top=25
- stadium.floor.height=32
+ stadium_floor_top=25
+ stadium_floor_height=32
  --regular floor
  local rugcolorpairs={{2,14,false},{3,4,false},{1,13,false},{0,5,false},{12,13,false},{12,13,true}}
  local i=1+flr(rnd(#rugcolorpairs))
 
- stadium.floor.color1=rugcolorpairs[i][1]
- stadium.floor.color2=rugcolorpairs[i][2]
- stadium.floor.flicker=rugcolorpairs[i][3]
+ stadium_floor_color1=rugcolorpairs[i][1]
+ stadium_floor_color2=rugcolorpairs[i][2]
+ stadium_floor_flicker=rugcolorpairs[i][3]
 
- stadium.seats={
+ stadium_seats={
   {8,25},{21,24},{34,23},{47,22},
   {65,22},{78,23},{91,24},{104,25},
 
@@ -355,52 +350,52 @@ function game_init()
   {61,41},{75,42},{89,43},
  }
  
- stadium.field.left=5
- stadium.field.right=122
- stadium.field.top=58
- stadium.field.bottom=119
- stadium.field.middle=0.5*(stadium.field.left+stadium.field.right)
- stadium.field.chalkcolor=7
- stadium.field.grasscolor=3
- stadium.field.goalzonewidth=15
+ stadium_field_left=5
+ stadium_field_right=122
+ stadium_field_top=58
+ stadium_field_bottom=119
+ stadium_field_middle=0.5*(stadium_field_left+stadium_field_right)
+ stadium_field_chalkcolor=7
+ stadium_field_grasscolor=3
+ stadium_field_goalzonewidth=15
 
- stadium.display.left=25
- stadium.display.right=102
- stadium.display.top=8
- stadium.display.bottom=29
- stadium.display.lightcolor=10
- stadium.display.woodcolor=1
- if(rnd()<0.66) stadium.display.woodcolor=2
- if(rnd()<0.63) stadium.display.woodcolor=13
- stadium.display.digit_width=12
- stadium.display.digit_height_max=17
- stadium.display.digit_heights={2,2}
+ stadium_display_left=25
+ stadium_display_right=102
+ stadium_display_top=8
+ stadium_display_bottom=29
+ stadium_display_lightcolor=10
+ stadium_display_woodcolor=1
+ if(rnd()<0.66) stadium_display_woodcolor=2
+ if(rnd()<0.63) stadium_display_woodcolor=13
+ stadium_display_digit_width=12
+ stadium_display_digit_height_max=17
+ stadium_display_digit_heights={2,2}
 
- players[1].x=stadium.field.left + stadium.field.goalzonewidth-13
- players[1].xmin=stadium.field.left-3
- players[1].xmax=stadium.field.left+stadium.field.goalzonewidth-5
+ players[1].x=stadium_field_left + stadium_field_goalzonewidth-13
+ players[1].xmin=stadium_field_left-3
+ players[1].xmax=stadium_field_left+stadium_field_goalzonewidth-5
  players[1].dx=0 players[1].dy=0
 
- players[2].x=stadium.field.right - stadium.field.goalzonewidth+5
- players[2].xmin=stadium.field.right-stadium.field.goalzonewidth-2
- players[2].xmax=stadium.field.right-4
+ players[2].x=stadium_field_right - stadium_field_goalzonewidth+5
+ players[2].xmin=stadium_field_right-stadium_field_goalzonewidth-2
+ players[2].xmax=stadium_field_right-4
  players[2].dx=0 players[2].dy=0
 
- players[1].y=stadium.field.top + 5
- players[2].y=stadium.field.bottom-13
- players[1].ymin=stadium.field.top-1
- players[1].ymax=stadium.field.bottom-8
+ players[1].y=stadium_field_top + 5
+ players[2].y=stadium_field_bottom-13
+ players[1].ymin=stadium_field_top-1
+ players[1].ymax=stadium_field_bottom-8
  players[2].ymin=players[1].ymin
  players[2].ymax=players[1].ymax
  
  --seat the audience
- for seat=1,#stadium.seats do
-  stadium.audience[seat]={}
-  while(stadium.audience[seat].sprite==nil or stadium.audience[seat].sprite==stadium.audience[seat-1].sprite) do
-   stadium.audience[seat].sprite=stadium.fans[1+flr(rnd(#stadium.fans))]
+ for seat=1,#stadium_seats do
+  stadium_audience[seat]={}
+  while(stadium_audience[seat].sprite==nil or stadium_audience[seat].sprite==stadium_audience[seat-1].sprite) do
+   stadium_audience[seat].sprite=stadium_fans[1+flr(rnd(#stadium_fans))]
    if(seat==1 or rnd()<0.2) break   
   end
-  stadium.audience[seat].timing=0
+  stadium_audience[seat].timing=0
  end
  shuffle_audience_timing()
  
@@ -495,10 +490,10 @@ function draw_windup()
  
  
  local x1,y1,x2,y2,middle,width,meter_left,meter_right
- middle=0.5*(stadium.field.left+stadium.field.right)
+ middle=0.5*(stadium_field_left+stadium_field_right)
  width=10
  x1=middle-width/2 x2=middle+width/2 
- y1=stadium.field.bottom-1 y2=127
+ y1=stadium_field_bottom-1 y2=127
 
  if(draw_it) then
   if(num==1) then
@@ -512,7 +507,7 @@ function draw_windup()
   rectfill(x1+1,y1+1,x2-1,y2-1,14)
   rectfill(meter_left,y1+1,meter_right,y2-1,clr)
  else
-  rectfill(x1,stadium.field.bottom+1,x2,126,5)
+  rectfill(x1,stadium_field_bottom+1,x2,126,5)
   print("vs",middle-3,122,15)
  end  
 end
@@ -532,10 +527,10 @@ function game_update()
   end
  end
  
- if(stadium.floor.flicker) then
-  local t=stadium.floor.color1
-  stadium.floor.color1=stadium.floor.color2
-  stadium.floor.color2=t
+ if(stadium_floor_flicker) then
+  local t=stadium_floor_color1
+  stadium_floor_color1=stadium_floor_color2
+  stadium_floor_color2=t
  end
 
  
@@ -613,8 +608,8 @@ function game_update()
  end
 
  if(oddball.upforgrabs) then
-  oddball.x=(stadium.field.left+stadium.field.right)/2-4
-  oddball.y=(stadium.field.top+stadium.field.bottom)/2-4
+  oddball.x=(stadium_field_left+stadium_field_right)/2-4
+  oddball.y=(stadium_field_top+stadium_field_bottom)/2-4
  elseif(players[1].holding) then
   oddball.x=players[1].x+6
   oddball.y=players[1].y+1
@@ -693,7 +688,7 @@ function game_update()
  oddball.approaching_player=1 if(oddball.dx > 0) then oddball.approaching_player=2 end 
 
  --out of bounds
- if((oddball.y<=stadium.field.top or oddball.y>=stadium.field.bottom-6) and 
+ if((oddball.y<=stadium_field_top or oddball.y>=stadium_field_bottom-6) and 
     not (players[1].holding or players[2].holding)) then
   oddball.y+=-1*oddball.dy/abs(oddball.dy) --prevents getting stuck
   oddball.dy*=-1
@@ -702,14 +697,14 @@ function game_update()
 
  --score!! goal!!
  local scoring_player
- if(oddball.x<stadium.field.left-4 or oddball.x>stadium.field.right-3) then
-  if(oddball.x>stadium.field.middle) then
+ if(oddball.x<stadium_field_left-4 or oddball.x>stadium_field_right-3) then
+  if(oddball.x>stadium_field_middle) then
    scoring_player=1
   else
    scoring_player=2
   end
   players[scoring_player].score+=1
-  stadium.display.digit_heights[scoring_player]=2
+  stadium_display_digit_heights[scoring_player]=2
   schedule_sfx(1,7)--lets clapping begin first
   oddball.upforgrabs=true
   oddball.x=64 oddball.y=85 --approximately in the middle so ai returns to midfield
@@ -737,8 +732,8 @@ function game_update()
 end
 
 function shuffle_audience_timing()
- for i=1,#stadium.audience do
-  stadium.audience[i].timing=-19+flr(rnd(39))
+ for i=1,#stadium_audience do
+  stadium_audience[i].timing=-19+flr(rnd(39))
  end
 end
 
@@ -753,11 +748,11 @@ function game_draw()
 
  draw_field() 
  draw_scoreboard()
- draw_floor(stadium.field.middle,stadium.floor.top,stadium.floor.height)
+ draw_floor(stadium_field_middle,stadium_floor_top,stadium_floor_height)
  draw_names()
  
- local exitx=(stadium.display.left+stadium.display.right)/2-12
- local exity=stadium.display.bottom-25
+ local exitx=(stadium_display_left+stadium_display_right)/2-12
+ local exity=stadium_display_bottom-25
  draw_door(exitx,exity+3) --just adding a little length
  draw_door(exitx,exity)
 
@@ -773,17 +768,17 @@ function game_draw()
   if(oddball.upforgrabs and cycles-intro_ending_at>125) then
    help_flag=true
    msg="(hold Ž to serve)"
-   print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-15,clr)   
+   print(msg,stadium_field_middle-2*#msg,stadium_field_bottom-15,clr)   
   end
   if(help_flag and (players[1].holding or players[2].holding) and cycles-intro_ending_at>145) then
    msg="(let that turtle fly!))"
-   print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-22,clr)
+   print(msg,stadium_field_middle-2*#msg,stadium_field_bottom-22,clr)
    msg="     watch | that meter"
-   print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-13,clr)
+   print(msg,stadium_field_middle-2*#msg,stadium_field_bottom-13,clr)
    msg="|"
-   print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-8,cycles%16+rnd(3))
+   print(msg,stadium_field_middle-2*#msg,stadium_field_bottom-8,cycles%16+rnd(3))
    msg="v"
-   print(msg,stadium.field.middle-2*#msg,stadium.field.bottom-6,4+cycles%5)
+   print(msg,stadium_field_middle-2*#msg,stadium_field_bottom-6,4+cycles%5)
    
    if(players[1].winding_up) then
     if(players[1].winding_dir>2) players[1].winding_dir=2
@@ -798,21 +793,21 @@ end
 
 
 function draw_field()
- rectfill(stadium.field.left, stadium.field.top,
-  stadium.field.right,stadium.field.bottom,
-  stadium.field.grasscolor)
- rect(stadium.field.left, stadium.field.top,
-  stadium.field.right,stadium.field.bottom,
-  stadium.field.chalkcolor)
- rect(stadium.field.left, stadium.field.top,
-  stadium.field.left+stadium.field.goalzonewidth,
-  stadium.field.bottom, stadium.field.chalkcolor)
- rect(stadium.field.right, stadium.field.top,
-  stadium.field.right-stadium.field.goalzonewidth,
-  stadium.field.bottom, stadium.field.chalkcolor)
+ rectfill(stadium_field_left, stadium_field_top,
+  stadium_field_right,stadium_field_bottom,
+  stadium_field_grasscolor)
+ rect(stadium_field_left, stadium_field_top,
+  stadium_field_right,stadium_field_bottom,
+  stadium_field_chalkcolor)
+ rect(stadium_field_left, stadium_field_top,
+  stadium_field_left+stadium_field_goalzonewidth,
+  stadium_field_bottom, stadium_field_chalkcolor)
+ rect(stadium_field_right, stadium_field_top,
+  stadium_field_right-stadium_field_goalzonewidth,
+  stadium_field_bottom, stadium_field_chalkcolor)
  print("stp",
-   (stadium.field.left+stadium.field.right)/2-5,
-   (stadium.field.top+stadium.field.bottom)/2-3)
+   (stadium_field_left+stadium_field_right)/2-5,
+   (stadium_field_top+stadium_field_bottom)/2-3)
 end   
 
 function draw_player(num)
@@ -869,76 +864,76 @@ function draw_scoreboard()
  local coords={}
  coords[1]={}
  coords[2]={}
- coords[1].x=stadium.display.left+2
- coords[1].y=stadium.display.top+2
- coords[2].x=stadium.display.right-2-stadium.display.digit_width
- coords[2].y=stadium.display.top+2
+ coords[1].x=stadium_display_left+2
+ coords[1].y=stadium_display_top+2
+ coords[2].x=stadium_display_right-2-stadium_display_digit_width
+ coords[2].y=stadium_display_top+2
  
- rectfill(stadium.display.left,stadium.display.top,
-  stadium.display.right, stadium.display.bottom,
-  stadium.display.woodcolor)
+ rectfill(stadium_display_left,stadium_display_top,
+  stadium_display_right, stadium_display_bottom,
+  stadium_display_woodcolor)
 
  for i=1,2 do
   if(players[i].score==0) then
-   line(coords[i].x,coords[i].y,coords[i].x+stadium.display.digit_width,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
-   line(coords[i].x,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y,stadium.display.lightcolor)   
+   line(coords[i].x,coords[i].y,coords[i].x+stadium_display_digit_width,coords[1].y,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y,coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],coords[i].x,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
+   line(coords[i].x,coords[i].y+stadium_display_digit_heights[i],coords[i].x,coords[i].y,stadium_display_lightcolor)   
   end 
   if(players[i].score==1) then
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y,coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
   end 
   if(players[i].score==2) then
-   line(coords[i].x,coords[i].y,coords[i].x+stadium.display.digit_width,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
-   line(coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y,coords[i].x+stadium_display_digit_width,coords[1].y,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y,coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i]/2,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i]/2,coords[i].x,coords[i].y+stadium_display_digit_heights[i]/2,stadium_display_lightcolor)
+   line(coords[i].x,coords[i].y+stadium_display_digit_heights[i]/2,coords[i].x,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],coords[i].x,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
   end 
   if(players[i].score==3) then
-   line(coords[i].x,coords[i].y,coords[i].x+stadium.display.digit_width,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y,coords[i].x+stadium_display_digit_width,coords[1].y,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y,coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i]/2,coords[i].x,coords[i].y+stadium_display_digit_heights[i]/2,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],coords[i].x,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
   end 
   if(players[i].score==4) then
-   line(coords[i].x,coords[i].y,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y,coords[i].x,coords[i].y+stadium_display_digit_heights[i]/2,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i]/2,coords[i].x,coords[i].y+stadium_display_digit_heights[i]/2,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y,coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
   end 
   if(players[i].score==5) then
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x,coords[i].y,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y,coords[i].x,coords[1].y,stadium_display_lightcolor)
+   line(coords[i].x,coords[i].y,coords[i].x,coords[i].y+stadium_display_digit_heights[i]/2,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i]/2,coords[i].x,coords[i].y+stadium_display_digit_heights[i]/2,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i]/2,coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],coords[i].x,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
   end 
   if(players[i].score==6) then
-   line(coords[i].x,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y,stadium.display.lightcolor)   
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y+stadium_display_digit_heights[i],coords[i].x,coords[i].y,stadium_display_lightcolor)   
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],coords[i].x,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i]/2,coords[i].x,coords[i].y+stadium_display_digit_heights[i]/2,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i]/2,coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
   end 
   if(players[i].score==7) then
-   line(coords[i].x,coords[i].y,coords[i].x+stadium.display.digit_width,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y,coords[i].x+stadium_display_digit_width,coords[1].y,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y,coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
   end 
   if(players[i].score==8) then
-   line(coords[i].x,coords[i].y,coords[i].x+stadium.display.digit_width,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
-   line(coords[i].x,coords[i].y+stadium.display.digit_heights[i],coords[i].x,coords[i].y,stadium.display.lightcolor)   
+   line(coords[i].x,coords[i].y,coords[i].x+stadium_display_digit_width,coords[1].y,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y,coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i]/2,coords[i].x,coords[i].y+stadium_display_digit_heights[i]/2,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],coords[i].x,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
+   line(coords[i].x,coords[i].y+stadium_display_digit_heights[i],coords[i].x,coords[i].y,stadium_display_lightcolor)   
   end 
   if(players[i].score==9) then
-   line(coords[i].x,coords[i].y,coords[i].x+stadium.display.digit_width,coords[1].y,stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y,coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i],stadium.display.lightcolor)
-   line(coords[i].x+stadium.display.digit_width,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,stadium.display.lightcolor)
-   line(coords[i].x,coords[i].y+stadium.display.digit_heights[i]/2,coords[i].x,coords[i].y,stadium.display.lightcolor)
+   line(coords[i].x,coords[i].y,coords[i].x+stadium_display_digit_width,coords[1].y,stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y,coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i],stadium_display_lightcolor)
+   line(coords[i].x+stadium_display_digit_width,coords[i].y+stadium_display_digit_heights[i]/2,coords[i].x,coords[i].y+stadium_display_digit_heights[i]/2,stadium_display_lightcolor)
+   line(coords[i].x,coords[i].y+stadium_display_digit_heights[i]/2,coords[i].x,coords[i].y,stadium_display_lightcolor)
   end 
 
-  if(stadium.display.digit_heights[i]<stadium.display.digit_height_max) then
-   stadium.display.digit_heights[i]+=1
+  if(stadium_display_digit_heights[i]<stadium_display_digit_height_max) then
+   stadium_display_digit_heights[i]+=1
   end
  end
 end
@@ -960,9 +955,9 @@ function draw_floor(middle,top,height)
   local l=middle-rad
   local r=middle+rad
   local h=top+i
-  line(l,h,r,h,stadium.floor.color1)
+  line(l,h,r,h,stadium_floor_color1)
   for j=l+2,r-2,4 do
-   local c=stadium.floor.color2
+   local c=stadium_floor_color2
    --blink red when win!
    if((players[1].score==9 or players[2].score==9) and flr(cycles/15)%2==0) then
     c=8
@@ -983,15 +978,15 @@ function draw_door(exitx,exity)
 end
 
 function draw_audience()
- for seat=1,#stadium.seats do
-  local seatx=stadium.seats[seat][1]
-  local seaty=stadium.seats[seat][2]
+ for seat=1,#stadium_seats do
+  local seatx=stadium_seats[seat][1]
+  local seaty=stadium_seats[seat][2]
   spr(6,seatx,seaty,2,2)
   --draw each audience member in 
   -- their seat, facing the ball
-  local fan_sprite=stadium.audience[seat].sprite
-  if(oddball.x < seatx+stadium.audience[seat].timing) fan_sprite-=16
-  if(oddball.x > seatx+8+stadium.audience[seat].timing) fan_sprite+=16
+  local fan_sprite=stadium_audience[seat].sprite
+  if(oddball.x < seatx+stadium_audience[seat].timing) fan_sprite-=16
+  if(oddball.x > seatx+8+stadium_audience[seat].timing) fan_sprite+=16
   spr(fan_sprite,seatx+4,seaty+3)
  end
 end
@@ -1041,8 +1036,8 @@ function party_draw()
  
  local p=1.1*(8+party_time/12)
 
- for i=1,#stadium.audience do
-  local z=stadium.audience[i].sprite+32
+ for i=1,#stadium_audience do
+  local z=stadium_audience[i].sprite+32
   local row=flr(i/per)
   local col=i%6
   sspr(z*8%128,8*flr(z*8/128),8,8,
@@ -1052,7 +1047,7 @@ function party_draw()
    61-p/12+flr(i/per)*(7-i/10),--y
    20/p*(flr(i/per)*per),--w
    20/p*(flr(i/per)*per),--h
-   ((cycles+flr(stadium.audience[i].timing))%3==0)--x flip
+   ((cycles+flr(stadium_audience[i].timing))%3==0)--x flip
   )
  end
  party_drapes_draw()
@@ -1201,14 +1196,14 @@ function newbtnp(b,p)
 end
 
 function ai_control(p)
- local midfield=0.5*(stadium.field.top+stadium.field.bottom)-11+rnd(9)
- local midzone if(p==1) midzone=stadium.field.left+4 else midzone=stadium.field.right-10
+ local midfield=0.5*(stadium_field_top+stadium_field_bottom)-11+rnd(9)
+ local midzone if(p==1) midzone=stadium_field_left+4 else midzone=stadium_field_right-10
  local distance=abs(players[p].x-oddball.x) if(p==2) distance-=4
  if(p==2) distance+=3 else distance-=4
  local gap=abs(players[p].y-oddball.y)
  local slope={oddball.dy*(0.95+rnd(0.04)),oddball.dx*(0.9+rnd(0.09))}
  slope.a=slope[1]/slope[2]
- local top=stadium.field.top local bottom=stadium.field.bottom
+ local top=stadium_field_top local bottom=stadium_field_bottom
  local height=bottom-top
  local direction=oddball.dx/abs(oddball.dx)
  local backwards,forwards
@@ -1247,11 +1242,11 @@ function ai_control(p)
     if(yprojection<top-5 or yprojection>bottom+5) then
      local to_wall,bounces,overage
      if(oddball.dy<0) then
-      to_wall=oddball.y-stadium.field.top
-      overage=stadium.field.top-yprojection
+      to_wall=oddball.y-stadium_field_top
+      overage=stadium_field_top-yprojection
      else
-      to_wall=stadium.field.bottom-oddball.y
-      overage=yprojection-stadium.field.bottom
+      to_wall=stadium_field_bottom-oddball.y
+      overage=yprojection-stadium_field_bottom
      end
      bounces=1+flr(abs(overage)/height)
      newyproj=overage%height
@@ -1259,7 +1254,7 @@ function ai_control(p)
        or (bounces%2==0 and oddball.dy<0)) then
       newyproj=height-newyproj
      end
-     newyproj+=stadium.field.top
+     newyproj+=stadium_field_top
     else
      newyproj=yprojection
     end
