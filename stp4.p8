@@ -12,7 +12,7 @@ end
 
 function _draw()
  screen.draw()
-
+ 
 end
 
 function _update()
@@ -617,18 +617,23 @@ function game_update()
  end
 
  local slope=oddball.dy/oddball.dx if(oddball.approaching_player==2) slope*=-1
- local offset
+ local num,offset,adjustedx,adjustedy
+
+ num=oddball.approaching_player
+ adjustedx=oddball.x+flr(3.5+rnd())
+ adjustedy=oddball.y+flr(3.5+rnd())
+ if(num==1) shieldx=players[1].x+5 else shieldx=players[2].x+2
  
- if(abs(oddball.x-players[oddball.approaching_player].x)<3) then
+ if(abs(adjustedx-shieldx)<3) then
   --check for paddle impact
-  local num,shieldhity1,shieldhity2
+  local shieldhity1,shieldhity2
 
-  num=oddball.approaching_player
   shieldhity1=players[num].y-5
-  shieldhity2=players[num].y+7
+  shieldhity2=players[num].y+8
+  
+  offset=flr(0.5+adjustedy-shieldhity1)
 
-  offset=flr(0.5+oddball.y-shieldhity1)
-  if(oddball.y>=shieldhity1 and oddball.y<=shieldhity2) then
+  if(adjustedy>=shieldhity1 and adjustedy<=shieldhity2) then
    if(not players[oddball.approaching_player].dancing) then
     --collision
     oddball.dx*=-1
@@ -688,7 +693,6 @@ function game_update()
  effective_bottom=stadium_field_bottom+yadjust[2]
  diff=effective_top-oddball.y
  if(diff>0) then
-  printh("diff1 "..diff)
   out_of_bounds=true
   oddball.y=effective_top+diff
  end
@@ -696,9 +700,9 @@ function game_update()
  if(diff>0) then
   out_of_bounds=true
   oddball.y=effective_bottom-diff
-  printh("diff2 "..diff)
  end
  if(out_of_bounds) oddball.dy*=-0.75-rnd(0.2)
+ 
 
  --score!! goal!!
  local scoring_player
