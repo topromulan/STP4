@@ -13,6 +13,17 @@ end
 function _draw()
  screen.draw()
  
+ local x1,y1,x2,y2,clr
+ x1=65 y1=56
+ x1=oddball.x+4
+ y1=oddball.y+4
+ clr=10
+ 
+ x2=x1+oddball.dx*10
+ y2=y1+oddball.dy*10
+ 
+ line(x1,y1,x2,y2,clr)
+
 end
 
 function _update()
@@ -597,7 +608,7 @@ function game_update()
   end
 
   if(newbtn("o",p) or players[p].winding_up) player_service(p)
-  if(newbtnp("x",p)) players[1+p%2].score+=1
+--  if(newbtnp("x",p)) players[1+p%2].score+=1
   if(newbtn("x",p)) then
    oddball.x-=oddball.dx
    oddball.y-=oddball.dy
