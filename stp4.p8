@@ -8,22 +8,36 @@ __lua__
 function _init()
  screen={}
  do_intro()
+ debug=false
 end
 
 function _draw()
  screen.draw()
- 
- local x1,y1,x2,y2,clr
- x1=65 y1=56
- x1=oddball.x+4
- y1=oddball.y+4
- clr=10
- 
- x2=x1+oddball.dx*10
- y2=y1+oddball.dy*10
- 
- line(x1,y1,x2,y2,clr)
 
+ if(debug) then 
+  local x1,y1,x2,y2,clr
+  x1=65 y1=56
+  x1=oddball.x+4
+  y1=oddball.y+4
+  clr=10
+  
+  x2=x1+oddball.dx*10
+  y2=y1+oddball.dy*10
+ 
+  line(x1,y1,x2,y2,clr)
+
+  if(debug) then 
+   for p=1,2 do
+    if(players[p].ai and 
+     players[p].thinking
+     and players[p].thinking>0
+    ) then
+     print("??",players[p].x+1,players[p].y+5,7)
+    end
+   end 
+  end
+      
+ end
 end
 
 function _update()
@@ -1186,7 +1200,7 @@ function newbtn_mgmt()
    if(players[p].ai) then
     if(players[p].js[newbtn_conv(b)]) then
      if(players[p].js[newbtn_conv(b)]>0) then
-      players[p].js[newbtn_conv(b)]=players[p].js[newbtn_conv(b)]-1 --why not -=1 work
+      players[p].js[newbtn_conv(b)]=players[p].js[newbtn_conv(b)]-1 --why not -=1 work (??)
      else
       players[p].js[newbtn_conv(b)]=nil
      end
@@ -1250,19 +1264,18 @@ function ai_control(p)
    elseif(rnd()>0.98) then
     players[p].js[forwards]=1
    end
-   if(not thinking) then
-    thinking=3+flr(rnd(7.5))
-   elseif(thinking>0) then
-    thinking-=1
+   if(not players[p].thinking) then
+    players[p].thinking=13+flr(rnd(7.5))
+   elseif(players[p].thinking>0) then
+    players[p].thinking-=1
     if(not (players[p].js.u or players[p].js.d)) then
-     if(yprojection<players[p].dy) then
+     if(yprojection<players[p].y) then
       if(rnd()>0.25) players[p].js.u=3 else players[p].js.d=2
      else
       if(rnd()>0.25) players[p].js.d=3 else players[p].js.u=2
      end
     end
    else
-    thinking=nil
     if(yprojection<top-5 or yprojection>bottom+5) then
      local to_wall,bounces,overage
      if(oddball.dy<0) then
@@ -1290,6 +1303,7 @@ function ai_control(p)
    end
   else
    -- near field
+   printh("near field")
    if(rnd()>0.74) then --tend to run for it
     players[p].js[forwards]=2
    elseif(rnd()>0.83) then
