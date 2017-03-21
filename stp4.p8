@@ -597,8 +597,12 @@ function game_update()
   end
 
   if(newbtn("o",p) or players[p].winding_up) player_service(p)
-  if(newbtnp("x",p)) then
-  players[1+p%2].score+=1
+  if(newbtnp("x",p)) players[1+p%2].score+=1
+  if(newbtn("x",p)) then
+   oddball.x-=oddball.dx
+   oddball.y-=oddball.dy
+   oddball.x+=players[p].dx
+   oddball.y+=players[p].dy
   end
  end
 
