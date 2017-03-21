@@ -1296,9 +1296,9 @@ function ai_control(p)
      newyproj=yprojection
     end
     if(players[p].y>newyproj) then
-     players[p].js.u=5 players[p].js.d=0
+     players[p].js.u=5 players[p].js.d=nil
     else
-     players[p].js.d=5 players[p].js.u=0
+     players[p].js.d=5 players[p].js.u=nil
     end   
    end
   else
