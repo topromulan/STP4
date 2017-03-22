@@ -8,13 +8,17 @@ __lua__
 function _init()
  screen={}
  do_intro()
- debug=false
+ debug=true
 end
 
 function _draw()
  screen.draw()
+ 
+ if(global6) line(players[2].x-global6,global5,127,global5,14)
+ pset(global7,global8,8)
+ if(global6) line(players[2].x-3,players[2].y,players[2].x+3,players[2].y,15)
 
- if(debug) then 
+ if(debug) then
   local x1,y1,x2,y2,clr
   x1=65 y1=56
   x1=oddball.x+4
@@ -25,7 +29,7 @@ function _draw()
   y2=y1+oddball.dy*10
  
   line(x1,y1,x2,y2,clr)
-
+  
   if(debug) then 
    for p=1,2 do
     if(players[p].ai and 
@@ -36,6 +40,9 @@ function _draw()
     end
    end 
   end
+
+  draw_joystick(1)
+  draw_joystick(2)
       
  end
 end
@@ -651,6 +658,8 @@ function game_update()
  num=oddball.approaching_player
  adjustedx=oddball.x+flr(3.5+rnd())
  adjustedy=oddball.y+flr(3.5+rnd())
+ global7=adjustedx
+ global8=adjustedy
  if(num==1) shieldx=players[1].x+5 else shieldx=players[2].x+2
  
  if(abs(adjustedx-shieldx)<3) then
@@ -1256,7 +1265,7 @@ function ai_control(p)
   if(players[p].x>midzone+1-rnd(2)) players[p].js.l=1
   players[p].thinking=nil
  else
-  local yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
+  local yprojection=4+oddball.y+slope[1]*(distance/abs(slope[2]))
   if(distance>ai_far_field) then
    --sizing it up faraway
    if(rnd()>0.94) then --tend to back up
@@ -1265,14 +1274,14 @@ function ai_control(p)
     players[p].js[forwards]=1
    end
    if(not players[p].thinking) then
-    players[p].thinking=13+flr(rnd(7.5))
+    players[p].thinking=15+flr(rnd(7.5))
    elseif(players[p].thinking>0) then
     players[p].thinking-=1
     if(not (players[p].js.u or players[p].js.d)) then
-     if(yprojection<players[p].y) then
-      if(rnd()>0.25) players[p].js.u=3 else players[p].js.d=2
+     if(oddball.y<players[p].y) then
+      if(rnd()>0.25) players[p].js.u=2
      else
-      if(rnd()>0.25) players[p].js.d=3 else players[p].js.u=2
+      if(rnd()>0.25) players[p].js.d=2
      end
     end
    else
@@ -1301,9 +1310,10 @@ function ai_control(p)
      players[p].js.d=5 players[p].js.u=nil
     end   
    end
+   global5=newyproj
+   global6=distance
   else
    -- near field
-   printh("near field")
    if(rnd()>0.74) then --tend to run for it
     players[p].js[forwards]=2
    elseif(rnd()>0.83) then
@@ -1318,11 +1328,39 @@ function ai_control(p)
    if(distance>3.1*abs(oddball.dx) and distance<4.1*abs(oddball.dx)) then
     if(gap<12) players[p].js.o=3
    end
+   
+   global5=yprojection
+   global6=distance
 
   end
   
  end
 end
+
+function draw_joystick(num)
+ local x,y
+ if(num==1) x=stadium_field_left+stadium_field_goalzonewidth/2 else x=stadium_field_right-2.5*stadium_field_goalzonewidth
+ y=stadium_field_top-10
+
+
+ local diam=2
+
+ rectfill(x,y,x+diam*16,y+diam*8,5)
+ rect(x,y,x+diam*16,y+diam*8,15)
+ 
+ if(players[num].js.l) circfill(x+diam*1.5,y+diam*4,diam,8)
+ circ(x+diam*1.5,y+diam*4,diam,15)
+ if(players[num].js.r) circfill(x+diam*4.5,y+diam*4,diam,8)
+ circ(x+diam*4.5,y+diam*4,diam,15)
+ if(players[num].js.u) circfill(x+diam*3,y+diam*2,diam,8)
+ circ(x+diam*3,y+diam*2,diam,15)
+ if(players[num].js.d) circfill(x+diam*3,y+diam*6,diam,8)
+ circ(x+diam*3,y+diam*6,diam,15)
+ 
+
+end
+
+
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000888800002220000000000000088000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000fff000001ff0000084000000044000000008800000000000000000
