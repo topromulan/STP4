@@ -578,7 +578,10 @@ function game_update()
       or (players[1].ai and players[2].ai and rnd()<0.05)
      )
     )
-     and not (players[1].score+players[2].score==0)
+     and (
+      players[1].ai and players[2].ai
+      or not (players[1].score+players[2].score==0)
+    )
       then
     players[p].js.o=5+flr(rnd(20))
    end
