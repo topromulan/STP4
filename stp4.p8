@@ -8,16 +8,12 @@ __lua__
 function _init()
  screen={}
  do_intro()
- debug=true
+ debug=false
 end
 
 function _draw()
  screen.draw()
  
- if(global6) line(players[2].x-global6,global5,127,global5,14)
- pset(global7,global8,8)
- if(global6) line(players[2].x-3,players[2].y,players[2].x+3,players[2].y,15)
-
  if(debug) then
   local x1,y1,x2,y2,clr
   x1=65 y1=56
@@ -661,8 +657,6 @@ function game_update()
  num=oddball.approaching_player
  adjustedx=oddball.x+flr(3.5+rnd())
  adjustedy=oddball.y+flr(3.5+rnd())
- global7=adjustedx
- global8=adjustedy
  if(num==1) shieldx=players[1].x+5 else shieldx=players[2].x+2
  
  if(abs(adjustedx-shieldx)<3) then
@@ -1257,27 +1251,30 @@ function ai_control(p)
  local height=bottom-top
  local direction=oddball.dx/abs(oddball.dx)
  local backwards,forwards
-  if(p==1) backwards="l" else backwards="r"
-  if(p==1) forwards="r" else forwards="l"
+ if(p==1) then
+  backwards="l" forwards="r"
+ else
+  backwards="r" forwards="l"
+ end
  local coming=true if(p!=oddball.approaching_player) coming=false
  if(oddball.upforgrabs or players[p%2+1].holding or not coming) then
   --amble toward midfield
-  if(players[p].y<midfield-2 and rnd()<0.15) players[p].js["d"]=2
-  if(players[p].y>midfield+2 and rnd()<0.15) players[p].js["u"]=2
-  if(players[p].x<midzone-1+rnd(2)) players[p].js.r=1
-  if(players[p].x>midzone+1-rnd(2)) players[p].js.l=1
+  if(players[p].y<midfield-2 and rnd()<0.15) players[p].js["d"]=3
+  if(players[p].y>midfield+2 and rnd()<0.15) players[p].js["u"]=3
+  if(players[p].x<midzone-1+rnd(2) and not players[p].js.l) players[p].js.r=1
+  if(players[p].x>midzone+1-rnd(2) and not players[p].js.r) players[p].js.l=1
   players[p].thinking=nil
  else
   local yprojection=4+oddball.y+slope[1]*(distance/abs(slope[2]))
   if(distance>ai_far_field) then
    --sizing it up faraway
    if(rnd()>0.94) then --tend to back up
-    players[p].js[backwards]=1
+    players[p].js[backwards]=flr(rnd(3))
    elseif(rnd()>0.98) then
-    players[p].js[forwards]=1
+    players[p].js[forwards]=flr(rnd(2))
    end
    if(not players[p].thinking) then
-    players[p].thinking=15+flr(rnd(7.5))
+    players[p].thinking=5+flr(rnd(7.5))
    elseif(players[p].thinking>0) then
     players[p].thinking-=1
     if(not (players[p].js.u or players[p].js.d)) then
@@ -1313,18 +1310,21 @@ function ai_control(p)
      players[p].js.d=5 players[p].js.u=nil
     end   
    end
-   global5=newyproj
-   global6=distance
   else
    -- near field
-   if(rnd()>0.74) then --tend to run for it
-    players[p].js[forwards]=2
-   elseif(rnd()>0.83) then
-    players[p].js[backwards]=1
+   if(gap>3 and distance<10) then
+    players[p].js[forwards]=nil
+    players[p].js[backwards]=2
+   else
+    if(rnd()>0.74) then --tend to run for it
+     players[p].js[forwards]=2
+    elseif(rnd()>0.83) then
+     players[p].js[backwards]=1
+    end    
    end
    if(players[p].y>yprojection+1) then
     players[p].js.u=2
-   elseif(players[p].y<yprojection-1) then
+   elseif(players[p].y<yprojection-4) then
     players[p].js.d=2
    end
 
@@ -1332,9 +1332,6 @@ function ai_control(p)
     if(gap<12) players[p].js.o=3
    end
    
-   global5=yprojection
-   global6=distance
-
   end
   
  end
@@ -1343,13 +1340,12 @@ end
 function draw_joystick(num)
  local x,y
  if(num==1) x=stadium_field_left+stadium_field_goalzonewidth/2 else x=stadium_field_right-2.5*stadium_field_goalzonewidth
- y=stadium_field_top-10
-
+ y=stadium_field_top-15
 
  local diam=2
 
- rectfill(x,y,x+diam*16,y+diam*8,5)
- rect(x,y,x+diam*16,y+diam*8,15)
+ rectfill(x,y,x+diam*14,y+diam*8,5)
+ rect(x,y,x+diam*14,y+diam*8,15)
  
  if(players[num].js.l) circfill(x+diam*1.5,y+diam*4,diam,8)
  circ(x+diam*1.5,y+diam*4,diam,15)
@@ -1359,8 +1355,10 @@ function draw_joystick(num)
  circ(x+diam*3,y+diam*2,diam,15)
  if(players[num].js.d) circfill(x+diam*3,y+diam*6,diam,8)
  circ(x+diam*3,y+diam*6,diam,15)
- 
-
+ if(players[num].js.o) circfill(x+diam*9,y+diam*5,diam,8)
+ circ(x+diam*9,y+diam*5,diam,15)
+ if(players[num].js.x) circfill(x+diam*12,y+diam*5,diam,8)
+ circ(x+diam*12,y+diam*5,diam,15)
 end
 
 
