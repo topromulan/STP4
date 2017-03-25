@@ -34,12 +34,13 @@ function _draw()
     ) then
      print("??",players[p].x+1,players[p].y+5,7)
     end
+--    print(flr(players[p].dx*10),players[p].x-5,players[p].y+1,14)
+--    print(flr(players[p].dy*10),players[p].x-5,players[p].y+7,14)
    end 
   end
 
   draw_joystick(1)
   draw_joystick(2)
-      
  end
 end
 
@@ -632,8 +633,8 @@ function game_update()
   if(newbtn("x",p)) then
    oddball.x-=oddball.dx
    oddball.y-=oddball.dy
-   oddball.x+=players[p].dx
-   oddball.y+=players[p].dy
+   oddball.x+=1.3*players[p].dx
+   oddball.y+=1.5*players[p].dy
   end
  end
 
@@ -1225,6 +1226,15 @@ function newbtn_mgmt()
    end
   end
  end
+
+ if(players[p]) then --??
+  if(players[p].js.l and players[p].js.r) then
+   if(players[p].js.l>players[p].js.r) players[p].js.r=nil else players[p].js.r=nil
+  end
+  if(players[p].js.u and players[p].js.d) then
+   if(players[p].js.u>players[p].js.d) players[p].js.d=nil else players[p].js.u=nil
+  end
+ end
 end
 
 function newbtn(b,p)
@@ -1244,7 +1254,6 @@ function ai_control(p)
  local midzone if(p==1) midzone=stadium_field_left+4 else midzone=stadium_field_right-10
  local distance=abs(players[p].x-oddball.x) if(p==2) distance-=4
  if(p==2) distance+=3 else distance-=4
- local gap=abs(players[p].y-oddball.y)
  local slope={oddball.dy*(0.95+rnd(0.04)),oddball.dx*(0.9+rnd(0.09))}
  slope.a=slope[1]/slope[2]
  local top=stadium_field_top local bottom=stadium_field_bottom
@@ -1261,11 +1270,12 @@ function ai_control(p)
   --amble toward midfield
   if(players[p].y<midfield-2 and rnd()<0.15) players[p].js["d"]=3
   if(players[p].y>midfield+2 and rnd()<0.15) players[p].js["u"]=3
-  if(players[p].x<midzone-1+rnd(2) and not players[p].js.l) players[p].js.r=1
-  if(players[p].x>midzone+1-rnd(2) and not players[p].js.r) players[p].js.l=1
+  if(players[p].x<midzone-1+rnd(2) and not players[p].js.l) players[p].js.r=2
+  if(players[p].x>midzone+1-rnd(2) and not players[p].js.r) players[p].js.l=2
   players[p].thinking=nil
  else
-  local yprojection=4+oddball.y+slope[1]*(distance/abs(slope[2]))
+  local yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
+  local gap=abs(players[p].y-yprojection)
   if(distance>ai_far_field) then
    --sizing it up faraway
    if(rnd()>0.94) then --tend to back up
@@ -1312,14 +1322,14 @@ function ai_control(p)
    end
   else
    -- near field
-   if(gap>3 and distance<10) then
+   if(gap>3 and distance<15) then
     players[p].js[forwards]=nil
     players[p].js[backwards]=2
    else
     if(rnd()>0.74) then --tend to run for it
-     players[p].js[forwards]=2
+     players[p].js[forwards]=3
     elseif(rnd()>0.83) then
-     players[p].js[backwards]=1
+     players[p].js[backwards]=2
     end    
    end
    if(players[p].y>yprojection+1) then
@@ -1338,29 +1348,41 @@ function ai_control(p)
 end
 
 function draw_joystick(num)
- local x,y
- if(num==1) x=stadium_field_left+stadium_field_goalzonewidth/2 else x=stadium_field_right-2.5*stadium_field_goalzonewidth
- y=stadium_field_top-15
+ local u,l
+ if(num==1) l=stadium_field_left+stadium_field_goalzonewidth/2 else l=stadium_field_right-2.5*stadium_field_goalzonewidth
+ u=stadium_field_top-15
 
  local diam=2
 
- rectfill(x,y,x+diam*14,y+diam*8,5)
- rect(x,y,x+diam*14,y+diam*8,15)
- 
- if(players[num].js.l) circfill(x+diam*1.5,y+diam*4,diam,8)
- circ(x+diam*1.5,y+diam*4,diam,15)
- if(players[num].js.r) circfill(x+diam*4.5,y+diam*4,diam,8)
- circ(x+diam*4.5,y+diam*4,diam,15)
- if(players[num].js.u) circfill(x+diam*3,y+diam*2,diam,8)
- circ(x+diam*3,y+diam*2,diam,15)
- if(players[num].js.d) circfill(x+diam*3,y+diam*6,diam,8)
- circ(x+diam*3,y+diam*6,diam,15)
- if(players[num].js.o) circfill(x+diam*9,y+diam*5,diam,8)
- circ(x+diam*9,y+diam*5,diam,15)
- if(players[num].js.x) circfill(x+diam*12,y+diam*5,diam,8)
- circ(x+diam*12,y+diam*5,diam,15)
-end
+ rectfill(l,u,l+diam*14,u+diam*8,5)
+ rect(l,u,l+diam*14,u+diam*8,15)
 
+ local x,y
+
+ x=l+diam*1.5 y=u+diam*4
+ if(players[num].js.l) circfill(x,y,diam,8)
+ circ(x,y,diam,7)
+
+ x=l+diam*4.5 y=u+diam*4
+ if(players[num].js.r) circfill(x,y,diam,8)
+ circ(x,y,diam,7)
+
+ x=l+diam*3 y=u+diam*2
+ if(players[num].js.u) circfill(x,y,diam,8)
+ circ(x,y,diam,7)
+
+ x=l+diam*3 y=u+diam*6
+ if(players[num].js.d) circfill(x,y,diam,8)
+ circ(x,y,diam,7)
+
+ x=l+diam*9 y=u+diam*5
+ if(players[num].js.o) circfill(x,y,diam,8)
+ circ(x,y,diam,7)
+
+ x=l+diam*12 y=u+diam*5
+ if(players[num].js.x) circfill(x,y,diam,8)
+ circ(x,y,diam,7)
+end
 
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000888800002220000000000000088000000000000000000000000000
