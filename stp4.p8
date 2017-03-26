@@ -8,46 +8,18 @@ __lua__
 function _init()
  screen={}
  do_intro()
- debug=false
+ debug=true
 end
 
 function _draw()
  screen.draw()
  
- if(debug) then
-  local x1,y1,x2,y2,clr
-  x1=65 y1=56
-  x1=oddball.x+4
-  y1=oddball.y+4
-  clr=10
-  
-  x2=x1+oddball.dx*10
-  y2=y1+oddball.dy*10
- 
-  line(x1,y1,x2,y2,clr)
-  
-  if(debug) then 
-   for p=1,2 do
-    if(players[p].ai and 
-     players[p].thinking
-     and players[p].thinking>0
-    ) then
-     print("??",players[p].x+1,players[p].y+5,7)
-    end
---    print(flr(players[p].dx*10),players[p].x-5,players[p].y+1,14)
---    print(flr(players[p].dy*10),players[p].x-5,players[p].y+7,14)
-   end 
-  end
-
-  draw_joystick(1)
-  draw_joystick(2)
- end
 end
 
 function _update()
   cycles+=1
 
- if(cycles%30==0) printh("")
+ if(cycles%30==0 and debug) printh("")
   
   --fix bug when it wraps
   if(cycles<0) then
@@ -659,7 +631,7 @@ function game_update()
  adjustedx=oddball.x+flr(3.5+rnd())
  adjustedy=oddball.y+flr(3.5+rnd())
  if(num==1) shieldx=players[1].x+5 else shieldx=players[2].x+2
- 
+
  if(abs(adjustedx-shieldx)<3) then
   --check for paddle impact
   local shieldhity1,shieldhity2
@@ -698,8 +670,8 @@ function game_update()
    else
     oddball.dx+=(0.05+rnd(0.05))*players[oddball.approaching_player].dx
    end
-   local lowspeed=0.888
-   local highspeed=5.0
+   local lowspeed=0.988
+   local highspeed=4.2
    if(abs(oddball.dx)<lowspeed) oddball.dx=lowspeed*(oddball.dx/abs(oddball.dx))
    if(abs(oddball.dx)>highspeed) oddball.dx=highspeed*(oddball.dx/abs(oddball.dx))
    oddball.dy+=0.45*players[oddball.approaching_player].dy
@@ -1275,7 +1247,7 @@ function ai_control(p)
   players[p].thinking=nil
  else
   local yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
-  local gap=abs(players[p].y-yprojection)
+  local gap=abs(players[p].y-yprojection-1)
   if(distance>ai_far_field) then
    --sizing it up faraway
    if(rnd()>0.94) then --tend to back up
@@ -1324,7 +1296,7 @@ function ai_control(p)
    -- near field
    local nearyproj=yprojection
    if(yprojection<stadium_field_top-1 or yprojection>stadium_field_bottom+1) nearyproj=midfield
-   if(gap>3 and distance<15) then
+   if(gap>2 and distance<15) then
     players[p].js[forwards]=nil
     players[p].js[backwards]=2
    else
@@ -1341,10 +1313,11 @@ function ai_control(p)
    end
 
    if(distance>7*abs(oddball.dx) and distance<8.1*abs(oddball.dx)) then
-    if(gap<4) then
+    printh("checking "..gap.." "..distance.." odx="..oddball.dx.." ox="..oddball.x)
+    if(gap<2 or oddball.dx<1.2) then
      players[p].js.o=10
+     printh("hit it!")
     end
-    printh("checking "..gap.." "..distance.." odx="..oddball.dx)
    end
    
   end
@@ -1352,42 +1325,6 @@ function ai_control(p)
  end
 end
 
-function draw_joystick(num)
- local u,l
- if(num==1) l=stadium_field_left+stadium_field_goalzonewidth/2 else l=stadium_field_right-2.5*stadium_field_goalzonewidth
- u=stadium_field_top-15
-
- local diam=2
-
- rectfill(l,u,l+diam*14,u+diam*8,5)
- rect(l,u,l+diam*14,u+diam*8,15)
-
- local x,y
-
- x=l+diam*1.5 y=u+diam*4
- if(players[num].js.l) circfill(x,y,diam,8)
- circ(x,y,diam,7)
-
- x=l+diam*4.5 y=u+diam*4
- if(players[num].js.r) circfill(x,y,diam,8)
- circ(x,y,diam,7)
-
- x=l+diam*3 y=u+diam*2
- if(players[num].js.u) circfill(x,y,diam,8)
- circ(x,y,diam,7)
-
- x=l+diam*3 y=u+diam*6
- if(players[num].js.d) circfill(x,y,diam,8)
- circ(x,y,diam,7)
-
- x=l+diam*9 y=u+diam*5
- if(players[num].js.o) circfill(x,y,diam,8)
- circ(x,y,diam,7)
-
- x=l+diam*12 y=u+diam*5
- if(players[num].js.x) circfill(x,y,diam,8)
- circ(x,y,diam,7)
-end
 
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000888800002220000000000000088000000000000000000000000000
