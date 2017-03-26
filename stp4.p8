@@ -717,7 +717,7 @@ function game_update()
    sfx(1+oddball.approaching_player)
    --glancing blows
    --extra oomph
-   if(newbtn("o",oddball.approaching_player)) then oddball.dx*=1.1 sfx(0) end   
+   if(not players[oddball.approaching_player].moving and newbtn("o",oddball.approaching_player)) then oddball.dx*=1.1 sfx(0) end   
   end
  end
 
