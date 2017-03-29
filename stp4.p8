@@ -1046,8 +1046,8 @@ end
 function party_update()
  party_time=cycles-party_started
 
- if(party_time>10 and
-   (
+ if(party_time>120
+   or party_time>10 and (
     (trophy_for_player1 and newbtn("x",1) and newbtn("o",1))
     or (trophy_for_player2 and newbtn("x",2) and newbtn("o",2))
   )) then do_intro() end
