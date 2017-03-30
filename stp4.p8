@@ -607,12 +607,14 @@ function game_update()
    if(newbtnp("o",p)) sfx(18,3)
   end
   
---  if(newbtnp("x",p)) players[1+p%2].score+=1
-  if(newbtn("x",p)) then
-   oddball.x-=oddball.dx
-   oddball.y-=oddball.dy
-   oddball.x+=1.3*players[p].dx
-   oddball.y+=1.5*players[p].dy
+  if(debug) then
+   if(newbtn("o",p) and newbtnp("x",p)) players[1+p%2].score+=1
+   if(newbtn("x",p)) then
+    oddball.x-=oddball.dx
+    oddball.y-=oddball.dy
+    oddball.x+=1.3*players[p].dx
+    oddball.y+=1.5*players[p].dy
+   end
   end
  end
 
@@ -1024,13 +1026,19 @@ function player_wins(num)
  screen.draw=party_draw
  party_started=cycles+1
 
+ local aicredit
  if(party_message==nil and num==1) then
-  party_message=players[1].name.." wins"
+  if(players[1].ai) aicredit=" (ai)" else ai=""
+  party_message=players[1].name..aicredit.." wins"
   plaque_color=8
  elseif(party_message==nil and num==2) then
-  party_message=players[2].name.." wins"
+  if(players[2].ai) aicredit=" (ai)" else ai=""
+  party_message=players[2].name..aicredit.." wins"
   plaque_color=2
  else
+  --this was an easter egg until
+  -- we took out direct deposit points
+  -- xxx add them back in as menuitem
   party_message="everybody wins!!"
   plaque_color=4
  end
@@ -1094,7 +1102,8 @@ function party_draw()
 
  local plaquexy={}
  plaquexy[1]=42-2*#party_message
- plaquexy[2]=40
+ if(plaquexy[1]<2) plaquexy[1]=3
+ plaquexy[2]=40-0.12*#party_message
  local tcolor
  if(party_time>38) then
   tcolor=15
@@ -1115,7 +1124,7 @@ function party_draw()
    px=128*(party_time/125)
    if(p==2) then px=128-px end --so player 2 comes from r
    py=100-party_time/20+50*sin(party_time/cycles)
-   sspr(sx,sy,8,8,px,py,24,24)
+   sspr(sx,sy,8,8,px,py,36+rnd(2),36+rnd(2))
   end
  end
 end
