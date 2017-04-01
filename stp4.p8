@@ -1351,10 +1351,8 @@ function ai_control(p)
    end
 
    if(distance>7*abs(oddball.dx) and distance<8.1*abs(oddball.dx)) then
-    printh("checking "..gap.." "..distance.." odx="..oddball.dx.." ox="..oddball.x)
     if(gap<2 or oddball.dx<1.2) then
      players[p].js.o=10
-     printh("hit it!")
     end
    end
    
