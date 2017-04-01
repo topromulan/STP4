@@ -546,8 +546,11 @@ function game_update()
  -- if(btnp(5)) then players[2].score += 1 end
 
  if(cycles>oddball.service_time) then
+  if(players[1].ai and players[2].ai) then
+   if(players[1].score>=9 or players[2].score>=9) do_intro()
+  end
   if(players[1].score>=9) then
-   player_wins(1) 
+   player_wins(1)
   end
   if(players[2].score>=9) then
    player_wins(2)
