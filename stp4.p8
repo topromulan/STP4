@@ -22,11 +22,15 @@ __lua__
 function _init()
  screen={}
  do_intro()
- debug=true
+ debug=false
 end
 
 function _draw()
  screen.draw()
+ 
+ if(debug) then
+  print("debug",5+99*(flr(cycles/3)%2),4+rnd(2.1)+(cycles/10)%10,7)
+ end
 end
 
 function _update()
@@ -96,7 +100,7 @@ function do_intro()
  screen.draw=intro_draw
 
  menuitem(1,"2-player game",play_2p)
- menuitem(2)
+ menuitem(2,"ai vs ai match",play_ai_only)
  menuitem(3)
 
  game_init()
@@ -106,6 +110,8 @@ function do_intro()
 end
 
 function intro_update()
+ newbtn_mgmt()
+ 
  if(intro_ending) then
   if(intro_ending_at==nil) then
    intro_ending_at=cycles+55
@@ -118,16 +124,18 @@ function intro_update()
   end
  end 
 
- if(btnp()!=0 and not intro_ending) intro_ending=true
  for p=1,2 do
-  if(btnp(4,players[p].js.num) or btnp(5,players[p].js.num)) then
-   if(players[p].ai) then
-    players[p].ai=false
-   else
-    intro_ending_at=cycles
-   end
+  if(newbtnp("o",p) or newbtnp("x",p)) then
+   -- take money and begin exit
+   if(players[p].ai) players[p].ai=false
+   if(not intro_ending) intro_ending=true
+   -- possibly exit quick
+   if(newbtn("o",p) and newbtn("x",p)) then
+    intro_ending_at=cycles+1
+   end   
   end
  end
+
 
  lx+=1
  if(lx>200) lx=-200
@@ -160,7 +168,6 @@ function intro_update()
  if(rnd()>0.985) ry+=rnd()-suby
 
  sound_effect_mgmt()
- newbtn_mgmt()
 end
 
 function intro_draw()
@@ -1218,7 +1225,7 @@ end
 function newbtn_mgmt()
  for p=1,2 do
   for b=0,5 do
-   if(players[p].ai) then
+   if(players[p].ai and screen.update==game_update and not debug) then
     if(players[p].js[newbtn_conv(b)]) then
      if(players[p].js[newbtn_conv(b)]>0) then
       players[p].js[newbtn_conv(b)]=players[p].js[newbtn_conv(b)]-1 --why not -=1 work (??)
@@ -1388,6 +1395,14 @@ function play_2p()
   players[p].ai=false
  end
  intro_ending=true
+end
+
+function play_ai_only()
+ for p=1,2 do
+  players[p].ai=true
+ end
+ intro_ending=true
+ intro_ending_at=cycles
 end
 
 __gfx__
