@@ -4,7 +4,21 @@ __lua__
 -- super turtle pong 4
 -- 2016-2017 macrowave
 -- https://github.com/topromulan/stp4
--- from dale and dahlia anderson.
+-- by timelime, professor nom, and timelime jr.
+
+-- €€
+-- –––––––––––––
+-- –warning: the following–
+-- –  spaghetti code may  –
+-- – contain meatballs or –
+-- –binary tree fragments,–
+-- –   and may have been  –
+-- –processed by a machine–
+-- –      that also       –
+-- –multi-processes nuts. –
+-- –––––––––––––
+-- €€
+
 function _init()
  screen={}
  do_intro()
@@ -13,7 +27,6 @@ end
 
 function _draw()
  screen.draw()
- 
 end
 
 function _update()
