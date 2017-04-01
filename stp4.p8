@@ -95,7 +95,7 @@ function do_intro()
  screen.update=intro_update
  screen.draw=intro_draw
 
- menuitem(1)
+ menuitem(1,"2-player game",play_2p)
  menuitem(2)
  menuitem(3)
 
@@ -1381,6 +1381,13 @@ function point_p(p)
  players[p].score+=1
  stadium_display_digit_heights[p]=5+p+rnd(4)
  sfx(19) sfx(flr(20+rnd(5)))
+end
+
+function play_2p()
+ for p=1,2 do
+  players[p].ai=false
+ end
+ intro_ending=true
 end
 
 __gfx__
