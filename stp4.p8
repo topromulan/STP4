@@ -21,7 +21,8 @@ __lua__
 
 function _init()
  do_intro()
- debug=false
+ debug=true
+ win=9
 end
 
 function _draw()
@@ -96,7 +97,7 @@ function do_intro()
 
  menuitem(1,"2-player game",play_2p)
  menuitem(2,"ai vs ai match",play_ai_only)
- menuitem(3) win=9
+ if(win==9) win_at_9() else win_at_2()
 
  game_init()
  newbtn_init()
@@ -1413,6 +1414,15 @@ function play_ai_only()
  intro_ending_at=cycles
 end
 
+function win_at_2()
+ win=2
+ menuitem(3,"classic 9-point game",win_at_9)
+end
+
+function win_at_9()
+ win=9
+ menuitem(3,"best 2 out of 3",win_at_2)
+end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000888800002220000000000000088000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000fff000001ff0000084000000044000000008800000000000000000
