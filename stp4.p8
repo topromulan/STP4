@@ -580,7 +580,8 @@ function game_update()
       or not (players[1].score+players[2].score==0)
     )
       then
-    players[p].js.o=5+flr(rnd(20))
+    players[p].js.o=15+flr(rnd(20))
+    players[p].js.pflags["o"]=false
    end
      
 --   players[p].js.l=nil
@@ -1205,6 +1206,15 @@ function newbtn_init()
    else
     players[p].js[newbtn_conv(b)]=nil
    end
+   --it will only be used if ai
+   --but why check. because the
+   --joystick wrapper ai vs
+   --human is backwards, btnp
+   --uses this hack for the
+   --case where it is important
+   --that the ai btnp like for
+   --the windup sound.
+   players[p].js.pflags={}
   end
  end
 end
@@ -1231,6 +1241,10 @@ function newbtn_mgmt()
       players[p].js[newbtn_conv(b)]=nil
      end
     end
+    for k,v in pairs(players[p].js.pflags) do
+     if(v==true) v=nil
+     if(v==false) players[p].js.pflags[k]=true
+    end
    else
     local m=newbtn_conv(b)
     if(btn(b,players[p].js.num)) then
@@ -1254,6 +1268,7 @@ function newbtn_mgmt()
    if(players[p].js.u>players[p].js.d) players[p].js.d=nil else players[p].js.u=nil
   end
  end
+ 
 end
 
 function newbtn(b,p)
@@ -1262,14 +1277,9 @@ function newbtn(b,p)
 end
 
 function newbtnp(b,p)
--- if(newbtn(b,p)) then
---  if(players[p].js.pflags[b]
---    and cycles==players[p].js.pflags[b]) then
---   return true
---  end
--- end
  if(newbtn(b,p)) then
   if(players[p].js[b]==0) return true
+  if(players[p].js.pflags[b]) return true
  end 
 end
 
