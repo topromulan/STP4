@@ -20,13 +20,12 @@ __lua__
 -- €€
 
 function _init()
- screen={}
  do_intro()
  debug=false
 end
 
 function _draw()
- screen.draw()
+ draw_mode()
  
  if(debug) then
   print("debug",5+99*(flr(cycles/3)%2),4+rnd(2.1)+(cycles/10)%10,7)
@@ -44,7 +43,7 @@ function _update()
    if(oddball!=nil) oddball.service_time=0 
   end
 
-  screen.update()
+  update_mode()
   
 end
 
@@ -67,10 +66,6 @@ function do_intro()
 
  --
  
- stplogo={}
- stplogos={}
- stplogot={}
- stplogop={}
  stplogoclr1=7
  stplogoclr2=5
  stplogoclr=stplogoclr1
@@ -96,12 +91,12 @@ function do_intro()
   end
  end
  
- screen.update=intro_update
- screen.draw=intro_draw
+ update_mode=intro_update
+ draw_mode=intro_draw
 
  menuitem(1,"2-player game",play_2p)
  menuitem(2,"ai vs ai match",play_ai_only)
- menuitem(3)
+ menuitem(3) win=9
 
  game_init()
  newbtn_init()
@@ -290,8 +285,8 @@ end
 
 function play_game()
 -- game_init() called during intro
- screen.update=game_update
- screen.draw=game_draw
+ update_mode=game_update
+ draw_mode=game_draw
  
  menuitem(1,"direct deposit:")
  menuitem(2,"+1 "..players[1].name,point_p1)
@@ -547,12 +542,12 @@ function game_update()
 
  if(cycles>oddball.service_time) then
   if(players[1].ai and players[2].ai) then
-   if(players[1].score>=9 or players[2].score>=9) do_intro()
+   if(players[1].score>=win or players[2].score>=win) do_intro()
   end
-  if(players[1].score>=9) then
+  if(players[1].score>=win) then
    player_wins(1)
   end
-  if(players[2].score>=9) then
+  if(players[2].score>=win) then
    player_wins(2)
   end
  end
@@ -1017,7 +1012,7 @@ function draw_floor(middle,top,height)
   for j=l+2,r-2,4 do
    local c=stadium_floor_color2
    --blink red when win!
-   if((players[1].score==9 or players[2].score==9) and flr(cycles/15)%2==0) then
+   if((players[1].score>=win or players[2].score>=win) and flr(cycles/15)%2==0) then
     c=8
    end
    line(j,h,j+1,h,c)
@@ -1055,8 +1050,8 @@ function player_wins(num)
  elseif(num==2) then
   trophy_for_player2=true
  end
- screen.update=party_update
- screen.draw=party_draw
+ update_mode=party_update
+ draw_mode=party_draw
  party_started=cycles+1
 
  local aicredit
@@ -1228,7 +1223,7 @@ end
 function newbtn_mgmt()
  for p=1,2 do
   for b=0,5 do
-   if(players[p].ai and screen.update==game_update and not debug) then
+   if(players[p].ai and update_mode==game_update and not debug) then
     if(players[p].js[newbtn_conv(b)]) then
      if(players[p].js[newbtn_conv(b)]>0) then
       players[p].js[newbtn_conv(b)]=players[p].js[newbtn_conv(b)]-1 --why not -=1 work (??)
