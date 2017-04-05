@@ -21,7 +21,7 @@ __lua__
 
 function _init()
  do_intro()
- debug=false
+ debug=true
  win_at_9()
 end
 
@@ -31,9 +31,10 @@ function _draw()
  if(debug) then
   print("debug",5+99*(flr(cycles/3)%2),4+rnd(2.1)+(cycles/10)%10,7)
  end
+
 end
 
-function _update60()
+function _update()
   cycles+=1
 
  if(cycles%30==0 and debug) printh("")
@@ -169,10 +170,9 @@ end
 function intro_draw()
  rectfill(0,0,127,102,5)
 
- local s,sx,sy
- local rd=30
- local ld=32+sin(lx/1000)*20
- local ratio=ld/rd
+ rd=30
+ ld=32+sin(lx/1000)*20
+ ratio=ld/rd
  circfill(lx,ly,ld,lcolor)
  s=players[1].sprites[1+flr(cycles/5)%7]
  sx=s*8%128
@@ -236,15 +236,15 @@ function intro_draw()
  if(rnd()<0.975) print("live",79+rnd(3),104+rnd(3),8)
  if(flr(cycles/25)%2!=0) print("broadcasting live",28,105,11)
 
- if(cycles<15) print("from turtle pong stadium",xl,yt,letter)
+ if(cycles<15) print("from "..stadium_name,xl,yt,letter)
 
  
  
  for y=flr(rainfloor),rainline,-1 do
   for x=xl-4,xr+4 do
-   local above=pget(x,y-1)
-   local here=pget(x,y)
-   local result=here
+   above=pget(x,y-1)
+   here=pget(x,y)
+   result=here
    if(here==air) then
     if(water==above or wet==above) then
      result=water
@@ -282,7 +282,7 @@ function intro_draw()
  for y=rainline,rainfloor do
   for x=xl-5,xr+5 do
    if(cycles<13) then
-    local coord={x-1+rnd(3),y-1+rnd(3)}
+    coord={x-1+rnd(3),y-1+rnd(3)}
     if(pget(coord[1],coord[2])!=water) pset(coord[1],coord[2],0)
    end
   end
@@ -336,23 +336,19 @@ function game_init()
  players[1].winding_dir=1
  players[2].winding_dir=1
 
- local lnames={
-  {"red","red","red","rouge","rusty","ruddy","redder","rosy","ruby","russet","big red","beet red"},
-  {"ricky","ricky","ralf","rancid","remy","rebner","raggy","rose","ray","ruffguy","razor","ripple","rhine","roo","radagast"}
- }
- local rnames={
-  {"purple","purple","purplish","p.","plum","perse","p-diddy"},
-  {"pete","pete","page","paddy","padma","price","pinky","peppy","po-po","patty","press","poof","perp","pixel"}
+ names={
+  { {"red","red","red","rouge","rusty","ruddy","redder","rosy","ruby","russet","big red","beet red"},
+    {"ricky","ricky","ralf","rancid","remy","rebner","raggy","rose","ray","ruffguy","razor","ripple","rhine","roo","radagast"} },
+  { {"purple","purple","purplish","p.","plum","perse","p-diddy"},
+    {"pete","pete","page","paddy","padma","price","pinky","peppy","po-po","patty","press","poof","perp","pixel"} },
  }
 
- local too_long="radagast rebner"
- players[1].name=too_long players[2].name=too_long
- while(#players[1].name>=#too_long) do
-  players[1].name=lnames[1][1+flr(rnd(#lnames[1]))].." "..lnames[2][1+flr(rnd(#lnames[2]))]
+ for p=1,2 do
+  players[p].name="radagast rebner"
+  while(#players[p].name>=15) do
+   players[p].name=names[p][1][1+flr(rnd(#names[p][1]))].." "..names[p][2][1+flr(rnd(#names[p][2]))]
+  end
  end
- while(#players[2].name>=#too_long) do
-  players[2].name=rnames[1][1+flr(rnd(#rnames[1]))].." "..rnames[2][1+flr(rnd(#rnames[2]))]
- end 
 
  trophy_for_player1=false
  trophy_for_player2=false
@@ -363,15 +359,17 @@ function game_init()
 
  stadium_audience={}
 
+ stadium_name="turtle pong stadium"
+
  stadium_floor_top=25
  stadium_floor_height=32
  --regular floor
- local rugcolorpairs={{2,14,false},{3,4,false},{1,13,false},{0,5,false},{12,13,false},{12,13,true}}
- local i=1+flr(rnd(#rugcolorpairs))
+ rugcolorpairs={{2,14,false},{3,4,false},{1,13,false},{0,5,false},{12,13,false},{12,13,true}}
+ rug=rugcolorpairs[1+flr(rnd(#rugcolorpairs))]
 
- stadium_floor_color1=rugcolorpairs[i][1]
- stadium_floor_color2=rugcolorpairs[i][2]
- stadium_floor_flicker=rugcolorpairs[i][3]
+ stadium_floor_color1=rug[1]
+ stadium_floor_color2=rug[2]
+ stadium_floor_flicker=rug[3]
 
  stadium_seats={
   {8,25},{21,24},{34,23},{47,22},
@@ -384,7 +382,7 @@ function game_init()
   {19,43},{33,42},{47,41},
   {61,41},{75,42},{89,43},
  }
- 
+
  stadium_field_left=5
  stadium_field_right=122
  stadium_field_top=58
@@ -476,7 +474,7 @@ function player_service(num)
    oddball.dy=0.1-rnd(0.2)
    --oddball.dx*=0.55 --for serve testing
    oddball.dx+=(0.1+rnd(0.1))*players[num].dx
-   local reldx=players[num].dx
+   reldx=players[num].dx
    if(num==2) reldx*=-1
    if(reldx<-0.65) then
     oddball.dy+=3*players[num].dy
@@ -514,36 +512,35 @@ function player_windup(num)
 end
 
 function draw_windup()
- local draw_it,num,clr
+
  if(players[1].winding_up) then
-  draw_it=true num=1 clr=8
+  draw_it=true draw_num=1 draw_clr=8
  elseif(players[2].winding_up) then
-  draw_it=true num=2 clr=2
+  draw_it=true draw_num=2 draw_clr=2
  else
   draw_it=false
  end
  
- 
- local x1,y1,x2,y2,middle,width,meter_left,meter_right
- middle=0.5*(stadium_field_left+stadium_field_right)
- width=10
- x1=middle-width/2 x2=middle+width/2 
- y1=stadium_field_bottom-1 y2=127
+ windup_width=10
+ wind_x1=stadium_field_middle-windup_width/2
+ wind_x2=stadium_field_middle+windup_width/2 
+ wind_y1=stadium_field_bottom-1
+ wind_y2=127
 
  if(draw_it) then
-  if(num==1) then
-   meter_left=x1+1
-   meter_right=x1+(width-1)*(players[num].serve_power/10)
+  if(wind_num==1) then
+   meter_left=wind_x1+1
+   meter_right=wind_x1+(windup_width-1)*(players[draw_num].serve_power/10)
   else
-   meter_left=x2-(width-1)*(players[num].serve_power/10)
-   meter_right=x2-1
+   meter_left=wind_x2-(windup_width-1)*(players[draw_num].serve_power/10)
+   meter_right=wind_x2-1
   end
-  rect(x1,y1,x2,y2,15)
-  rectfill(x1+1,y1+1,x2-1,y2-1,14)
-  rectfill(meter_left,y1+1,meter_right,y2-1,clr)
+  rect(wind_x1,wind_y1,wind_x2,wind_y2,15)
+  rectfill(wind_x1+1,wind_y1+1,wind_x2-1,wind_y2-1,14)
+  rectfill(meter_left,wind_y1+1,meter_right,wind_y2-1,clr)
  else
-  rectfill(x1,stadium_field_bottom+1,x2,126,5)
-  print("vs",middle-3,122,15)
+  rectfill(wind_x1,stadium_field_bottom+1,wind_x2,126,5)
+  print("vs",stadium_field_middle-3,122,15)
  end  
 end
 
@@ -566,9 +563,9 @@ function game_update()
  end
  
  if(stadium_floor_flicker) then
-  local t=stadium_floor_color1
+  super_important_t=stadium_floor_color1
   stadium_floor_color1=stadium_floor_color2
-  stadium_floor_color2=t
+  stadium_floor_color2=super_important_t
  end
 
  
@@ -619,8 +616,7 @@ function game_update()
    if(rnd()<players[p].dx) players[p].dx*=-1
   end 
    
-  local threshold=0.25
-  if(p==2) threshold=0.005
+  threshold=0.25 if(p==2) threshold=0.005
   if(players[p].dx<threshold and players[p].dx>-1*threshold
     and players[p].dy<threshold and players[p].dy>-1*threshold) then
    players[p].moving=false
@@ -674,36 +670,33 @@ function game_update()
   oddball.y+=oddball.dy
  end
 
- local slope=oddball.dy/oddball.dx if(oddball.approaching_player==2) slope*=-1
- local num,offset,adjustedx,adjustedy
-
- num=oddball.approaching_player
+ slope_a_dope=oddball.dy/oddball.dx if(oddball.approaching_player==2) slope_a_dope*=-1
+ dope_num=oddball.approaching_player
  adjustedx=oddball.x+flr(3.5+rnd())
  adjustedy=oddball.y+flr(3.5+rnd())
- if(num==1) shieldx=players[1].x+5 else shieldx=players[2].x+2
+ if(dope_num==1) shieldx=players[1].x+5 else shieldx=players[2].x+2
 
  if(abs(adjustedx-shieldx)<3) then
   --check for paddle impact
-  local shieldhity1,shieldhity2
 
-  shieldhity1=players[num].y-5
-  shieldhity2=players[num].y+8
+  shieldhity1=players[dope_num].y-5
+  shieldhity2=players[dope_num].y+8
   
-  offset=flr(0.5+adjustedy-shieldhity1)
+  dope_offset=flr(0.5+adjustedy-shieldhity1)
 
   if(adjustedy>=shieldhity1 and adjustedy<=shieldhity2) then
    if(not players[oddball.approaching_player].dancing) then
     --collision
     oddball.dx*=-1
-    if(offset<2.1) then
+    if(dope_offset<2.1) then
      oddball.dy-=1.8+rnd(0.4)
-    elseif(offset<4.1) then
+    elseif(dope_offset<4.1) then
      oddball.dy-=0.25
      oddball.dy*=1.2
-    elseif(offset<8) then
+    elseif(dope_offset<8) then
      oddball.dy*=0.5
      oddball.dy+=-0.2+rnd(0.4)
-    elseif(offset<10) then
+    elseif(dope_offset<10) then
      oddball.dy+=0.25
      oddball.dy*=1.2
     else
@@ -720,17 +713,17 @@ function game_update()
    else
     oddball.dx+=(0.05+rnd(0.05))*players[oddball.approaching_player].dx
    end
-   local lowspeed=0.988
-   local highspeed=4.2
+   lowspeed=0.988
+   highspeed=4.2
    if(abs(oddball.dx)<lowspeed) oddball.dx=lowspeed*(oddball.dx/abs(oddball.dx))
    if(abs(oddball.dx)>highspeed) oddball.dx=highspeed*(oddball.dx/abs(oddball.dx))
    oddball.dy+=0.45*players[oddball.approaching_player].dy
 
    shuffle_audience_timing()
    
-   if(slope>0.15 or offset>9.9) then
+   if(slope_a_dope>0.15 or dope_offset>9.9) then
     set_player_pose(oddball.approaching_player,5)
-   elseif(slope<-0.15 or offset<2.1) then
+   elseif(slope_a_dope<-0.15 or dope_offset<2.1) then
     set_player_pose(oddball.approaching_player,4)
    else
     set_player_pose(oddball.approaching_player,3)
@@ -745,25 +738,23 @@ function game_update()
 
  oddball.approaching_player=1 if(oddball.dx > 0) then oddball.approaching_player=2 end 
 
- local out_of_bounds,diff,effective_top,effective_bottom
- local yadjust={0,-6}
+ yadjust={0,-6}
  effective_top=stadium_field_top+yadjust[1]
  effective_bottom=stadium_field_bottom+yadjust[2]
- diff=effective_top-oddball.y
- if(diff>0) then
+ dope_diff=effective_top-oddball.y
+ local out_of_bounds --shorter than out_of_bounds=false!
+ if(dope_diff>0) then
   out_of_bounds=true
-  oddball.y=effective_top+diff
+  oddball.y=effective_top+dope_diff
  end
- diff=oddball.y-effective_bottom
- if(diff>0) then
+ dope_diff=oddball.y-effective_bottom
+ if(dope_diff>0) then
   out_of_bounds=true
-  oddball.y=effective_bottom-diff
+  oddball.y=effective_bottom-dope_diff
  end
  if(out_of_bounds) oddball.dy*=-0.75-rnd(0.2)
- 
 
  --score!! goal!!
- local scoring_player
  if(oddball.x<stadium_field_left-4 or oddball.x>stadium_field_right-3) then
   if(oddball.x>stadium_field_middle) then
    scoring_player=1
@@ -808,18 +799,18 @@ function game_draw()
  cls()
  rect(0,0,127,127,5) --———
 
- local msg="turtle pong stadium"
- local clr=15
- if(rnd()<0.2 and cycles%2==0) clr=7
- print(msg,64-2*#msg,2,clr)
+ msgv=stadium_name
+ clrv=15
+ if(rnd()<0.2 and cycles%2==0) clrv=7
+ print(msgv,64-2*#msgv,2,clrv)
 
  draw_field() 
  draw_scoreboard()
  draw_floor(stadium_field_middle,stadium_floor_top,stadium_floor_height)
  draw_names()
  
- local exitx=(stadium_display_left+stadium_display_right)/2-12
- local exity=stadium_display_bottom-25
+ exitx=(stadium_display_left+stadium_display_right)/2-12
+ exity=stadium_display_bottom-25
  draw_door(exitx,exity+3) --just adding a little length
  draw_door(exitx,exity)
 
@@ -830,22 +821,21 @@ function game_draw()
  draw_windup()
 
  if(players[1].score==0 and players[2].score==0) then
-  local msg,clr
-  clr=(flr(cycles/25)%2+5)
+  clrv=(flr(cycles/25)%2+5)
   if(oddball.upforgrabs and cycles-intro_ending_at>125) then
    help_flag=true
-   msg="(hold Ž to serve)"
-   print(msg,stadium_field_middle-2*#msg,stadium_field_bottom-15,clr)   
+   msgv="(hold Ž to serve)"
+   print(msgv,stadium_field_middle-2*#msgv,stadium_field_bottom-15,clrv)   
   end
   if(help_flag and (players[1].holding or players[2].holding) and cycles-intro_ending_at>145) then
-   msg="(let that turtle fly!))"
-   print(msg,stadium_field_middle-2*#msg,stadium_field_bottom-22,clr)
-   msg="     watch | that meter"
-   print(msg,stadium_field_middle-2*#msg,stadium_field_bottom-13,clr)
-   msg="|"
-   print(msg,stadium_field_middle-2*#msg,stadium_field_bottom-8,cycles%16+rnd(3))
-   msg="v"
-   print(msg,stadium_field_middle-2*#msg,stadium_field_bottom-6,4+cycles%5)
+   msgv="(let that turtle fly!))"
+   print(msgv,stadium_field_middle-2*#msgv,stadium_field_bottom-22,clrv)
+   msgv="     watch | that meter"
+   print(msgv,stadium_field_middle-2*#msgv,stadium_field_bottom-13,clrv)
+   msgv="|"
+   print(msgv,stadium_field_middle-2*#msgv,stadium_field_bottom-8,cycles%16+rnd(3))
+   msgv="v"
+   print(msgv,stadium_field_middle-2*#msgv,stadium_field_bottom-6,4+cycles%5)
    
    if(players[1].winding_up) then
     if(players[1].winding_dir>2) players[1].winding_dir=2
@@ -928,7 +918,7 @@ function draw_oddball()
 end
 
 function draw_scoreboard()
- local coords={}
+ coords={}
  coords[1]={}
  coords[2]={}
  coords[1].x=stadium_display_left+2
@@ -1012,19 +1002,18 @@ end
 
 function draw_floor(middle,top,height)
  for i=1,height do
-  local rad
   if(i<8) then
-   rad=15+i^2
-   if(rad>60) rad=62
+   the_rad=15+i^2
+   if(the_rad>60) the_rad=62
   else
-   rad=60-1.5*(i%3)-i/10
+   the_rad=60-1.5*(i%3)-i/10
   end
-  local l=middle-rad
-  local r=middle+rad
-  local h=top+i
+  l=middle-the_rad
+  r=middle+the_rad
+  h=top+i
   line(l,h,r,h,stadium_floor_color1)
   for j=l+2,r-2,4 do
-   local c=stadium_floor_color2
+   c=stadium_floor_color2
    --blink red when win!
    if((players[1].score>=win or players[2].score>=win) and flr(cycles/15)%2==0) then
     c=8
@@ -1035,9 +1024,9 @@ function draw_floor(middle,top,height)
 end
 
 function draw_door(exitx,exity)
- local ul_sprite=73
- local ulsx=(ul_sprite%16)*8
- local ulsy=(flr(ul_sprite/16)*8)
+ ul_sprite=73
+ ulsx=(ul_sprite%16)*8
+ ulsy=(flr(ul_sprite/16)*8)
 
  sspr(ulsx,ulsy,24,24,exitx,exity)
  print("exit",exitx+5,exity+5,15)
@@ -1046,12 +1035,12 @@ end
 
 function draw_audience()
  for seat=1,#stadium_seats do
-  local seatx=stadium_seats[seat][1]
-  local seaty=stadium_seats[seat][2]
+  seatx=stadium_seats[seat][1]
+  seaty=stadium_seats[seat][2]
   spr(6,seatx,seaty,2,2)
   --draw each audience member in 
   -- their seat, facing the ball
-  local fan_sprite=stadium_audience[seat].sprite
+  fan_sprite=stadium_audience[seat].sprite
   if(oddball.x < seatx+stadium_audience[seat].timing) fan_sprite-=16
   if(oddball.x > seatx+8+stadium_audience[seat].timing) fan_sprite+=16
   spr(fan_sprite,seatx+4,seaty+3)
@@ -1068,7 +1057,6 @@ function player_wins(num)
  draw_mode=party_draw
  party_started=cycles+1
 
- local aicredit
  if(party_message==nil and num==1) then
   if(players[1].ai) aicredit=" (ai)" else aicredit=""
   party_message=players[1].name..aicredit.." wins"
@@ -1085,7 +1073,7 @@ function player_wins(num)
  end
  music(0)
  party_update()
- local compliments={"’stellar’","first place","–electric–","…like a ninja…","epic","rad","“top notch“","™ zen-like ™","Žpico-riffic—"}
+ compliments={"’stellar’","first place","–electric–","…like a ninja…","epic","rad","“top notch“","™ zen-like ™","Žpico-riffic—"}
  adjective=compliments[1+flr(rnd(#compliments))]
 
  per=4+flr(rnd(3.5)) -- a mysterious global variable
@@ -1111,25 +1099,24 @@ function party_draw()
  draw_floor(80,65,63)
  draw_door(70,44)
  
- local p=1.1*(8+party_time/12)
+ party_p=1.1*(8+party_time/12)
 
  for i=1,#stadium_audience do
-  local z=stadium_audience[i].sprite+32
-  local row=1+flr(i/per)
-  local col=i%6
+  z=stadium_audience[i].sprite+32
+  row=1+flr(i/per)
+  col=i%6
 --  sspr(z*8%128,8*flr(z*8/128),8,8,
---   60+p-5*row+
---    (i%per)*((360-(10-row)*30)/p)
+--   60+party_p-5*row+
+--    (i%per)*((360-(10-row)*30)/party_p)
 --    , --x
---   59-p/12+row*(8-row),--y
---   20/p*(row*per),--w
---   20/p*(row*per),--h
+--   59-party_p/12+row*(8-row),--y
+--   20/party_p*(row*per),--w
+--   20/party_p*(row*per),--h
 --   ((cycles+flr(stadium_audience[i].timing))%3==0)--x flip
 --  )
  end
  party_drapes_draw()
 
- local clr1,clr2
  if(flr(cycles/3.1)%2==0) then
   clr1=4 clr2=9
  else
@@ -1141,11 +1128,10 @@ function party_draw()
  if(party_time>10) print("thanks for playing",10,15,clr1)
  if(party_time>20 and flr(cycles/20)%2==0) print("that was "..adjective.."!!",13,23,clr2)
 
- local plaquexy={}
+ plaquexy={}
  plaquexy[1]=42-2*#party_message
  if(plaquexy[1]<2) plaquexy[1]=3
  plaquexy[2]=40-0.12*#party_message
- local tcolor
  if(party_time>38) then
   tcolor=15
   if(party_time>42) rectfill(plaquexy[1],plaquexy[2],plaquexy[1]+2+4*#party_message,plaquexy[2]+8,plaque_color)
@@ -1155,32 +1141,30 @@ function party_draw()
 
  print(party_message,plaquexy[1]+2,plaquexy[2]+2,tcolor)
 
- for p=1,2 do
-  local s,sx,sy,px,py
-  if(p==1 and trophy_for_player1 or
-     p==2 and trophy_for_player2) then
-   s=players[p].sprites[1+cycles%6]
-   sx=s*8%128
-   sy=8*flr(s*8/128)
-   px=128*(party_time/125)
-   if(p==2) then px=128-px end --so player 2 comes from r
-   py=100-party_time/20+50*sin(party_time/cycles)
-   sspr(sx,sy,8,8,px,py,36+rnd(2),36+rnd(2))
+ for party_p=1,2 do
+  if(party_p==1 and trophy_for_player1 or
+     party_p==2 and trophy_for_player2) then
+   s1234=players[party_p].sprites[1+cycles%6]
+   sx1234=s1234*8%128
+   sy1234=8*flr(s1234*8/128)
+   px1234=128*(party_time/125)
+   if(party_p==2) then px1234=128-px1234 end --so player 2 comes from r
+   py1234=100-party_time/20+50*sin(party_time/cycles)
+   sspr(sx1234,sy1234,8,8,px1234,py1234,36+rnd(2),36+rnd(2))
   end
  end
 end
 
 function party_drapes_draw()
- local x,y
- for y=0,127 do
-  for x=0,127 do
-   if(y>party_line1(x)) pset(x,y,party_fn(x,y))
-   if(y<party_line2(x)) pset(x,y,party_fn(x,y))
+ for y1234=0,127 do
+  for x1234=0,127 do
+   if(y1234>party_line1(x1234)) pset(x1234,y1234,party_fn(x1234,y1234))
+   if(y1234<party_line2(x1234)) pset(x1234,y1234,party_fn(x1234,y1234))
   end
  end
- for x=0,127 do
-  pset(x,party_line1(x),15)
-  pset(x,party_line2(x),11)
+ for x1234=0,127 do
+  pset(x1234,party_line1(x1234),15)
+  pset(x1234,party_line2(x1234),11)
  end
 end
 
@@ -1259,7 +1243,7 @@ function newbtn_mgmt()
      if(v==false) players[p].js.pflags[k]=true
     end
    else
-    local m=newbtn_conv(b)
+    m=newbtn_conv(b)
     if(btn(b,players[p].js.num)) then
      if(players[p].js[m]) then
       players[p].js[m]+=1
@@ -1297,22 +1281,21 @@ function newbtnp(b,p)
 end
 
 function ai_control(p)
- local midfield=0.5*(stadium_field_top+stadium_field_bottom)-11+rnd(9)
- local midzone if(p==1) midzone=stadium_field_left+4 else midzone=stadium_field_right-10
- local distance=abs(players[p].x-oddball.x) if(p==2) distance-=4
+ midfield=0.5*(stadium_field_top+stadium_field_bottom)-11+rnd(9)
+ if(p==1) midzone=stadium_field_left+4 else midzone=stadium_field_right-10
+ distance=abs(players[p].x-oddball.x) if(p==2) distance-=4
  if(p==2) distance+=3 else distance-=4
- local slope={oddball.dy*(0.95+rnd(0.04)),oddball.dx*(0.9+rnd(0.09))}
+ slope={oddball.dy*(0.95+rnd(0.04)),oddball.dx*(0.9+rnd(0.09))}
  slope.a=slope[1]/slope[2]
- local top=stadium_field_top local bottom=stadium_field_bottom
- local height=bottom-top
- local direction=oddball.dx/abs(oddball.dx)
- local backwards,forwards
+ top=stadium_field_top bottom=stadium_field_bottom
+ height=bottom-top
+ direction=oddball.dx/abs(oddball.dx)
  if(p==1) then
   backwards="l" forwards="r"
  else
   backwards="r" forwards="l"
  end
- local coming=true if(p!=oddball.approaching_player) coming=false
+ coming=true if(p!=oddball.approaching_player) coming=false
  if(oddball.upforgrabs or players[p%2+1].holding or not coming) then
   --amble toward midfield
   if(players[p].y<midfield-2 and rnd()<0.15) players[p].js["d"]=3
@@ -1321,8 +1304,8 @@ function ai_control(p)
   if(players[p].x>midzone+1-rnd(2) and not players[p].js.r) players[p].js.l=2
   players[p].thinking=nil
  else
-  local yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
-  local gap=abs(players[p].y-yprojection-1)
+  yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
+  gap=abs(players[p].y-yprojection-1)
   if(distance>ai_far_field) then
    --sizing it up faraway
    if(rnd()>0.94) then --tend to back up
@@ -1343,7 +1326,6 @@ function ai_control(p)
     end
    else
     if(yprojection<top-5 or yprojection>bottom+5) then
-     local to_wall,bounces,overage
      if(oddball.dy<0) then
       to_wall=oddball.y-stadium_field_top
       overage=stadium_field_top-yprojection
@@ -1369,7 +1351,7 @@ function ai_control(p)
    end
   else
    -- near field
-   local nearyproj=yprojection
+   nearyproj=yprojection
    if(yprojection<stadium_field_top-1 or yprojection>stadium_field_bottom+1) nearyproj=midfield
    if(gap>2 and distance<15) then
     players[p].js[forwards]=nil
