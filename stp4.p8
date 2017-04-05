@@ -302,9 +302,9 @@ function play_game()
  update_mode=game_update
  draw_mode=game_draw
  
---xxx menuitem(1,"direct deposit:")
--- menuitem(2,"+1 "..players[1].name,point_p1)
--- menuitem(3,"+1 "..players[2].name,point_p2)
+ menuitem(1,"direct deposit:",print)
+ menuitem(2,"+1 "..players[1].name,point_p1)
+ menuitem(3,"+1 "..players[2].name,point_p2)
 end
 
 function game_init()
@@ -434,7 +434,7 @@ function game_init()
  shuffle_audience_timing()
  
  oddball.upforgrabs=true
- oddball.service_time=cycles+10+rnd(3)
+ oddball.service_time=cycles+25+rnd(10)
  oddball.dx=0 oddball.dy=0
  oddball.x=64 -- so it's not nil
  oddball.y=64
@@ -457,7 +457,7 @@ end
 function player_service(num)
  players[num].dx*=0.75
  players[num].dy*=0.75
- if(oddball.upforgrabs and cycles>oddball.service_time+25+rnd(3.2) and not players[num].dancing) then
+ if(oddball.upforgrabs and cycles>oddball.service_time+25+rnd(3.2) and newbtnp("o",num)) then
   --move it into player's hands
   oddball.upforgrabs=false
   oddball.dx=0 oddball.dy=0
@@ -514,12 +514,11 @@ end
 
 function draw_windup()
 
+ draw_it=false
  if(players[1].winding_up) then
   draw_it=true draw_num=1 draw_clr=8
  elseif(players[2].winding_up) then
   draw_it=true draw_num=2 draw_clr=2
- else
-  draw_it=false
  end
  
  windup_width=10
@@ -529,16 +528,16 @@ function draw_windup()
  wind_y2=127
 
  if(draw_it) then
-  if(wind_num==1) then
+  if(draw_num==1) then
    meter_left=wind_x1+1
    meter_right=wind_x1+(windup_width-1)*(players[draw_num].serve_power/10)
   else
    meter_left=wind_x2-(windup_width-1)*(players[draw_num].serve_power/10)
    meter_right=wind_x2-1
   end
+  rectfill(wind_x1,wind_y1,wind_x2-1,wind_y2-1,14)
+  rectfill(meter_left,wind_y1+1,meter_right,wind_y2-1,draw_clr)
   rect(wind_x1,wind_y1,wind_x2,wind_y2,15)
-  rectfill(wind_x1+1,wind_y1+1,wind_x2-1,wind_y2-1,14)
-  rectfill(meter_left,wind_y1+1,meter_right,wind_y2-1,clr)
  else
   rectfill(wind_x1,stadium_field_bottom+1,wind_x2,126,5)
   print("vs",stadium_field_middle-3,122,15)
@@ -767,15 +766,14 @@ function game_update()
   schedule_sfx(1,7)--lets clapping begin first
   oddball.upforgrabs=true
   oddball.x=64 oddball.y=85 --approximately in the middle so ai returns to midfield
+  oddball.service_time=cycles+45+rnd(10)
   if(players[1].score<9 and players[2].score<9) then
-   oddball.service_time=cycles+20+rnd(5)
    poke(0x3681,60+flr(rnd(30)))
    sfx(16)
    schedule_sfx(16,2)
    if(rnd()<0.15) schedule_sfx(17,5)
   else
    --winner winner chicken dinner 
-   oddball.service_time=cycles+55+rnd(10)+12
    players[scoring_player].dancing=true
    schedule_sfx(10,10) schedule_sfx(11,11)
    poke(0x3681,80)--3241+10*44
@@ -913,9 +911,7 @@ function draw_oddball()
   oddball.sprite=oddball.sprites[1+flr(cycles/3.3)%8]
  end
 
- if(cycles>oddball.service_time) then
-  spr(oddball.sprite,oddball.x,oddball.y)
- end
+ if(cycles>oddball.service_time) spr(oddball.sprite,oddball.x,oddball.y)
 end
 
 function draw_scoreboard()
@@ -1057,6 +1053,7 @@ function player_wins(num)
  update_mode=party_update
  draw_mode=party_draw
  party_started=cycles+1
+ menuitem(1) menuitem(2) menuitem(3)
 
  if(party_message==nil and num==1) then
   if(players[1].ai) aicredit=" (ai)" else aicredit=""
