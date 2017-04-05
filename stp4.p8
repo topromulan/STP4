@@ -217,7 +217,7 @@ function intro_draw()
  if(not intro_left) intro_left=55
  for i=0,#mode do
   print(sub(mode,i,i),
-   stplogosx+1+i*4,
+   stplogosx+1+i*(4+55/intro_left/4)+55/intro_left,
    stplogosy-11+i*7.5/(62-intro_left),
    10+#mode)
  end
