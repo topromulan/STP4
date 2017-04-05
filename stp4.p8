@@ -1105,15 +1105,15 @@ function party_draw()
   z=stadium_audience[i].sprite+32
   row=1+flr(i/per)
   col=i%6
---  sspr(z*8%128,8*flr(z*8/128),8,8,
---   60+party_p-5*row+
---    (i%per)*((360-(10-row)*30)/party_p)
---    , --x
---   59-party_p/12+row*(8-row),--y
---   20/party_p*(row*per),--w
---   20/party_p*(row*per),--h
---   ((cycles+flr(stadium_audience[i].timing))%3==0)--x flip
---  )
+  sspr(z*8%128,8*flr(z*8/128),8,8,
+   60+party_p-5*row+
+    (i%per)*((360-(10-row)*30)/party_p)
+    , --x
+   59-party_p/12+row*(8-row),--y
+   20/party_p*(row*per),--w
+   20/party_p*(row*per),--h
+   ((cycles+flr(stadium_audience[i].timing))%3==0)--x flip
+  )
  end
  party_drapes_draw()
 
@@ -1150,7 +1150,7 @@ function party_draw()
    px1234=128*(party_time/125)
    if(party_p==2) then px1234=128-px1234 end --so player 2 comes from r
    py1234=100-party_time/20+50*sin(party_time/cycles)
-   sspr(sx1234,sy1234,8,8,px1234,py1234,36+rnd(2),36+rnd(2))
+   sspr(sx1234,sy1234,8,8,px1234,py1234,48+rnd(2),48+rnd(2))
   end
  end
 end
