@@ -191,6 +191,7 @@ function intro_draw()
 
  print("1992-2017 macrowave",38,25,11) 
 
+ local intro_left
  if(intro_ending and intro_ending_at!=nil) then
   intro_left=intro_ending_at-cycles
   stplogoclr=intro_left/2
