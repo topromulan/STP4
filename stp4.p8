@@ -21,7 +21,7 @@ __lua__
 
 function _init()
  do_intro()
- debug=true
+ debug=false
  win_at_9()
 end
 
@@ -217,7 +217,7 @@ function intro_draw()
  if(not intro_left) intro_left=55
  for i=0,#mode do
   print(sub(mode,i,i),
-   stplogosx+1+i*(4+55/intro_left/4)+55/intro_left,
+   stplogosx+1+i*(4+60/intro_left/4)+55/intro_left,
    stplogosy-11+i*7.5/(62-intro_left),
    10+#mode)
  end
@@ -687,7 +687,7 @@ function game_update()
   if(adjustedy>=shieldhity1 and adjustedy<=shieldhity2) then
    if(not players[oddball.approaching_player].dancing) then
     --collision
-    oddball.dx*=-1
+    oddball.dx*=-1.025
     if(dope_offset<2.1) then
      oddball.dy-=1.8+rnd(0.4)
     elseif(dope_offset<4.1) then
@@ -713,7 +713,7 @@ function game_update()
    else
     oddball.dx+=(0.05+rnd(0.05))*players[oddball.approaching_player].dx
    end
-   lowspeed=0.988
+   lowspeed=1.1234
    highspeed=4.2
    if(abs(oddball.dx)<lowspeed) oddball.dx=lowspeed*(oddball.dx/abs(oddball.dx))
    if(abs(oddball.dx)>highspeed) oddball.dx=highspeed*(oddball.dx/abs(oddball.dx))
