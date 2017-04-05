@@ -18,37 +18,43 @@ Super Turtle Pong 4 brings back the authentic feel of these historic MacroWave p
 
 ### Intro Screen
  * Turtle Pong is a game for two players.
- * To INSERT MONEY, press any button.
+ * To INSERT MONEY, press __(X)__ or press __(O)__. No change.
+  * If two humans are available, simply insert money with both paddles. Or, press __pause__ then choose __2-PLAYER GAME__.
   * If only one human is available, or if you do not have enough money for two players, then only insert money with the paddle you want to play with.
-  * If two humans are available, simply insert money with both paddles. Or, hit pause and choose to start a 2-Player game.
-   * Tip: Starting the game from the pause menu is easier when playing with kids.
  * Note: Artificial Intelligence will take the field for any absent human players (or present players who did not insert money).
+ * Bonus info: Also if you have no money you can also choose "AI VS AI MATCH"
+ * Finally: Want a quicker duel? Press pause and choose BEST 2 OUT OF 3.
 
 ### Game Play
+Move your player around within your area of the field. Chalk outlines both players' goal areas. Try to throw the turtle past your friend to score goals.
 
-Move your player to the desired standing position within your end of the field. Chalk outlines your end. Focus on the field when you start and ignore the different kinds of Turtle Pong fans in the grandstands. They just watch. After the game, they will leave through the exit in an orderly fashion while you party. Except if your opponent won, then it is they who party. To be a winner, you need to score nine points! Here is your guide to scoring those nine points*:
-
-*AKA "the long road to nine"
+Focus on the field; don't get distracted by the fans in the grandstands. 
 
 #### Service
- * Move your player by means of your directional keypad.
- * When an the lucky turtle is up for grabs in the middle of the grass, press and hold down the "O" button, to take it and hold it.
- * A meter on screen shows you winding up for the serve. This helps you measure out the power of your serve. Keep holding it..
- * You may still move around. Your movement affects the trajectory of the serve when released.
- * Release "O" to serve.
+ * Run around with the directional keypad.
+ * When the turtle is up for grabs in the middle of the field, press and hold your __(O)__ button to take it and hold it.
+ * A meter on screen shows you winding up for the serve. The meter helps you mete out the power of your serve. Keep holding __(O)__..
+ * Your movement affects the trajectory of the serve when released.
+ * Let go __(O)__ to serve! _Yeah, let that puppy fly!!_
   * Pro Tip: Surprise your opponent with flinging a turtle flying right at him, or try to sneak it past him along the edge.
-  * About Manners: Most players prefer to serve after they just lost a point. This is a matter between the players.
+  * About Manners: Most players prefer to serve after they just lost a point. This is a matter between the players. _There is no referee in STP4. Don't make us program one!!_
 
 #### Ball in Play
- * Move your player by means of your directional keypad.
- * Try to hit the turtle by moving your paddle into its way!
- * Pressing "O" and you dig in your feet for extra power on the hit.
-  * Pro Tip: If you're pretty sure you're in the right spot, and want to put a bit more pep on your return, holding "O" is the way to go! 
- * To hit trickier angles, try using the edges of your paddle.
+ * Run around with the directional keypad.
+ * Get in position (get in the turtle's way so your paddle will hit it).
+ * You can get a more solid hit if you dig in your feet (press _(O)_).
+  * Pro Tip: If you're pretty sure you're in the right spot, and want to put a bit more pep on your return, holding _(O)_ is the way to go! 
+ * Control the angles according to which part of your paddle hits the turtle.
 
-### Party
+#### Direct Deposit System
+ * Points may be directly awarded in the _pause_ menu. This has several functionalities.
+  * Give a new player a handicap.
+  * Mitigate a player dispute.
+  * Bribe a player.
+
+### Party!
  * The first player who achieves nine points is thrown a party.
- * To leave the party early and get started on your next whuppin', press both buttons at once, after you waited a sec.
+ * To leave your own party early and get started on your next whuppin', press both buttons at once, after you waited a sec.
 
 ## Gratuities
  * 2016-2017 Macrowave
