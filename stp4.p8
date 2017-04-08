@@ -22,7 +22,7 @@ __lua__
 function _init()
  do_intro()
  win_at_9()
- love_music()
+ music_lover=true
 end
 
 function _draw()
@@ -761,6 +761,7 @@ function game_update()
    if(rnd()<0.15) schedule_sfx(17,5)
   else
    --winner winner chicken dinner 
+   music(-1)
    players[scoring_player].dancing=true
    schedule_sfx(10,10) schedule_sfx(11,11)
    poke(0x3681,80)--3241+10*44
@@ -1284,10 +1285,14 @@ function ai_control(p)
  coming=true if(p!=oddball.approaching_player) coming=false
  if(oddball.upforgrabs or players[p%2+1].holding or not coming) then
   --amble toward midfield
-  if(players[p].y<midfield-2 and rnd()<0.15) players[p].js["d"]=3
-  if(players[p].y>midfield+2 and rnd()<0.15) players[p].js["u"]=3
+  if(players[p].y<oddball.y-2 and rnd()<0.15) players[p].js["d"]=3
+  if(players[p].y>oddball.y+2 and rnd()<0.15) players[p].js["u"]=3
   if(players[p].x<midzone-1+rnd(2) and not players[p].js.l) players[p].js.r=2
   if(players[p].x>midzone+1-rnd(2) and not players[p].js.r) players[p].js.l=2
+  if(oddball.upforgrabs) then
+   players[p].dy*=0.5
+   players[p].dx*=0.25
+  end
   players[p].thinking=nil
  else
   yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
@@ -1774,7 +1779,7 @@ __sfx__
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __music__
-00 0c0d0e0f
+04 0c0d0e0f
 01 1a1b1d44
 01 1a1b1c44
 02 1a1e5c44
