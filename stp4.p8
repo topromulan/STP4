@@ -14,7 +14,7 @@ __lua__
 -- –binary tree fragments,–
 -- –   and may have been  –
 -- –processed by a machine–
--- –      that also       –
+-- –   that is or also    –
 -- –multi-processes nuts. –
 -- –––––––––––––
 -- €€
@@ -485,7 +485,7 @@ function player_service(num)
    end
 
    sfx(1+num) sfx(4,3)
-   if(music_lover) music(1)
+   if(music_lover and not (players[1].ai and players[2].ai)) music(1)
   end
  else
   --dancing?
