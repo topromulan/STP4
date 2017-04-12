@@ -23,7 +23,7 @@ function _init()
  do_intro()
  win_at_9()
  music_lover=true
- songs={5}
+ songs={1,5}
 end
 
 function _draw()
@@ -428,7 +428,7 @@ function game_init()
   stadium_audience[seat].timing=0
  end
  shuffle_audience_timing()
- 
+
  oddball.upforgrabs=true
  oddball.service_time=cycles+25+rnd(10)
  oddball.dx=0 oddball.dy=0
@@ -572,22 +572,21 @@ function game_update()
   if(players[p].ai) then
    ai_control(p)
    
+   lead=players[p].score-players[1+p%2].score
+   availability=cycles-oddball.service_time
    if(oddball.upforgrabs
      and (
-      (cycles-oddball.service_time>80+10*(players[p].score-players[1+p%2].score)
-       and rnd()<0.01)
-      or (cycles-oddball.service_time>5
-       and players[p%2+1].score>players[p].score)
-      or rnd()<0.005
-      or (players[1].ai and players[2].ai and rnd()<0.05)
-     )
+      availability>80+10*lead and rnd()<0.025
+      or lead<0 and availability>15 and rnd()<0.01
+      or players[1].ai and players[2].ai and rnd()<0.005
     )
      and (
       players[1].ai and players[2].ai
       or not (players[1].score+players[2].score==0)
-    )
+    ))
       then
-    players[p].js.o=15+flr(rnd(20))
+    printh("a="..availability.." l="..lead)
+    players[p].js.o=15+flr(rnd(10))
     players[p].js.pflags["o"]=false
    end
      
@@ -1791,10 +1790,10 @@ __music__
 00 1a1b1c44
 02 1a1e5c44
 00 41424344
-00 32336b44
-01 326d4344
-00 07424344
-00 32424344
+00 32333744
+01 32334344
+00 32344344
+02 32334344
 00 41424344
 00 41424344
 00 41424344
