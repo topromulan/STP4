@@ -20,8 +20,8 @@ __lua__
 -- €€
 
 function _init()
+ do_intro()
  win_at_9()
- do_intro() -- need to encapsulate seat_audience
  music_lover=true
  songs={1,5,11,15,19}
  next_song=1
@@ -98,7 +98,6 @@ function do_intro()
  if(win==9) win_at_9() else win_at_2()
 
  game_init()
- newbtn_init()
   
  cls(5)
 end
@@ -134,7 +133,7 @@ function intro_update()
  lx+=1
  if(lx>200) lx=-200
  if(lx==50) then
-  schedule_sfx(0,flr(rnd(2))) 
+  schedule_sfx(0,rnd(2)) 
   rx+=0.75 ry+=0.85
  end
 
@@ -321,6 +320,8 @@ function game_init()
  players[2].js={}
  players[2].js.num=0
 
+ newbtn_init()
+
  players[1].sprites={9,25,41,57,56,55,54}
  players[2].sprites={10,26,42,58,59,60,61}
  
@@ -343,7 +344,7 @@ function game_init()
  }
 
  for p=1,2 do
-  players[p].name="radagast rebner"
+  players[p].name="max length name"
   while(#players[p].name>=15) do
    players[p].name=names[p][1][1+flr(rnd(#names[p][1]))].." "..names[p][2][1+flr(rnd(#names[p][2]))]
   end
@@ -1247,9 +1248,10 @@ function newbtn_mgmt()
   end
  end
 
- if(players[p]) then --??
+ --this makes the ai somewhat smoother
+ if(players[p]) then
   if(players[p].js.l and players[p].js.r) then
-   if(players[p].js.l>players[p].js.r) players[p].js.r=nil else players[p].js.r=nil
+   if(players[p].js.l>players[p].js.r) players[p].js.r=nil else players[p].js.l=nil
   end
   if(players[p].js.u and players[p].js.d) then
    if(players[p].js.u>players[p].js.d) players[p].js.d=nil else players[p].js.u=nil
@@ -1405,11 +1407,13 @@ end
 function win_at_2()
  win=2
  menuitem(3,"classic 9-point game",win_at_9)
+ game_init()
 end
 
 function win_at_9()
  win=9
  menuitem(3,"best 2 out of 3",win_at_2)
+ game_init()
 end
 
 function love_music()
