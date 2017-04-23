@@ -299,8 +299,8 @@ function play_game()
  draw_mode=game_draw
  
 -- menuitem(1,"direct deposit:",print)
- menuitem(1,"+1 "..players[1].name,point_p1)
- menuitem(2,"+1 "..players[2].name,point_p2)
+ menuitem(1,"+1 "..pnames[1],point_p1)
+ menuitem(2,"+1 "..pnames[2],point_p2)
  if(music_lover) love_music() else hate_music()
 end
 
@@ -340,10 +340,10 @@ function game_init()
     {"pete","pete","page","paddy","padma","price","pinky","peppy","po-po","patty","press","poof","perp","pixel"} },
  }
 
+ pnames={"fifteen chars!!","fifteen chars!!"}
  for p=1,2 do
-  players[p].name="max length name"
-  while(#players[p].name>=15) do
-   players[p].name=names[p][1][1+flr(rnd(#names[p][1]))].." "..names[p][2][1+flr(rnd(#names[p][2]))]
+  while(#pnames[p]>=15) do
+   pnames[p]=names[p][1][1+flr(rnd(#names[p][1]))].." "..names[p][2][1+flr(rnd(#names[p][2]))]
   end
  end
 
@@ -983,8 +983,8 @@ function draw_scoreboard()
 end
 
 function draw_names()
- print(players[1].name,2,121,8)
- print(players[2].name,127-4*#players[2].name,121,2)
+ print(pnames[1],2,121,8)
+ print(pnames[2],127-4*#pnames[2],121,2)
 end
 
 function draw_floor(middle,top,height)
@@ -1047,13 +1047,13 @@ function player_wins(num)
 
  if(party_message==nil and num==1) then
   if(ai[1]) aicredit=" (ai)" else aicredit=""
-  party_message=players[1].name..aicredit.." wins"
+  party_message=pnames[1]..aicredit.." wins"
 
 
   plaque_color=8
  elseif(party_message==nil and num==2) then
   if(ai[2]) aicredit=" (ai)" else aicredit=""
-  party_message=players[2].name..aicredit.." wins"
+  party_message=pnames[2]..aicredit.." wins"
   plaque_color=2
  else
   party_message="everybody wins!!"
