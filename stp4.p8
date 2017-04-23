@@ -120,7 +120,7 @@ function intro_update()
  for p=1,2 do
   if(newbtnp("o",p) or newbtnp("x",p)) then
    -- take money and begin exit
-   if(players[p].ai) players[p].ai=false
+   if(ai[p]) ai[p]=false
    if(not intro_ending) intro_ending=true
    -- possibly exit quick
    if(newbtn("o",p) and newbtn("x",p)) then
@@ -313,8 +313,8 @@ function game_init()
  players[1]={}
  players[2]={}
 
- players[1].ai=true
- players[2].ai=true
+ ai={true,true}
+
  players[1].js={}
  players[1].js.num=1
  players[2].js={}
@@ -489,7 +489,7 @@ function player_service(num)
    end
 
    sfx(1+num) sfx(4,3)
-   if(music_lover and not (players[1].ai and players[2].ai)) play_song()
+   if(music_lover and not (ai[1] and ai[2])) play_song()
 --   if(music_lover) play_song()
 --    printh("hold".."a".."few".."tokens".."for".."me")
   end
@@ -553,7 +553,7 @@ function game_update()
  -- if(btnp(5)) then players[2].score += 1 end
 
  if(cycles>oddball.service_time) then
-  if(players[1].ai and players[2].ai) then
+  if(ai[1] and ai[2]) then
    if(players[1].score>=win or players[2].score>=win) do_intro()
   end
   if(players[1].score>=win) then
@@ -574,7 +574,7 @@ function game_update()
  for p=1,2 do
   set_player_pose(p,1+flr(rnd(1.05)))
 
-  if(players[p].ai) then
+  if(ai[p]) then
    ai_control(p)
    
    lead=players[p].score-players[1+p%2].score
@@ -583,10 +583,10 @@ function game_update()
      and (
       availability>80+10*lead and rnd()<0.025
       or lead<0 and availability>15 and rnd()<0.01
-      or players[1].ai and players[2].ai and rnd()<0.005
+      or ai[1] and ai[2] and rnd()<0.005
     )
      and (
-      players[1].ai and players[2].ai
+      ai[1] and ai[2]
       or not (players[1].score+players[2].score==0)
     ))
       then
@@ -1049,13 +1049,13 @@ function player_wins(num)
  menuitem(1) menuitem(2) menuitem(3)
 
  if(party_message==nil and num==1) then
-  if(players[1].ai) aicredit=" (ai)" else aicredit=""
+  if(ai[1]) aicredit=" (ai)" else aicredit=""
   party_message=players[1].name..aicredit.." wins"
 
 
   plaque_color=8
  elseif(party_message==nil and num==2) then
-  if(players[2].ai) aicredit=" (ai)" else aicredit=""
+  if(ai[2]) aicredit=" (ai)" else aicredit=""
   party_message=players[2].name..aicredit.." wins"
   plaque_color=2
  else
@@ -1221,7 +1221,7 @@ end
 function newbtn_mgmt()
  for p=1,2 do
   for b=0,5 do
-   if(players[p].ai and update_mode==game_update) then
+   if(ai[p] and update_mode==game_update) then
     if(players[p].js[newbtn_conv(b)]) then
      if(players[p].js[newbtn_conv(b)]>0) then
       players[p].js[newbtn_conv(b)]=players[p].js[newbtn_conv(b)]-1 --why not -=1 work (??)
@@ -1391,14 +1391,14 @@ end
 
 function play_2p()
  for p=1,2 do
-  players[p].ai=false
+  ai[p]=false
  end
  intro_ending=true
 end
 
 function play_ai_only()
  for p=1,2 do
-  players[p].ai=true
+  ai[p]=true
  end
  intro_ending=true
  intro_ending_at=cycles
