@@ -315,10 +315,7 @@ function game_init()
 
  ai={true,true}
 
- players[1].js={}
- players[1].js.num=1
- players[2].js={}
- players[2].js.num=0
+ js={{num=1},{num=0}}
 
  newbtn_init()
 
@@ -590,14 +587,14 @@ function game_update()
       or not (players[1].score+players[2].score==0)
     ))
       then
-    players[p].js.o=15+flr(rnd(10))
-    players[p].js.pflags["o"]=false
+    js[p].o=15+flr(rnd(10))
+    js[p].pflags["o"]=false
    end
      
---   players[p].js.l=nil
---   players[p].js.u=nil
---   players[p].js.d=nil
---   players[p].js.r=nil
+--   js[p].l=nil
+--   js[p].u=nil
+--   js[p].d=nil
+--   js[p].r=nil
   end
 
   if((players[p].holding or players[p].dancing or not newbtn("o",p))) then
@@ -1187,12 +1184,12 @@ end
 function newbtn_init()
  for p=1,2 do
   for b=0,5 do
-   if(btn(b,players[p].js.num)) then
+   if(btn(b,js[p].num)) then
     --false is a reminder that it
     -- was already pressed at init
-    players[p].js[newbtn_conv(b)]=false
+    js[p][newbtn_conv(b)]=false
    else
-    players[p].js[newbtn_conv(b)]=nil
+    js[p][newbtn_conv(b)]=nil
    end
    --it will only be used if ai
    --but why check. because the
@@ -1202,7 +1199,7 @@ function newbtn_init()
    --case where it is important
    --that the ai btnp like for
    --the windup sound.
-   players[p].js.pflags={}
+   js[p].pflags={}
   end
  end
 end
@@ -1222,27 +1219,27 @@ function newbtn_mgmt()
  for p=1,2 do
   for b=0,5 do
    if(ai[p] and update_mode==game_update) then
-    if(players[p].js[newbtn_conv(b)]) then
-     if(players[p].js[newbtn_conv(b)]>0) then
-      players[p].js[newbtn_conv(b)]=players[p].js[newbtn_conv(b)]-1 --why not -=1 work (??)
+    if(js[p][newbtn_conv(b)]) then
+     if(js[p][newbtn_conv(b)]>0) then
+      js[p][newbtn_conv(b)]=js[p][newbtn_conv(b)]-1 --why not -=1 work (??)
      else
-      players[p].js[newbtn_conv(b)]=nil
+      js[p][newbtn_conv(b)]=nil
      end
     end
-    for k,v in pairs(players[p].js.pflags) do
+    for k,v in pairs(js[p].pflags) do
      if(v==true) v=nil
-     if(v==false) players[p].js.pflags[k]=true
+     if(v==false) js[p].pflags[k]=true
     end
    else
     m=newbtn_conv(b)
-    if(btn(b,players[p].js.num)) then
-     if(players[p].js[m]) then
-      players[p].js[m]+=1
+    if(btn(b,js[p].num)) then
+     if(js[p][m]) then
+      js[p][m]+=1
      else
-      players[p].js[m]=0
+      js[p][m]=0
      end
     else
-     players[p].js[m]=nil
+     js[p][m]=nil
     end
    end
   end
@@ -1250,25 +1247,25 @@ function newbtn_mgmt()
 
  --this makes the ai somewhat smoother
  if(players[p]) then
-  if(players[p].js.l and players[p].js.r) then
-   if(players[p].js.l>players[p].js.r) players[p].js.r=nil else players[p].js.l=nil
+  if(js[p].l and js[p].r) then
+   if(js[p].l>js[p].r) js[p].r=nil else js[p].l=nil
   end
-  if(players[p].js.u and players[p].js.d) then
-   if(players[p].js.u>players[p].js.d) players[p].js.d=nil else players[p].js.u=nil
+  if(js[p].u and js[p].d) then
+   if(js[p].u>js[p].d) js[p].d=nil else js[p].u=nil
   end
  end
  
 end
 
 function newbtn(b,p)
- if(players[p].js[b]) return true
+ if(js[p][b]) return true
  return false
 end
 
 function newbtnp(b,p)
  if(newbtn(b,p)) then
-  if(players[p].js[b]==0) return true
-  if(players[p].js.pflags[b]) return true
+  if(js[p][b]==0) return true
+  if(js[p].pflags[b]) return true
  end 
 end
 
@@ -1290,10 +1287,10 @@ function ai_control(p)
  coming=true if(p!=oddball.approaching_player) coming=false
  if(oddball.upforgrabs or players[p%2+1].holding or not coming) then
   --amble toward midfield
-  if(players[p].y<oddball.y-2 and rnd()<0.15) players[p].js["d"]=3
-  if(players[p].y>oddball.y+2 and rnd()<0.15) players[p].js["u"]=3
-  if(players[p].x<midzone-1+rnd(2) and not players[p].js.l) players[p].js.r=2
-  if(players[p].x>midzone+1-rnd(2) and not players[p].js.r) players[p].js.l=2
+  if(players[p].y<oddball.y-2 and rnd()<0.15) js[p]["d"]=3
+  if(players[p].y>oddball.y+2 and rnd()<0.15) js[p]["u"]=3
+  if(players[p].x<midzone-1+rnd(2) and not js[p].l) js[p].r=2
+  if(players[p].x>midzone+1-rnd(2) and not js[p].r) js[p].l=2
   if(oddball.upforgrabs) then
    players[p].dy*=0.5
    players[p].dx*=0.25
@@ -1305,19 +1302,19 @@ function ai_control(p)
   if(distance>ai_far_field) then
    --sizing it up faraway
    if(rnd()>0.94) then --tend to back up
-    players[p].js[backwards]=flr(rnd(3))
+    js[p][backwards]=flr(rnd(3))
    elseif(rnd()>0.98) then
-    players[p].js[forwards]=flr(rnd(2))
+    js[p][forwards]=flr(rnd(2))
    end
    if(not players[p].thinking) then
     players[p].thinking=5+flr(rnd(7.5))
    elseif(players[p].thinking>0) then
     players[p].thinking-=1
-    if(not (players[p].js.u or players[p].js.d)) then
+    if(not (js[p].u or js[p].d)) then
      if(oddball.y<players[p].y) then
-      if(rnd()>0.25) players[p].js.u=2
+      if(rnd()>0.25) js[p].u=2
      else
-      if(rnd()>0.25) players[p].js.d=2
+      if(rnd()>0.25) js[p].d=2
      end
     end
    else
@@ -1340,9 +1337,9 @@ function ai_control(p)
      newyproj=yprojection
     end
     if(players[p].y>newyproj) then
-     players[p].js.u=5 players[p].js.d=nil
+     js[p].u=5 js[p].d=nil
     else
-     players[p].js.d=5 players[p].js.u=nil
+     js[p].d=5 js[p].u=nil
     end   
    end
   else
@@ -1350,24 +1347,24 @@ function ai_control(p)
    nearyproj=yprojection
    if(yprojection<stadium_field_top-1 or yprojection>stadium_field_bottom+1) nearyproj=midfield
    if(gap>2 and distance<15) then
-    players[p].js[forwards]=nil
-    players[p].js[backwards]=2
+    js[p][forwards]=nil
+    js[p][backwards]=2
    else
     if(rnd()>0.74) then --tend to run for it
-     players[p].js[forwards]=3
+     js[p][forwards]=3
     elseif(rnd()>0.83) then
-     players[p].js[backwards]=2
+     js[p][backwards]=2
     end    
    end
    if(players[p].y>nearyproj+1) then
-    players[p].js.u=2
+    js[p].u=2
    elseif(players[p].y<nearyproj-4) then
-    players[p].js.d=2
+    js[p].d=2
    end
 
    if(distance>7*abs(oddball.dx) and distance<8.1*abs(oddball.dx)) then
     if(gap<2 or oddball.dx<1.2) then
-     players[p].js.o=10
+     js[p].o=10
     end
    end
    
