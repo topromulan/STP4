@@ -324,8 +324,8 @@ function game_init()
  
  scores={0,0}
 
- players[1].holding=false
- players[2].holding=false
+ holding={false,false}
+
  players[1].winding_up=false
  players[2].winding_up=false
  players[1].serve_power=1
@@ -457,15 +457,15 @@ function player_service(num)
   --move it into player's hands
   oddball.upforgrabs=false
   oddball.dx=0 oddball.dy=0
-  players[num].holding=true
- elseif(players[num].holding) then
+  holding[num]=true
+ elseif(holding[num]) then
   if(newbtn("o",num)) then
    --still winding up
    players[num].winding_up=true
    player_windup(num)
   else
    --let it fly
-   players[num].holding=false
+   holding[num]=false
    players[num].winding_up=false
    oddball.dx=-1*(-3+2*num)*(1+rnd(0.5)+players[num].serve_power/10)
    oddball.dy=0.1-rnd(0.2)
@@ -597,7 +597,7 @@ function game_update()
 --   js[p].r=nil
   end
 
-  if((players[p].holding or players[p].dancing or not newbtn("o",p))) then
+  if((holding[p] or not newbtn("o",p))) then
    if(newbtn("l",p)) players[p].dx-=0.35-rnd(0.05)
    if(newbtn("r",p)) players[p].dx+=0.29+rnd(0.05)
    if(newbtn("u",p)) players[p].dy-=0.35-rnd(0.03)
@@ -636,7 +636,7 @@ function game_update()
   end
 
   if(newbtn("o",p) or players[p].winding_up) player_service(p)
-  if(players[p].holding) then
+  if(holding[p]) then
    if(newbtn("o",p)) poke(0x36c8,players[p].serve_power*5)
 
    if(newbtnp("o",p)) sfx(18,3)
@@ -647,10 +647,10 @@ function game_update()
   if(oddball.service_time-cycles<12) music(-1)
   oddball.x=(stadium_field_left+stadium_field_right)/2-4
   oddball.y=(stadium_field_top+stadium_field_bottom)/2-4
- elseif(players[1].holding) then
+ elseif(holding[1]) then
   oddball.x=players[1].x+6
   oddball.y=players[1].y+1
- elseif(players[2].holding) then
+ elseif(holding[2]) then
   oddball.x=players[2].x-6
   oddball.y=players[2].y+1
  else
@@ -816,7 +816,7 @@ function game_draw()
    msgv="(hold Ž to serve)"
    print(msgv,stadium_field_middle-2*#msgv,stadium_field_bottom-15,clrv)   
   end
-  if(help_flag and (players[1].holding or players[2].holding) and cycles-intro_ending_at>145) then
+  if(help_flag and (holding[1] or holding[2]) and cycles-intro_ending_at>145) then
    msgv="(let that turtle fly!))"
    print(msgv,stadium_field_middle-2*#msgv,stadium_field_bottom-22,clrv)
    msgv="     watch | that meter"
@@ -893,9 +893,9 @@ end
 function draw_oddball()
  if(oddball.upforgrabs) then
   oddball.sprite=oddball.sprites[2]
- elseif(players[1].holding) then
+ elseif(holding[1]) then
   oddball.sprite=oddball.sprites[1+flr(cycles/5)%3]
- elseif(players[2].holding) then
+ elseif(holding[2]) then
   oddball.sprite=oddball.sprites[5+flr(cycles/6)%3]
  else
   oddball.sprite=oddball.sprites[1+flr(cycles/3.3)%8]
@@ -1285,7 +1285,7 @@ function ai_control(p)
   backwards="r" forwards="l"
  end
  coming=true if(p!=oddball.approaching_player) coming=false
- if(oddball.upforgrabs or players[p%2+1].holding or not coming) then
+ if(oddball.upforgrabs or holding[p%2+1] or not coming) then
   --amble toward midfield
   if(players[p].y<oddball.y-2 and rnd()<0.15) js[p]["d"]=3
   if(players[p].y>oddball.y+2 and rnd()<0.15) js[p]["u"]=3
@@ -1416,7 +1416,7 @@ end
 function love_music()
  music_lover=true
  menuitem(3,"no music",hate_music)
- if(not oddball.upforgrabs and not players[1].holding and not players[2].holding) play_song()
+ if(not oddball.upforgrabs and not holding[1] and not holding[2]) play_song()
 end
 
 function hate_music()
