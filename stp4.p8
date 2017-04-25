@@ -404,12 +404,13 @@ function game_init()
  players[1].x=stadium_field_left + stadium_field_goalzonewidth-13
  players[1].xmin=stadium_field_left-3
  players[1].xmax=stadium_field_left+stadium_field_goalzonewidth-5
- players[1].dx=0 players[1].dy=0
 
  players[2].x=stadium_field_right - stadium_field_goalzonewidth+5
  players[2].xmin=stadium_field_right-stadium_field_goalzonewidth-2
  players[2].xmax=stadium_field_right-4
- players[2].dx=0 players[2].dy=0
+
+ playersdx={0,0}
+ playersdy={0,0}
 
  players[1].y=stadium_field_top + 5
  players[2].y=stadium_field_bottom-13
@@ -451,8 +452,8 @@ function set_player_pose(num,pose)
 end
 
 function player_service(num)
- players[num].dx*=0.75
- players[num].dy*=0.75
+ playersdx[num]*=0.75
+ playersdy[num]*=0.75
  if(oddball.upforgrabs and cycles>oddball.service_time+25+rnd(3.2) and newbtnp("o",num)) then
   --move it into player's hands
   oddball.upforgrabs=false
@@ -470,19 +471,19 @@ function player_service(num)
    oddball.dx=-1*(-3+2*num)*(1+rnd(0.5)+players[num].serve_power/10)
    oddball.dy=0.1-rnd(0.2)
    --oddball.dx*=0.55 --for serve testing
-   oddball.dx+=(0.1+rnd(0.1))*players[num].dx
-   reldx=players[num].dx
+   oddball.dx+=(0.1+rnd(0.1))*playersdx[num]
+   reldx=playersdx[num]
    if(num==2) reldx*=-1
    if(reldx<-0.65) then
-    oddball.dy+=3*players[num].dy
+    oddball.dy+=3*playersdy[num]
    elseif(reldx<0) then
-    oddball.dy+=2.25*players[num].dy
+    oddball.dy+=2.25*playersdy[num]
    elseif(reldx==0) then
-    oddball.dy+=2*players[num].dy
+    oddball.dy+=2*playersdy[num]
    elseif(reldx<=0.8) then
-    oddball.dy+=1.75*players[num].dy
+    oddball.dy+=1.75*playersdy[num]
    else
-    oddball.dy+=1.25*players[num].dy
+    oddball.dy+=1.25*playersdy[num]
    end
 
    sfx(1+num) sfx(4,3)
@@ -598,27 +599,27 @@ function game_update()
   end
 
   if((holding[p] or not newbtn("o",p))) then
-   if(newbtn("l",p)) players[p].dx-=0.35-rnd(0.05)
-   if(newbtn("r",p)) players[p].dx+=0.29+rnd(0.05)
-   if(newbtn("u",p)) players[p].dy-=0.35-rnd(0.03)
-   if(newbtn("d",p)) players[p].dy+=0.35+rnd(0.03)
+   if(newbtn("l",p)) playersdx[p]-=0.35-rnd(0.05)
+   if(newbtn("r",p)) playersdx[p]+=0.29+rnd(0.05)
+   if(newbtn("u",p)) playersdy[p]-=0.35-rnd(0.03)
+   if(newbtn("d",p)) playersdy[p]+=0.35+rnd(0.03)
   end
-  if(not (newbtn("l",p) or newbtn("r",p))) players[p].dx*=0.65
-  if(not (newbtn("u",p) or newbtn("d",p))) players[p].dy*=0.74
+  if(not (newbtn("l",p) or newbtn("r",p))) playersdx[p]*=0.65
+  if(not (newbtn("u",p) or newbtn("d",p))) playersdy[p]*=0.74
   --introduces a waver when not hanging onto the paddle
 --  if(band(shr(btn(),(p%2)*8),2^0+2^1+2^2+2^3)==0) then
   if(not (newbtn("l",p) or newbtn("r",p) or newbtn("u",p) or newbtn("d",p))) then
-   players[p].dx*=(0.7+rnd(0.6))
-   players[p].dy*=(0.7+rnd(0.6))
-   if(rnd()<players[p].dx) players[p].dx*=-1
+   playersdx[p]*=(0.7+rnd(0.6))
+   playersdy[p]*=(0.7+rnd(0.6))
+   if(rnd()<playersdx[p]) playersdx[p]*=-1
   end 
    
   threshold=0.25 if(p==2) threshold=0.005
-  if(players[p].dx<threshold and players[p].dx>-1*threshold
-    and players[p].dy<threshold and players[p].dy>-1*threshold) then
+  if(playersdx[p]<threshold and playersdx[p]>-1*threshold
+    and playersdy[p]<threshold and playersdy[p]>-1*threshold) then
    players[p].moving=false
-   players[p].dx=0
-   players[p].dy=0
+   playersdx[p]=0
+   playersdy[p]=0
   else
    players[p].moving=true
   end
@@ -626,13 +627,13 @@ function game_update()
   if(players[p].moving) then
    set_player_pose(p,1+flr(rnd(2)))
 
-   if(players[p].dx>0.75) players[p].dx=0.75
-   if(players[p].dx<-0.89) players[p].dx=-0.89
-   if(players[p].dy>1.25) players[p].dy=0.95
-   if(players[p].dy<-1.25) players[p].dy=-0.95
+   if(playersdx[p]>0.75) playersdx[p]=0.75
+   if(playersdx[p]<-0.89) playersdx[p]=-0.89
+   if(playersdy[p]>1.25) playersdy[p]=0.95
+   if(playersdy[p]<-1.25) playersdy[p]=-0.95
 
-   players[p].x+=players[p].dx
-   players[p].y+=players[p].dy
+   players[p].x+=playersdx[p]
+   players[p].y+=playersdy[p]
   end
 
   if(newbtn("o",p) or players[p].winding_up) player_service(p)
@@ -695,17 +696,17 @@ function game_update()
     sfx(8) sfx(9)
    end
 
-   if(oddball.approaching_player==1 and players[oddball.approaching_player].dx<0
-     or oddball.approaching_player==2 and players[oddball.approaching_player].dx>0) then
-    oddball.dx+=0.2*players[oddball.approaching_player].dx 
+   if(oddball.approaching_player==1 and playersdx[oddball.approaching_player]<0
+     or oddball.approaching_player==2 and playersdx[oddball.approaching_player]>0) then
+    oddball.dx+=0.2*playersdx[oddball.approaching_player] 
    else
-    oddball.dx+=(0.05+rnd(0.05))*players[oddball.approaching_player].dx
+    oddball.dx+=(0.05+rnd(0.05))*playersdx[oddball.approaching_player]
    end
    lowspeed=1.1234
    highspeed=4.2
    if(abs(oddball.dx)<lowspeed) oddball.dx=lowspeed*(oddball.dx/abs(oddball.dx))
    if(abs(oddball.dx)>highspeed) oddball.dx=highspeed*(oddball.dx/abs(oddball.dx))
-   oddball.dy+=0.45*players[oddball.approaching_player].dy
+   oddball.dy+=0.45*playersdy[oddball.approaching_player]
 
    shuffle_audience_timing()
    
@@ -1292,8 +1293,8 @@ function ai_control(p)
   if(players[p].x<midzone-1+rnd(2) and not js[p].l) js[p].r=2
   if(players[p].x>midzone+1-rnd(2) and not js[p].r) js[p].l=2
   if(oddball.upforgrabs) then
-   players[p].dy*=0.5
-   players[p].dx*=0.25
+   playersdy[p]*=0.5
+   playersdx[p]*=0.25
   end
   players[p].thinking=nil
  else
