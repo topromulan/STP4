@@ -668,7 +668,7 @@ function game_update()
  if(abs(adjustedx-shieldx)<3) then
   --check for paddle impact
 
-  shieldhity1=players[dope_num].y-5
+  shieldhity1=players[dope_num].y-3
   shieldhity2=players[dope_num].y+8
   
   dope_offset=flr(0.5+adjustedy-shieldhity1)
@@ -889,6 +889,8 @@ function draw_player(num)
 
  spr(players[num].sprite,players[num].x,players[num].y)
  if(players[num].ai) print("ai",players[num].x+1,players[num].y-7,7)
+
+
 end
 
 function draw_oddball()
