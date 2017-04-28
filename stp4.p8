@@ -574,28 +574,13 @@ function game_update()
 
   if(ai[p]) then
    ai_control(p)
-   
-   lead=scores[p]-scores[1+p%2]
-   availability=cycles-oddball.service_time
-   if(oddball.upforgrabs
-     and (
-      availability>80+10*lead and rnd()<0.025
-      or lead<0 and availability>15 and rnd()<0.01
-      or ai[1] and ai[2] and rnd()<0.005
-    )
-     and (
-      ai[1] and ai[2]
-      or not (scores[1]+scores[2]==0)
-    ))
-      then
-    js[p].o=15+flr(rnd(10))
-    js[p].pflags["o"]=false
+
+   if(btn(5,0)) then   
+    js[p].l=nil
+    js[p].u=nil
+    js[p].d=nil
+    js[p].r=nil
    end
-     
---   js[p].l=nil
---   js[p].u=nil
---   js[p].d=nil
---   js[p].r=nil
   end
 
   if((holding[p] or not newbtn("o",p))) then
@@ -1248,7 +1233,7 @@ function newbtn_mgmt()
   end
  end
 
- --this makes the ai somewhat smoother
+ --this makes the ai somewhat smoother. maybe? xxx
  if(players[p]) then
   if(js[p].l and js[p].r) then
    if(js[p].l>js[p].r) js[p].r=nil else js[p].l=nil
@@ -1288,10 +1273,48 @@ function ai_control(p)
   backwards="r" forwards="l"
  end
  coming=true if(p!=oddball.approaching_player) coming=false
- if(oddball.upforgrabs or holding[p%2+1] or not coming) then
+
+ lead=scores[p]-scores[1+p%2]
+ availability=cycles-oddball.service_time
+ if(oddball.upforgrabs
+   and (
+    availability>80+10*lead and rnd()<0.025
+    or lead<0 and availability>15 and rnd()<0.01
+    or ai[1] and ai[2] and rnd()<0.005
+  )
+   and (
+    ai[1] and ai[2]
+    or not (scores[1]+scores[2]==0)
+  ))
+    then
+  js[p].o=15+flr(rnd(10))
+  js[p].pflags["o"]=false
+  serve_strategy={
+   chance1=rnd(0.1),
+   chance2=rnd(0.3),
+  }
+  serve_strategy.dir1=forwards if(rnd()<0.15) serve_strategy.dir1=backwards
+  serve_strategy.dir2="u" if(rnd()<0.65) serve_strategy.dir2="d"
+ end   
+
+ if(holding[p]) then
+  --execute ai service strategy
+  if(js[p].o and js[p].o<5) then
+   if(rnd()<0.7-serve_strategy.chance1) js[p][serve_strategy.dir1]=2
+   if(rnd()<0.5-serve_strategy.chance2) js[p][serve_strategy.dir2]=2
+  else
+   if(rnd()<serve_strategy.chance1) js[p][serve_strategy.dir1]=1
+   if(rnd()<serve_strategy.chance2) js[p][serve_strategy.dir2]=1
+  end
+   
+ elseif(oddball.upforgrabs or holding[p%2+1] or not coming) then
   --amble toward midfield
-  if(players[p].y<oddball.y-2 and rnd()<0.15) js[p]["d"]=3
-  if(players[p].y>oddball.y+2 and rnd()<0.15) js[p]["u"]=3
+  if(players[p].y<midfield-rnd(15) and rnd()<0.15) js[p]["d"]=flr(rnd(3))
+  if(players[p].y>midfield+rnd(15) and rnd()<0.15) js[p]["u"]=flr(rnd(3))
+  --somewhat toward the ball
+  if(players[p].y<oddball.y-2 and rnd()<0.01) js[p]["d"]=3
+  if(players[p].y>oddball.y+2 and rnd()<0.01) js[p]["u"]=3
+
   if(players[p].x<midzone-1+rnd(2) and not js[p].l) js[p].r=2
   if(players[p].x>midzone+1-rnd(2) and not js[p].r) js[p].l=2
   if(oddball.upforgrabs) then
