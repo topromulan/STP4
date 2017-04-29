@@ -869,7 +869,7 @@ function draw_player(num)
  if(playersy[num] > players[num].ymax) playersy[num]=players[num].ymax
 
  spr(players[num].sprite,playersx[num],playersy[num])
- if(players[num].ai) print("ai",playersx[num]+1,playersy[num]-7,7)
+ if(ai[num]) print("ai",playersx[num]+1,playersy[num]-7,7)
 
 
 end
