@@ -401,19 +401,20 @@ function game_init()
  stadium_display_digit_height_max=17
  stadium_display_digit_heights={2,2}
 
- players[1].x=stadium_field_left + stadium_field_goalzonewidth-13
+ playersx={stadium_field_left+stadium_field_goalzonewidth-13,
+  stadium_field_right-stadium_field_goalzonewidth+5}
+
  players[1].xmin=stadium_field_left-3
  players[1].xmax=stadium_field_left+stadium_field_goalzonewidth-5
 
- players[2].x=stadium_field_right - stadium_field_goalzonewidth+5
  players[2].xmin=stadium_field_right-stadium_field_goalzonewidth-2
  players[2].xmax=stadium_field_right-4
 
  playersdx={0,0}
  playersdy={0,0}
 
- players[1].y=stadium_field_top + 5
- players[2].y=stadium_field_bottom-13
+ playersy={stadium_field_top+5,stadium_field_bottom-13}
+
  players[1].ymin=stadium_field_top-1
  players[1].ymax=stadium_field_bottom-8
  players[2].ymin=players[1].ymin
@@ -617,8 +618,8 @@ function game_update()
    if(playersdy[p]>1.25) playersdy[p]=0.95
    if(playersdy[p]<-1.25) playersdy[p]=-0.95
 
-   players[p].x+=playersdx[p]
-   players[p].y+=playersdy[p]
+   playersx[p]+=playersdx[p]
+   playersy[p]+=playersdy[p]
   end
 
   if(newbtn("o",p) or players[p].winding_up) player_service(p)
@@ -634,11 +635,11 @@ function game_update()
   oddball.x=(stadium_field_left+stadium_field_right)/2-4
   oddball.y=(stadium_field_top+stadium_field_bottom)/2-4
  elseif(holding[1]) then
-  oddball.x=players[1].x+6
-  oddball.y=players[1].y+1
+  oddball.x=playersx[1]+6
+  oddball.y=playersy[1]+1
  elseif(holding[2]) then
-  oddball.x=players[2].x-6
-  oddball.y=players[2].y+1
+  oddball.x=playersx[2]-6
+  oddball.y=playersy[2]+1
  else
   oddball.x+=oddball.dx
   oddball.y+=oddball.dy
@@ -648,13 +649,13 @@ function game_update()
  dope_num=oddball.approaching_player
  adjustedx=oddball.x+flr(3.5+rnd())
  adjustedy=oddball.y+flr(3.5+rnd())
- if(dope_num==1) shieldx=players[1].x+5 else shieldx=players[2].x+2
+ if(dope_num==1) shieldx=playersx[1]+5 else shieldx=playersx[2]+2
 
  if(abs(adjustedx-shieldx)<3) then
   --check for paddle impact
 
-  shieldhity1=players[dope_num].y-3
-  shieldhity2=players[dope_num].y+8
+  shieldhity1=playersy[dope_num]-3
+  shieldhity2=playersy[dope_num]+8
   
   dope_offset=flr(0.5+adjustedy-shieldhity1)
 
@@ -867,13 +868,13 @@ function draw_player(num)
 --  set_player_sprite(num,players[num].sprites[1+flr(rnd(2))])
  end
 
- if(players[num].x<players[num].xmin) players[num].x=players[num].xmin
- if(players[num].y < players[num].ymin) players[num].y=players[num].ymin
- if(players[num].x > players[num].xmax) players[num].x=players[num].xmax
- if(players[num].y > players[num].ymax) players[num].y=players[num].ymax
+ if(playersx[num]<players[num].xmin) playersx[num]=players[num].xmin
+ if(playersy[num] < players[num].ymin) playersy[num]=players[num].ymin
+ if(playersx[num] > players[num].xmax) playersx[num]=players[num].xmax
+ if(playersy[num] > players[num].ymax) playersy[num]=players[num].ymax
 
- spr(players[num].sprite,players[num].x,players[num].y)
- if(players[num].ai) print("ai",players[num].x+1,players[num].y-7,7)
+ spr(players[num].sprite,playersx[num],playersy[num])
+ if(players[num].ai) print("ai",playersx[num]+1,playersy[num]-7,7)
 
 
 end
@@ -1260,7 +1261,7 @@ end
 function ai_control(p)
  midfield=0.5*(stadium_field_top+stadium_field_bottom)-11+rnd(9)
  if(p==1) midzone=stadium_field_left+4 else midzone=stadium_field_right-10
- distance=abs(players[p].x-oddball.x) if(p==2) distance-=4
+ distance=abs(playersx[p]-oddball.x) if(p==2) distance-=4
  if(p==2) distance+=3 else distance-=4
  slope={oddball.dy*(0.95+rnd(0.04)),oddball.dx*(0.9+rnd(0.09))}
  slope.a=slope[1]/slope[2]
@@ -1309,14 +1310,14 @@ function ai_control(p)
    
  elseif(oddball.upforgrabs or holding[p%2+1] or not coming) then
   --amble toward midfield
-  if(players[p].y<midfield-rnd(15) and rnd()<0.15) js[p]["d"]=flr(rnd(3))
-  if(players[p].y>midfield+rnd(15) and rnd()<0.15) js[p]["u"]=flr(rnd(3))
+  if(playersy[p]<midfield-rnd(15) and rnd()<0.15) js[p]["d"]=flr(rnd(3))
+  if(playersy[p]>midfield+rnd(15) and rnd()<0.15) js[p]["u"]=flr(rnd(3))
   --somewhat toward the ball
-  if(players[p].y<oddball.y-2 and rnd()<0.01) js[p]["d"]=3
-  if(players[p].y>oddball.y+2 and rnd()<0.01) js[p]["u"]=3
+  if(playersy[p]<oddball.y-2 and rnd()<0.01) js[p]["d"]=3
+  if(playersy[p]>oddball.y+2 and rnd()<0.01) js[p]["u"]=3
 
-  if(players[p].x<midzone-1+rnd(2) and not js[p].l) js[p].r=2
-  if(players[p].x>midzone+1-rnd(2) and not js[p].r) js[p].l=2
+  if(playersx[p]<midzone-1+rnd(2) and not js[p].l) js[p].r=2
+  if(playersx[p]>midzone+1-rnd(2) and not js[p].r) js[p].l=2
   if(oddball.upforgrabs) then
    playersdy[p]*=0.5
    playersdx[p]*=0.25
@@ -1324,7 +1325,7 @@ function ai_control(p)
   players[p].thinking=nil
  else
   yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
-  gap=abs(players[p].y-yprojection-1)
+  gap=abs(playersy[p]-yprojection-1)
   if(distance>ai_far_field) then
    --sizing it up faraway
    if(rnd()>0.94) then --tend to back up
@@ -1337,7 +1338,7 @@ function ai_control(p)
    elseif(players[p].thinking>0) then
     players[p].thinking-=1
     if(not (js[p].u or js[p].d)) then
-     if(oddball.y<players[p].y) then
+     if(oddball.y<playersy[p]) then
       if(rnd()>0.25) js[p].u=2
      else
       if(rnd()>0.25) js[p].d=2
@@ -1362,7 +1363,7 @@ function ai_control(p)
     else
      newyproj=yprojection
     end
-    if(players[p].y>newyproj) then
+    if(playersy[p]>newyproj) then
      js[p].u=5 js[p].d=nil
     else
      js[p].d=5 js[p].u=nil
@@ -1382,9 +1383,9 @@ function ai_control(p)
      js[p][backwards]=2
     end    
    end
-   if(players[p].y>nearyproj+1) then
+   if(playersy[p]>nearyproj+1) then
     js[p].u=2
-   elseif(players[p].y<nearyproj-4) then
+   elseif(playersy[p]<nearyproj-4) then
     js[p].d=2
    end
 
