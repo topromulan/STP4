@@ -321,6 +321,7 @@ function game_init()
  player_sprites={{9,25,41,57,56,55,54},{10,26,42,58,59,60,61}}
  
  scores={0,0}
+ lead=0
 
  holding={false,false}
 
@@ -646,6 +647,14 @@ function game_update()
  adjustedy=oddball_y+flr(3.5+rnd())
  if(dope_num==1) shieldx=playersx[1]+5 else shieldx=playersx[2]+2
 
+ --if ai vs ai lead will be p2 lead
+ --doesn't matter whatever
+ lowspeed=1.3234-lead/10
+ highspeed=4.2
+ 
+ force_multiplier=-1*(1.05-lead/75)
+ printh(" fm="..force_multiplier.."  "..cycles.."  odx="..oddball_dx)
+
  if(abs(adjustedx-shieldx)<3) then
   --check for paddle impact
 
@@ -657,7 +666,7 @@ function game_update()
   if(adjustedy>=shieldhity1 and adjustedy<=shieldhity2) then
    if(not players[approaching_player].dancing) then
     --collision
-    oddball_dx*=-1.025
+    oddball_dx*=force_multiplier
     if(dope_offset<2.1) then
      oddball_dy-=1.8+rnd(0.4)
     elseif(dope_offset<4.1) then
@@ -683,8 +692,8 @@ function game_update()
    else
     oddball_dx+=(0.05+rnd(0.05))*playersdx[approaching_player]
    end
-   lowspeed=1.1234
-   highspeed=4.2
+   if(abs(lead)>3) lowspeed*=0.75
+   printh(lowspeed)
    if(abs(oddball_dx)<lowspeed) oddball_dx=lowspeed*(oddball_dx/abs(oddball_dx))
    if(abs(oddball_dx)>highspeed) oddball_dx=highspeed*(oddball_dx/abs(oddball_dx))
    oddball_dy+=0.45*playersdy[approaching_player]
@@ -1043,7 +1052,7 @@ function player_wins(num)
   party_message="everybody wins!!"
   plaque_color=4
  end
- play_song(0)
+ music(0)
  party_update()
  compliments={"ístellarí","Åfirst placeÅ","ñelectricñ","Ölike a ninjaÖ","çepicç","èradè","ìtop notchì","ô zen-like ô","épico-rifficó"}
  adjective=compliments[1+flr(rnd(#compliments))]
