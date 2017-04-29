@@ -324,12 +324,9 @@ function game_init()
 
  holding={false,false}
 
- players[1].winding_up=false
- players[2].winding_up=false
- players[1].serve_power=1
- players[2].serve_power=1
- players[1].winding_dir=1
- players[2].winding_dir=1
+ winding_uppage={false,false}
+ serve_powers={1,1}
+ winding_dirs={1,1}
 
  names={
   { {"red","red","red","rouge","rusty","ruddy","redder","rosy","ruby","russet","big red","beet red"},
@@ -461,13 +458,13 @@ function player_service(num)
  elseif(holding[num]) then
   if(newbtn("o",num)) then
    --still winding up
-   players[num].winding_up=true
+   winding_uppage[num]=true
    player_windup(num)
   else
    --let it fly
    holding[num]=false
-   players[num].winding_up=false
-   oddball_dx=-1*(-3+2*num)*(1+rnd(0.5)+players[num].serve_power/10)
+   winding_uppage[num]=false
+   oddball_dx=-1*(-3+2*num)*(1+rnd(0.5)+serve_powers[num]/10)
    oddball_dy=0.1-rnd(0.2)
    --oddball_dx*=0.55 --for serve testing
    oddball_dx+=(0.1+rnd(0.1))*playersdx[num]
@@ -497,16 +494,16 @@ function player_service(num)
 end
 
 function player_windup(num)
- if(players[num].serve_power==nil) players[num].serve_power=1
+ if(serve_powers[num]==nil) serve_powers[num]=1
 
- players[num].serve_power+=players[num].winding_dir
+ serve_powers[num]+=winding_dirs[num]
  
- if(players[num].serve_power>10) then
-  players[num].serve_power=10
-  players[num].winding_dir=-3
- elseif(players[num].serve_power<1) then
-  players[num].serve_power=1
-  players[num].winding_dir=0.5
+ if(serve_powers[num]>10) then
+  serve_powers[num]=10
+  winding_dirs[num]=-3
+ elseif(serve_powers[num]<1) then
+  serve_powers[num]=1
+  winding_dirs[num]=0.5
  end
  
 end
@@ -514,9 +511,9 @@ end
 function draw_windup()
 
  draw_it=false
- if(players[1].winding_up) then
+ if(winding_uppage[1]) then
   draw_it=true draw_num=1 draw_clr=8
- elseif(players[2].winding_up) then
+ elseif(winding_uppage[2]) then
   draw_it=true draw_num=2 draw_clr=2
  end
  
@@ -529,9 +526,9 @@ function draw_windup()
  if(draw_it) then
   if(draw_num==1) then
    meter_left=wind_x1+1
-   meter_right=wind_x1+(windup_width-1)*(players[draw_num].serve_power/10)
+   meter_right=wind_x1+(windup_width-1)*(serve_powers[draw_num]/10)
   else
-   meter_left=wind_x2-(windup_width-1)*(players[draw_num].serve_power/10)
+   meter_left=wind_x2-(windup_width-1)*(serve_powers[draw_num]/10)
    meter_right=wind_x2-1
   end
   rectfill(wind_x1,wind_y1,wind_x2-1,wind_y2-1,14)
@@ -620,9 +617,9 @@ function game_update()
    playersy[p]+=playersdy[p]
   end
 
-  if(newbtn("o",p) or players[p].winding_up) player_service(p)
+  if(newbtn("o",p) or winding_uppage[p]) player_service(p)
   if(holding[p]) then
-   if(newbtn("o",p)) poke(0x36c8,players[p].serve_power*5)
+   if(newbtn("o",p)) poke(0x36c8,serve_powers[p]*5)
 
    if(newbtnp("o",p)) sfx(18,3)
   end  
@@ -811,12 +808,12 @@ function game_draw()
    msgv="v"
    print(msgv,stadium_field_middle-2*#msgv,stadium_field_bottom-6,4+cycles%5)
    
-   if(players[1].winding_up) then
-    if(players[1].winding_dir>2) players[1].winding_dir=2
-    if(players[1].winding_dir<-0.5) players[1].winding_dir=-0.5
-   elseif(players[2].winding_up) then
-    if(players[2].winding_dir>2) players[2].winding_dir=2
-    if(players[2].winding_dir<-0.5) players[2].winding_dir=-0.5
+   if(winding_uppage[1]) then
+    if(winding_dirs[1]>2) winding_dirs[1]=2
+    if(winding_dirs[1]<-0.5) winding_dirs[1]=-0.5
+   elseif(winding_uppage[2]) then
+    if(winding_dirs[2]>2) winding_dirs[2]=2
+    if(winding_dirs[2]<-0.5) winding_dirs[2]=-0.5
    end
   end
  end
