@@ -170,16 +170,16 @@ function intro_draw()
  ld=32+sin(lx/1000)*20
  ratio=ld/rd
  circfill(lx,ly,ld,lcolor)
- s=players[1].sprites[1+flr(cycles/5)%7]
+ s=player_sprites[1][1+flr(cycles/5)%7]
  sx=s*8%128
  sy=8*flr(s*8/128)
  sspr(sx,sy,8,8,lx-12*ratio,ly-24*ratio,24*ratio,24*ratio)
 
  circfill(rx,ry,rd,rcolor)
  if(lx>=51 and lx<=70) then
-  s=players[2].sprites[6]
+  s=player_sprites[2][6]
  else
-  s=players[2].sprites[1+flr(cycles/5)%2]
+  s=player_sprites[2][1+flr(cycles/5)%2]
  end
  sx=s*8%128
  sy=8*flr(s*8/128)
@@ -318,8 +318,7 @@ function game_init()
 
  newbtn_init()
 
- players[1].sprites={9,25,41,57,56,55,54}
- players[2].sprites={10,26,42,58,59,60,61}
+ player_sprites={{9,25,41,57,56,55,54},{10,26,42,58,59,60,61}}
  
  scores={0,0}
 
@@ -447,7 +446,7 @@ function set_player_pose(num,pose)
  if(players[num].stagger_effect>0) then
   players[num].stagger_effect-=1
  else
-  players[num].sprite=players[num].sprites[pose]
+  players[num].sprite=player_sprites[num][pose]
  end
 end
 
@@ -864,7 +863,7 @@ function draw_player(num)
    players[num].dancing=false
   end 
  else
---  set_player_sprite(num,players[num].sprites[1+flr(rnd(2))])
+--  set_player_sprite(num,player_sprites[num][1+flr(rnd(2))])
  end
 
  if(playersx[num]<players[num].xmin) playersx[num]=players[num].xmin
@@ -1120,7 +1119,7 @@ function party_draw()
  for party_p=1,2 do
   if(party_p==1 and trophy_for_player1 or
      party_p==2 and trophy_for_player2) then
-   s1234=players[party_p].sprites[1+cycles%6]
+   s1234=player_sprites[party_p][1+cycles%6]
    sx1234=s1234*8%128
    sy1234=8*flr(s1234*8/128)
    px1234=128*(party_time/125)
