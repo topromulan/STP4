@@ -39,7 +39,7 @@ function _update()
   --fix bug when it wraps
   if(cycles<0) then
    cycles=1 
-   if(oddball!=nil) oddball.service_time=0 
+   if(oddball!=nil) service_time=0 
   end
 
   update_mode()
@@ -307,8 +307,7 @@ end
 function game_init()
  players={}
 
- oddball={}
- oddball.sprites={11,12,13,29,45,44,43,27}
+ oddball_sprites={11,12,13,29,45,44,43,27}
 
  players[1]={}
  players[2]={}
@@ -431,12 +430,12 @@ function game_init()
  end
  shuffle_audience_timing()
 
- oddball.upforgrabs=true
- oddball.service_time=cycles+25+rnd(10)
- oddball.dx=0 oddball.dy=0
- oddball.x=64
- oddball.y=64
- oddball.approaching_player=1
+ upforgrabs=true
+ service_time=cycles+25+rnd(10)
+ oddball_dx=0 oddball_dy=0
+ oddball_x=64
+ oddball_y=64
+ approaching_player=1
 
  help_flag=false
  
@@ -455,10 +454,10 @@ end
 function player_service(num)
  playersdx[num]*=0.75
  playersdy[num]*=0.75
- if(oddball.upforgrabs and cycles>oddball.service_time+25+rnd(3.2) and newbtnp("o",num)) then
+ if(upforgrabs and cycles>service_time+25+rnd(3.2) and newbtnp("o",num)) then
   --move it into player's hands
-  oddball.upforgrabs=false
-  oddball.dx=0 oddball.dy=0
+  upforgrabs=false
+  oddball_dx=0 oddball_dy=0
   holding[num]=true
  elseif(holding[num]) then
   if(newbtn("o",num)) then
@@ -469,22 +468,22 @@ function player_service(num)
    --let it fly
    holding[num]=false
    players[num].winding_up=false
-   oddball.dx=-1*(-3+2*num)*(1+rnd(0.5)+players[num].serve_power/10)
-   oddball.dy=0.1-rnd(0.2)
-   --oddball.dx*=0.55 --for serve testing
-   oddball.dx+=(0.1+rnd(0.1))*playersdx[num]
+   oddball_dx=-1*(-3+2*num)*(1+rnd(0.5)+players[num].serve_power/10)
+   oddball_dy=0.1-rnd(0.2)
+   --oddball_dx*=0.55 --for serve testing
+   oddball_dx+=(0.1+rnd(0.1))*playersdx[num]
    reldx=playersdx[num]
    if(num==2) reldx*=-1
    if(reldx<-0.65) then
-    oddball.dy+=3*playersdy[num]
+    oddball_dy+=3*playersdy[num]
    elseif(reldx<0) then
-    oddball.dy+=2.25*playersdy[num]
+    oddball_dy+=2.25*playersdy[num]
    elseif(reldx==0) then
-    oddball.dy+=2*playersdy[num]
+    oddball_dy+=2*playersdy[num]
    elseif(reldx<=0.8) then
-    oddball.dy+=1.75*playersdy[num]
+    oddball_dy+=1.75*playersdy[num]
    else
-    oddball.dy+=1.25*playersdy[num]
+    oddball_dy+=1.25*playersdy[num]
    end
 
    sfx(1+num) sfx(4,3)
@@ -551,7 +550,7 @@ function game_update()
  -- if(btnp(4)) then scores[1] += 1 end
  -- if(btnp(5)) then scores[2] += 1 end
 
- if(cycles>oddball.service_time) then
+ if(cycles>service_time) then
   if(ai[1] and ai[2]) then
    if(scores[1]>=win or scores[2]>=win) do_intro()
   end
@@ -630,25 +629,25 @@ function game_update()
   end  
  end
 
- if(oddball.upforgrabs) then
-  if(oddball.service_time-cycles<12) music(-1)
-  oddball.x=(stadium_field_left+stadium_field_right)/2-4
-  oddball.y=(stadium_field_top+stadium_field_bottom)/2-4
+ if(upforgrabs) then
+  if(service_time-cycles<12) music(-1)
+  oddball_x=(stadium_field_left+stadium_field_right)/2-4
+  oddball_y=(stadium_field_top+stadium_field_bottom)/2-4
  elseif(holding[1]) then
-  oddball.x=playersx[1]+6
-  oddball.y=playersy[1]+1
+  oddball_x=playersx[1]+6
+  oddball_y=playersy[1]+1
  elseif(holding[2]) then
-  oddball.x=playersx[2]-6
-  oddball.y=playersy[2]+1
+  oddball_x=playersx[2]-6
+  oddball_y=playersy[2]+1
  else
-  oddball.x+=oddball.dx
-  oddball.y+=oddball.dy
+  oddball_x+=oddball_dx
+  oddball_y+=oddball_dy
  end
 
- slope_a_dope=oddball.dy/oddball.dx if(oddball.approaching_player==2) slope_a_dope*=-1
- dope_num=oddball.approaching_player
- adjustedx=oddball.x+flr(3.5+rnd())
- adjustedy=oddball.y+flr(3.5+rnd())
+ slope_a_dope=oddball_dy/oddball_dx if(approaching_player==2) slope_a_dope*=-1
+ dope_num=approaching_player
+ adjustedx=oddball_x+flr(3.5+rnd())
+ adjustedy=oddball_y+flr(3.5+rnd())
  if(dope_num==1) shieldx=playersx[1]+5 else shieldx=playersx[2]+2
 
  if(abs(adjustedx-shieldx)<3) then
@@ -660,78 +659,78 @@ function game_update()
   dope_offset=flr(0.5+adjustedy-shieldhity1)
 
   if(adjustedy>=shieldhity1 and adjustedy<=shieldhity2) then
-   if(not players[oddball.approaching_player].dancing) then
+   if(not players[approaching_player].dancing) then
     --collision
-    oddball.dx*=-1.025
+    oddball_dx*=-1.025
     if(dope_offset<2.1) then
-     oddball.dy-=1.8+rnd(0.4)
+     oddball_dy-=1.8+rnd(0.4)
     elseif(dope_offset<4.1) then
-     oddball.dy-=0.25
-     oddball.dy*=1.2
+     oddball_dy-=0.25
+     oddball_dy*=1.2
     elseif(dope_offset<8) then
-     oddball.dy*=0.5
-     oddball.dy+=-0.2+rnd(0.4)
+     oddball_dy*=0.5
+     oddball_dy+=-0.2+rnd(0.4)
     elseif(dope_offset<10) then
-     oddball.dy+=0.25
-     oddball.dy*=1.2
+     oddball_dy+=0.25
+     oddball_dy*=1.2
     else
-     oddball.dy+=1.8+rnd(0.4)
+     oddball_dy+=1.8+rnd(0.4)
     end
    else
     --they screwed up boooo
     sfx(8) sfx(9)
    end
 
-   if(oddball.approaching_player==1 and playersdx[oddball.approaching_player]<0
-     or oddball.approaching_player==2 and playersdx[oddball.approaching_player]>0) then
-    oddball.dx+=0.2*playersdx[oddball.approaching_player] 
+   if(approaching_player==1 and playersdx[approaching_player]<0
+     or approaching_player==2 and playersdx[approaching_player]>0) then
+    oddball_dx+=0.2*playersdx[approaching_player] 
    else
-    oddball.dx+=(0.05+rnd(0.05))*playersdx[oddball.approaching_player]
+    oddball_dx+=(0.05+rnd(0.05))*playersdx[approaching_player]
    end
    lowspeed=1.1234
    highspeed=4.2
-   if(abs(oddball.dx)<lowspeed) oddball.dx=lowspeed*(oddball.dx/abs(oddball.dx))
-   if(abs(oddball.dx)>highspeed) oddball.dx=highspeed*(oddball.dx/abs(oddball.dx))
-   oddball.dy+=0.45*playersdy[oddball.approaching_player]
+   if(abs(oddball_dx)<lowspeed) oddball_dx=lowspeed*(oddball_dx/abs(oddball_dx))
+   if(abs(oddball_dx)>highspeed) oddball_dx=highspeed*(oddball_dx/abs(oddball_dx))
+   oddball_dy+=0.45*playersdy[approaching_player]
 
    shuffle_audience_timing()
    
    if(slope_a_dope>0.15 or dope_offset>9.9) then
-    set_player_pose(oddball.approaching_player,5)
+    set_player_pose(approaching_player,5)
    elseif(slope_a_dope<-0.15 or dope_offset<2.1) then
-    set_player_pose(oddball.approaching_player,4)
+    set_player_pose(approaching_player,4)
    else
-    set_player_pose(oddball.approaching_player,3)
+    set_player_pose(approaching_player,3)
    end
-   players[oddball.approaching_player].stagger_effect=35
-   sfx(1+oddball.approaching_player)
+   players[approaching_player].stagger_effect=35
+   sfx(1+approaching_player)
    --glancing blows
    --extra oomph
-   if(not players[oddball.approaching_player].moving and newbtn("o",oddball.approaching_player)) then oddball.dx*=1.1 sfx(0) end   
+   if(not players[approaching_player].moving and newbtn("o",approaching_player)) then oddball_dx*=1.1 sfx(0) end   
   end
  end
 
- oddball.approaching_player=1 if(oddball.dx > 0) then oddball.approaching_player=2 end 
+ approaching_player=1 if(oddball_dx > 0) then approaching_player=2 end 
 
  yadjust={0,-6}
  effective_top=stadium_field_top+yadjust[1]
  effective_bottom=stadium_field_bottom+yadjust[2]
- dope_diff=effective_top-oddball.y
+ dope_diff=effective_top-oddball_y
  local out_of_bounds --shorter than out_of_bounds=false!
  if(dope_diff>0) then
   out_of_bounds=true
-  oddball.y=effective_top+dope_diff
+  oddball_y=effective_top+dope_diff
  end
- dope_diff=oddball.y-effective_bottom
+ dope_diff=oddball_y-effective_bottom
  if(dope_diff>0) then
   out_of_bounds=true
-  oddball.y=effective_bottom-dope_diff
+  oddball_y=effective_bottom-dope_diff
  end
- if(out_of_bounds) oddball.dy*=-0.75-rnd(0.2)
+ if(out_of_bounds) oddball_dy*=-0.75-rnd(0.2)
 
  --score!! goal!!
- if(oddball.x<stadium_field_left-4 or oddball.x>stadium_field_right-3) then
-  if(oddball.x>stadium_field_middle) then
+ if(oddball_x<stadium_field_left-4 or oddball_x>stadium_field_right-3) then
+  if(oddball_x>stadium_field_middle) then
    scoring_player=1
   else
    scoring_player=2
@@ -739,9 +738,9 @@ function game_update()
   scores[scoring_player]+=1
   stadium_display_digit_heights[scoring_player]=2
   schedule_sfx(1,7)--lets clapping begin first
-  oddball.upforgrabs=true
-  oddball.x=64 oddball.y=85 --approximately in the middle so ai returns to midfield
-  oddball.service_time=cycles+45+rnd(10)
+  upforgrabs=true
+  oddball_x=64 oddball_y=85 --approximately in the middle so ai returns to midfield
+  service_time=cycles+45+rnd(10)
   if(scores[1]<win and scores[2]<win) then
    poke(0x3681,60+flr(rnd(30)))
    sfx(16)
@@ -798,7 +797,7 @@ function game_draw()
 
  if(scores[1]==0 and scores[2]==0) then
   clrv=(flr(cycles/25)%2+5)
-  if(oddball.upforgrabs and cycles-intro_ending_at>125) then
+  if(upforgrabs and cycles-intro_ending_at>125) then
    help_flag=true
    msgv="(hold Ž to serve)"
    print(msgv,stadium_field_middle-2*#msgv,stadium_field_bottom-15,clrv)   
@@ -880,17 +879,17 @@ function draw_player(num)
 end
 
 function draw_oddball()
- if(oddball.upforgrabs) then
-  oddball.sprite=oddball.sprites[2]
+ if(upforgrabs) then
+  oddball_sprite=oddball_sprites[2]
  elseif(holding[1]) then
-  oddball.sprite=oddball.sprites[1+flr(cycles/5)%3]
+  oddball_sprite=oddball_sprites[1+flr(cycles/5)%3]
  elseif(holding[2]) then
-  oddball.sprite=oddball.sprites[5+flr(cycles/6)%3]
+  oddball_sprite=oddball_sprites[5+flr(cycles/6)%3]
  else
-  oddball.sprite=oddball.sprites[1+flr(cycles/3.3)%8]
+  oddball_sprite=oddball_sprites[1+flr(cycles/3.3)%8]
  end
 
- if(cycles>oddball.service_time) spr(oddball.sprite,oddball.x,oddball.y)
+ if(cycles>service_time) spr(oddball_sprite,oddball_x,oddball_y)
 end
 
 function draw_scoreboard()
@@ -1017,8 +1016,8 @@ function draw_audience()
   --draw each audience member in 
   -- their seat, facing the ball
   fan_sprite=stadium_audience[seat].sprite
-  if(oddball.x < seatx+stadium_audience[seat].timing) fan_sprite-=16
-  if(oddball.x > seatx+8+stadium_audience[seat].timing) fan_sprite+=16
+  if(oddball_x < seatx+stadium_audience[seat].timing) fan_sprite-=16
+  if(oddball_x > seatx+8+stadium_audience[seat].timing) fan_sprite+=16
   spr(fan_sprite,seatx+4,seaty+3)
  end
 end
@@ -1261,23 +1260,23 @@ end
 function ai_control(p)
  midfield=0.5*(stadium_field_top+stadium_field_bottom)-11+rnd(9)
  if(p==1) midzone=stadium_field_left+4 else midzone=stadium_field_right-10
- distance=abs(playersx[p]-oddball.x) if(p==2) distance-=4
+ distance=abs(playersx[p]-oddball_x) if(p==2) distance-=4
  if(p==2) distance+=3 else distance-=4
- slope={oddball.dy*(0.95+rnd(0.04)),oddball.dx*(0.9+rnd(0.09))}
+ slope={oddball_dy*(0.95+rnd(0.04)),oddball_dx*(0.9+rnd(0.09))}
  slope.a=slope[1]/slope[2]
  top=stadium_field_top bottom=stadium_field_bottom
  height=bottom-top
- direction=oddball.dx/abs(oddball.dx)
+ direction=oddball_dx/abs(oddball_dx)
  if(p==1) then
   backwards="l" forwards="r"
  else
   backwards="r" forwards="l"
  end
- coming=true if(p!=oddball.approaching_player) coming=false
+ coming=true if(p!=approaching_player) coming=false
 
  lead=scores[p]-scores[1+p%2]
- availability=cycles-oddball.service_time
- if(oddball.upforgrabs
+ availability=cycles-service_time
+ if(upforgrabs
    and (
     availability>80+10*lead and rnd()<0.025
     or lead<0 and availability>15 and rnd()<0.01
@@ -1308,23 +1307,23 @@ function ai_control(p)
    if(rnd()<serve_strategy.chance2) js[p][serve_strategy.dir2]=1
   end
    
- elseif(oddball.upforgrabs or holding[p%2+1] or not coming) then
+ elseif(upforgrabs or holding[p%2+1] or not coming) then
   --amble toward midfield
   if(playersy[p]<midfield-rnd(15) and rnd()<0.15) js[p]["d"]=flr(rnd(3))
   if(playersy[p]>midfield+rnd(15) and rnd()<0.15) js[p]["u"]=flr(rnd(3))
   --somewhat toward the ball
-  if(playersy[p]<oddball.y-2 and rnd()<0.01) js[p]["d"]=3
-  if(playersy[p]>oddball.y+2 and rnd()<0.01) js[p]["u"]=3
+  if(playersy[p]<oddball_y-2 and rnd()<0.01) js[p]["d"]=3
+  if(playersy[p]>oddball_y+2 and rnd()<0.01) js[p]["u"]=3
 
   if(playersx[p]<midzone-1+rnd(2) and not js[p].l) js[p].r=2
   if(playersx[p]>midzone+1-rnd(2) and not js[p].r) js[p].l=2
-  if(oddball.upforgrabs) then
+  if(upforgrabs) then
    playersdy[p]*=0.5
    playersdx[p]*=0.25
   end
   players[p].thinking=nil
  else
-  yprojection=oddball.y+slope[1]*(distance/abs(slope[2]))
+  yprojection=oddball_y+slope[1]*(distance/abs(slope[2]))
   gap=abs(playersy[p]-yprojection-1)
   if(distance>ai_far_field) then
    --sizing it up faraway
@@ -1338,7 +1337,7 @@ function ai_control(p)
    elseif(players[p].thinking>0) then
     players[p].thinking-=1
     if(not (js[p].u or js[p].d)) then
-     if(oddball.y<playersy[p]) then
+     if(oddball_y<playersy[p]) then
       if(rnd()>0.25) js[p].u=2
      else
       if(rnd()>0.25) js[p].d=2
@@ -1346,17 +1345,17 @@ function ai_control(p)
     end
    else
     if(yprojection<top-5 or yprojection>bottom+5) then
-     if(oddball.dy<0) then
-      to_wall=oddball.y-stadium_field_top
+     if(oddball_dy<0) then
+      to_wall=oddball_y-stadium_field_top
       overage=stadium_field_top-yprojection
      else
-      to_wall=stadium_field_bottom-oddball.y
+      to_wall=stadium_field_bottom-oddball_y
       overage=yprojection-stadium_field_bottom
      end
      bounces=1+flr(abs(overage)/height)
      newyproj=overage%height
-     if((bounces%2==1 and oddball.dy>0)
-       or (bounces%2==0 and oddball.dy<0)) then
+     if((bounces%2==1 and oddball_dy>0)
+       or (bounces%2==0 and oddball_dy<0)) then
       newyproj=height-newyproj
      end
      newyproj+=stadium_field_top
@@ -1389,8 +1388,8 @@ function ai_control(p)
     js[p].d=2
    end
 
-   if(distance>7*abs(oddball.dx) and distance<8.1*abs(oddball.dx)) then
-    if(gap<2 or oddball.dx<1.2) then
+   if(distance>7*abs(oddball_dx) and distance<8.1*abs(oddball_dx)) then
+    if(gap<2 or oddball_dx<1.2) then
      js[p].o=10
     end
    end
@@ -1443,7 +1442,7 @@ end
 function love_music()
  music_lover=true
  menuitem(3,"no music",hate_music)
- if(not oddball.upforgrabs and not holding[1] and not holding[2]) play_song()
+ if(not upforgrabs and not holding[1] and not holding[2]) play_song()
 end
 
 function hate_music()
