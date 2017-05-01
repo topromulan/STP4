@@ -465,7 +465,7 @@ function player_service(num)
    --let it fly
    holding[num]=false
    winding_uppage[num]=false
-   oddball_dx=-1*(-3+2*num)*(1+rnd(0.5)+serve_powers[num]/10)
+   oddball_dx=-1*(-3+2*num)*(1+rnd(0.5)+serve_powers[num]/15)
    oddball_dy=0.1-rnd(0.2)
    --oddball_dx*=0.55 --for serve testing
    oddball_dx+=(0.1+rnd(0.1))*playersdx[num]
@@ -485,8 +485,6 @@ function player_service(num)
 
    sfx(1+num) sfx(4,3)
    if(music_lover and not (ai[1] and ai[2])) play_song()
---   if(music_lover) play_song()
---    printh("hold".."a".."few".."tokens".."for".."me")
   end
  else
   --dancing?
@@ -596,9 +594,9 @@ function game_update()
    if(rnd()<playersdx[p]) playersdx[p]*=-1
   end 
    
-  threshold=0.25 if(p==2) threshold=0.005
-  if(playersdx[p]<threshold and playersdx[p]>-1*threshold
-    and playersdy[p]<threshold and playersdy[p]>-1*threshold) then
+  threshold=0.25
+  if(abs(playersdx[p])<threshold
+    and abs(playersdy[p])<threshold) then
    players[p].moving=false
    playersdx[p]=0
    playersdy[p]=0
@@ -653,7 +651,6 @@ function game_update()
  highspeed=4.2
  
  force_multiplier=-1*(1.05-lead/75)
- printh(" fm="..force_multiplier.."  "..cycles.."  odx="..oddball_dx)
 
  if(abs(adjustedx-shieldx)<3) then
   --check for paddle impact
@@ -693,7 +690,6 @@ function game_update()
     oddball_dx+=(0.05+rnd(0.05))*playersdx[approaching_player]
    end
    if(abs(lead)>3) lowspeed*=0.75
-   printh(lowspeed)
    if(abs(oddball_dx)<lowspeed) oddball_dx=lowspeed*(oddball_dx/abs(oddball_dx))
    if(abs(oddball_dx)>highspeed) oddball_dx=highspeed*(oddball_dx/abs(oddball_dx))
    oddball_dy+=0.45*playersdy[approaching_player]
@@ -880,6 +876,7 @@ function draw_player(num)
  spr(players[num].sprite,playersx[num],playersy[num])
  if(ai[num]) print("ai",playersx[num]+1,playersy[num]-7,7)
 
+ print(num,playersx[num]+3,playersy[num]+9,7)
 
 end
 
@@ -1239,7 +1236,7 @@ function newbtn_mgmt()
  end
 
  --this makes the ai somewhat smoother. maybe? xxx
- if(players[p]) then
+ if(players[p] and p==1) then
   if(js[p].l and js[p].r) then
    if(js[p].l>js[p].r) js[p].r=nil else js[p].l=nil
   end
@@ -1265,7 +1262,7 @@ end
 function ai_control(p)
  midfield=0.5*(stadium_field_top+stadium_field_bottom)-11+rnd(9)
  if(p==1) midzone=stadium_field_left+4 else midzone=stadium_field_right-10
- distance=abs(playersx[p]-oddball_x) if(p==2) distance-=4
+ distance=abs(playersx[p]-oddball_x) if(p==2) distance-=8
  if(p==2) distance+=3 else distance-=4
  slope={oddball_dy*(0.95+rnd(0.04)),oddball_dx*(0.9+rnd(0.09))}
  slope.a=slope[1]/slope[2]
