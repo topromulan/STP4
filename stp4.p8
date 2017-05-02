@@ -306,6 +306,8 @@ end
 
 function game_init()
  players={}
+ shieldx={-1,-1} --avoid error
+ adjustedx=-1 adjustedy=-1
 
  oddball_sprites={11,12,13,29,45,44,43,27}
 
@@ -643,16 +645,16 @@ function game_update()
  dope_num=approaching_player
  adjustedx=oddball_x+flr(3.5+rnd())
  adjustedy=oddball_y+flr(3.5+rnd())
- if(dope_num==1) shieldx=playersx[1]+5 else shieldx=playersx[2]+2
+ shieldx={playersx[1]+6,playersx[2]+1}
 
  --if ai vs ai lead will be p2 lead
  --doesn't matter whatever
  lowspeed=1.3234-lead/10
  highspeed=4.2
- 
- force_multiplier=-1*(1.05-lead/75)
 
- if(abs(adjustedx-shieldx)<3) then
+ force_multiplier=-1*(1.05-lead/150)-(cycles-service_time)/10000 
+ 
+ if(abs(adjustedx-shieldx[dope_num])<3) then
   --check for paddle impact
 
   shieldhity1=playersy[dope_num]-3
@@ -663,6 +665,10 @@ function game_update()
   if(adjustedy>=shieldhity1 and adjustedy<=shieldhity2) then
    if(not players[approaching_player].dancing) then
     --collision
+    printh("p"..dope_num.." at "..cycles)
+    printh(" odx="..oddball_dx.." ody="..oddball_dy)
+    printh(" low "..lowspeed.." hi "..highspeed)
+    printh(" fm="..force_multiplier)
     oddball_dx*=force_multiplier
     if(dope_offset<2.1) then
      oddball_dy-=1.8+rnd(0.4)
@@ -876,7 +882,7 @@ function draw_player(num)
  spr(players[num].sprite,playersx[num],playersy[num])
  if(ai[num]) print("ai",playersx[num]+1,playersy[num]-7,7)
 
- print(num,playersx[num]+3,playersy[num]+9,7)
+-- print(num,playersx[num]+3,playersy[num]+9,7) 
 
 end
 
@@ -1235,13 +1241,13 @@ function newbtn_mgmt()
   end
  end
 
- --this makes the ai somewhat smoother. maybe? xxx
- if(players[p] and p==1) then
+ --debatable
+ if(players[p]) then
   if(js[p].l and js[p].r) then
    if(js[p].l>js[p].r) js[p].r=nil else js[p].l=nil
   end
   if(js[p].u and js[p].d) then
-   if(js[p].u>js[p].d) js[p].d=nil else js[p].u=nil
+   if(js[p].u<js[p].d) js[p].d=nil else js[p].u=nil
   end
  end
  
@@ -1262,8 +1268,7 @@ end
 function ai_control(p)
  midfield=0.5*(stadium_field_top+stadium_field_bottom)-11+rnd(9)
  if(p==1) midzone=stadium_field_left+4 else midzone=stadium_field_right-10
- distance=abs(playersx[p]-oddball_x) if(p==2) distance-=8
- if(p==2) distance+=3 else distance-=4
+ distance=abs(shieldx[p]-adjustedx)
  slope={oddball_dy*(0.95+rnd(0.04)),oddball_dx*(0.9+rnd(0.09))}
  slope.a=slope[1]/slope[2]
  top=stadium_field_top bottom=stadium_field_bottom
@@ -1325,7 +1330,7 @@ function ai_control(p)
   end
   players[p].thinking=nil
  else
-  yprojection=oddball_y+slope[1]*(distance/abs(slope[2]))
+  yprojection=adjustedy+slope[1]*(distance/abs(slope[2]))
   gap=abs(playersy[p]-yprojection-1)
   if(distance>ai_far_field) then
    --sizing it up faraway
@@ -1339,19 +1344,19 @@ function ai_control(p)
    elseif(players[p].thinking>0) then
     players[p].thinking-=1
     if(not (js[p].u or js[p].d)) then
-     if(oddball_y<playersy[p]) then
+     if(adjustedy<playersy[p]) then
       if(rnd()>0.25) js[p].u=2
      else
       if(rnd()>0.25) js[p].d=2
      end
     end
    else
-    if(yprojection<top-5 or yprojection>bottom+5) then
+    if(yprojection<top-2 or yprojection>bottom+2) then
      if(oddball_dy<0) then
-      to_wall=oddball_y-stadium_field_top
+      to_wall=adjustedy-stadium_field_top
       overage=stadium_field_top-yprojection
      else
-      to_wall=stadium_field_bottom-oddball_y
+      to_wall=stadium_field_bottom-adjustedy
       overage=yprojection-stadium_field_bottom
      end
      bounces=1+flr(abs(overage)/height)
@@ -1370,28 +1375,30 @@ function ai_control(p)
      js[p].d=5 js[p].u=nil
     end   
    end
+
   else
    -- near field
+   hands_y=playersy[p]+3
    nearyproj=yprojection
-   if(yprojection<stadium_field_top-1 or yprojection>stadium_field_bottom+1) nearyproj=midfield
+   if(yprojection<stadium_field_top-1 or yprojection>stadium_field_bottom+5 or yprojection<stadium_field_top-5) nearyproj=midfield
    if(gap>2 and distance<15) then
     js[p][forwards]=nil
     js[p][backwards]=2
    else
     if(rnd()>0.74) then --tend to run for it
      js[p][forwards]=3
-    elseif(rnd()>0.83) then
+    elseif(rnd()>0.93) then
      js[p][backwards]=2
     end    
    end
-   if(playersy[p]>nearyproj+1) then
+   if(hands_y>nearyproj-1) then
     js[p].u=2
-   elseif(playersy[p]<nearyproj-4) then
-    js[p].d=2
+   elseif(hands_y<nearyproj-5) then
+    js[p].d=3
    end
 
    if(distance>7*abs(oddball_dx) and distance<8.1*abs(oddball_dx)) then
-    if(gap<2 or oddball_dx<1.2) then
+    if(gap<2) then
      js[p].o=10
     end
    end
@@ -1460,6 +1467,8 @@ function play_song()
   next_song=songs[1+flr(rnd(#songs))]
  end
 end
+
+
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000888800002220000000000000088000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000fff000001ff0000084000000044000000008800000000000000000
