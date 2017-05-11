@@ -322,7 +322,7 @@ function game_init()
 
  player_sprites={{9,25,41,57,56,55,54},{10,26,42,58,59,60,61}}
  
- scores={0,0}
+ scores={1,1}
  lead=0
 
  holding={false,false}
@@ -1038,7 +1038,7 @@ function player_wins(num)
  end
  update_mode=party_update
  draw_mode=party_draw
- party_started=cycles+1
+ party_started=flr(cycles)+1
  menuitem(1) menuitem(2) menuitem(3)
 
  if(party_message==nil and num==1) then
@@ -1055,7 +1055,6 @@ function player_wins(num)
   party_message="everybody wins!!"
   plaque_color=4
  end
- music(0)
  party_update()
  compliments={"ístellarí","Åfirst placeÅ","ñelectricñ","Ölike a ninjaÖ","çepicç","èradè","ìtop notchì","ô zen-like ô","épico-rifficó"}
  adjective=compliments[1+flr(rnd(#compliments))]
@@ -1073,6 +1072,8 @@ function party_update()
     or (trophy_for_player2 and newbtn("x",2) and newbtn("o",2))
   )) then do_intro() end
 
+ if(party_started==cycles-5) music(0)
+ 
  sound_effect_mgmt()
  newbtn_mgmt()
 end
